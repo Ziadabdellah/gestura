@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "dev",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/gestura",
+      "program": "lib/main_dev.dart",
+      "args": ["--flavor", "dev"]
+    },
+    {
+      "name": "staging",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/gestura",
+      "program": "lib/main_staging.dart",
+      "args": ["--flavor", "staging"]
+    },
+    {
+      "name": "prod (release)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/gestura",
+      "program": "lib/main_prod.dart",
+      "args": ["--flavor", "prod"],
+      "flutterMode": "release"
+    }
+  ]
+}

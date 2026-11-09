@@ -1,0 +1,8 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Gestura",
+  "tagline": "La langue des signes, entre vos mains.",
+  "languageName": "Français",
+  "signsToReview": "{count, plural, =0{Rien à réviser} one{{count} signe à réviser} other{{count} signes à réviser}}",
+  "streakDays": "{count, plural, =0{Pas encore de série} one{Série de {count} jour} other{Série de {count} jours}}"
+}

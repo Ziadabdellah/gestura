@@ -8,7 +8,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0B6E69" alt="MIT license"></a>
 </p>
 
-Gestura is a Flutter app, in development, that will teach the sign language of the European country you live in: short video lessons, spaced-repetition review and a dictionary that works offline. The interface will be available in English, Arabic, Russian, Spanish, French and German.
+Gestura is a Flutter app for Android and iOS, in development, that will teach the sign language of the European country you live in: short video lessons, spaced-repetition review and a dictionary that works offline. The interface will be available in English, Arabic, Russian, Spanish, French and German.
 
 Every country has its own sign language, and each one is a full language with its own grammar. Gestura is meant as a learning companion, not a replacement for Deaf teachers and communities.
 
@@ -20,7 +20,7 @@ The project is built in phases. The foundation is in place:
 |---|---|---|
 | [`packages/gestura_ui`](packages/gestura_ui) | The design system: tokens, themes, fonts, components | Ready |
 | [`packages/gestura_core`](packages/gestura_core) | Shared pure Dart logic | Ready |
-| `apps/gestura` | The Android app | Next |
+| [`apps/gestura`](apps/gestura) | The Android and iOS app: three flavors and a first screen in six languages | In progress |
 
 ## Design system
 
@@ -66,10 +66,15 @@ A monorepo with pub workspaces and [melos](https://melos.invertase.dev) 8:
 ```
 gestura/
 ├── pubspec.yaml          workspace and melos scripts
+├── apps/
+│   └── gestura/          the Android and iOS app
 └── packages/
     ├── gestura_core/     pure Dart logic
     └── gestura_ui/       design system
 ```
+
+- **Flavors.** `dev`, `staging` and `prod` on Android and iOS (Gradle product flavors, Xcode schemes and build configurations), each with its own application ID and name, so all three install side by side on one phone. Dev and staging builds show a corner banner.
+- **Languages.** One ARB file per language (English, Arabic, Russian, Spanish, French and German), generated with `gen-l10n`. Tests check that every file has every message and that the plural rules of each language are right, including the six Arabic forms and the Russian ones.
 
 The app will follow MVVM, keep its data offline-first, and use Firebase for sync.
 
@@ -79,7 +84,7 @@ The app will follow MVVM, keep its data offline-first, and use Firebase for sync
 - [very_good_analysis](https://pub.dev/packages/very_good_analysis) with `--fatal-infos`: zero warnings and zero infos.
 - Unit and widget tests, accessibility guideline tests (tap targets, labels and text contrast) on small phones, large phones and tablets, and at 200% text.
 - Golden tests in English and Arabic, in light and dark.
-- 100% line coverage in both packages.
+- 100% line coverage in both packages; the app covers every line it owns.
 
 ## Getting started
 
@@ -88,9 +93,17 @@ Requirements: [fvm](https://fvm.app). The Flutter version is pinned in [`.fvmrc`
 ```bash
 fvm install
 fvm flutter pub get
+fvm dart run melos run gen --no-select
 fvm dart run melos run analyze --no-select
 fvm dart run melos run test:dart --no-select
 fvm dart run melos run test:flutter --no-select
+```
+
+To run the app on an Android device or an iOS simulator:
+
+```bash
+cd apps/gestura
+fvm flutter run --flavor dev -t lib/main_dev.dart
 ```
 
 To update the golden files after a UI change:

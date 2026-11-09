@@ -24,12 +24,16 @@ jobs:
 
       - name: Repository rules
         run: |
-          if git grep -nE '^[[:space:]]*(//|/\*)|[[:space:]]//[[:space:]]' -- '*.dart'; then
-            echo "Comments are not allowed in Dart files."
+          if git grep -nE '^[[:space:]]*(//|/\*)|[[:space:]]//[[:space:]]' -- '*.dart' '*.kt' '*.kts' '*.swift' '*.xcconfig'; then
+            echo "Comments are not allowed in Dart, Kotlin, Gradle, Swift or xcconfig files."
             exit 1
           fi
-          if git grep -nE '^[[:space:]]*#' -- '*.yaml' '*.yml' '.gitignore'; then
-            echo "Comments are not allowed in YAML files or .gitignore."
+          if git grep -nE '^[[:space:]]*#' -- '*.yaml' '*.yml' '*.properties' '*.gitignore' '*.metadata'; then
+            echo "Comments are not allowed in YAML, properties, .gitignore or .metadata files."
+            exit 1
+          fi
+          if git grep -nE '<!--' -- '*.xml' '*.plist' '*.xcscheme'; then
+            echo "Comments are not allowed in XML, plist or scheme files."
             exit 1
           fi
 

@@ -1,0 +1,5 @@
+/android/app/debug
+/android/app/profile
+/android/app/release
+migrate_working_dir/
+.widget_preview/

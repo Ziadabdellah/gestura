@@ -1,0 +1,30 @@
+name: gestura
+description: Learn the sign language of the country you live in.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  gestura_core:
+    path: ../../packages/gestura_core
+  gestura_ui:
+    path: ../../packages/gestura_ui
+  intl: ^0.20.3
+
+dev_dependencies:
+  alchemist: ^0.14.1
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true

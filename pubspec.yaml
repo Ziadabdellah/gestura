@@ -5,6 +5,7 @@ environment:
   sdk: ^3.13.0
 
 workspace:
+  - apps/gestura
   - packages/gestura_core
   - packages/gestura_ui
 
@@ -17,7 +18,14 @@ melos:
     gen:
       description: Run every code generator in the workspace.
       dependsOn:
+        - gen:l10n
         - gen:build_runner
+    gen:l10n:
+      description: Generate the localizations of every package that has an l10n.yaml.
+      private: true
+      exec: flutter gen-l10n
+      packageFilters:
+        fileExists: l10n.yaml
     gen:build_runner:
       description: Run build_runner in every package that uses it.
       private: true

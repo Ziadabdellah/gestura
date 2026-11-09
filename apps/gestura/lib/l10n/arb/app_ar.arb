@@ -1,0 +1,8 @@
+{
+  "@@locale": "ar",
+  "appTitle": "Gestura",
+  "tagline": "لغة الإشارة بين يديك.",
+  "languageName": "العربية",
+  "signsToReview": "{count, plural, =0{لا توجد إشارات للمراجعة} =1{إشارة واحدة للمراجعة} =2{إشارتان للمراجعة} few{{count} إشارات للمراجعة} many{{count} إشارة للمراجعة} other{{count} إشارة للمراجعة}}",
+  "streakDays": "{count, plural, =0{لا توجد سلسلة بعد} =1{سلسلة يوم واحد} =2{سلسلة يومين} few{سلسلة {count} أيام} many{سلسلة {count} يومًا} other{سلسلة {count} يوم}}"
+}

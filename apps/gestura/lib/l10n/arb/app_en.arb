@@ -1,0 +1,22 @@
+{
+  "@@locale": "en",
+  "appTitle": "Gestura",
+  "tagline": "Sign language, in your hands.",
+  "languageName": "English",
+  "signsToReview": "{count, plural, =0{Nothing to review} =1{1 sign to review} other{{count} signs to review}}",
+  "@signsToReview": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakDays": "{count, plural, =0{No streak yet} =1{1-day streak} other{{count}-day streak}}",
+  "@streakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

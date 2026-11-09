@@ -1,0 +1,8 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Gestura",
+  "tagline": "Язык жестов — в ваших руках.",
+  "languageName": "Русский",
+  "signsToReview": "{count, plural, =0{Нечего повторять} one{{count} жест для повторения} few{{count} жеста для повторения} many{{count} жестов для повторения} other{{count} жеста для повторения}}",
+  "streakDays": "{count, plural, =0{Серии пока нет} one{Серия {count} день} few{Серия {count} дня} many{Серия {count} дней} other{Серия {count} дня}}"
+}

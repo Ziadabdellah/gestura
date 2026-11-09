@@ -1,0 +1,8 @@
+{
+  "@@locale": "es",
+  "appTitle": "Gestura",
+  "tagline": "La lengua de signos, en tus manos.",
+  "languageName": "Español",
+  "signsToReview": "{count, plural, =0{Nada que repasar} =1{1 signo para repasar} other{{count} signos para repasar}}",
+  "streakDays": "{count, plural, =0{Aún no hay racha} =1{Racha de 1 día} other{Racha de {count} días}}"
+}
