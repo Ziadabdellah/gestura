@@ -18,5 +18,17 @@
         "type": "int"
       }
     }
-  }
+  },
+  "openSettings": "Open settings",
+  "settingsTitle": "Settings",
+  "settingsTheme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "settingsLanguage": "App language",
+  "languageSystem": "Device language",
+  "settingsAccessibility": "Accessibility",
+  "reduceMotionTitle": "Reduce motion",
+  "reduceMotionSubtitle": "Turn off animations across the app",
+  "settingsSaveFailed": "Couldn't save your settings. Please try again."
 }

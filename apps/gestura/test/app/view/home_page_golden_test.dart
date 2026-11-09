@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:alchemist/alchemist.dart';
 import 'package:flutter/material.dart';
-import 'package:gestura/app/gestura_app.dart';
-import 'package:gestura/config/app_config.dart';
+import 'package:gestura/features/settings/domain/app_settings.dart';
+
+import '../../helpers/fake_settings_repository.dart';
+import '../../helpers/pump_app.dart';
 
 const Size _phone = Size(360, 640);
 
@@ -15,18 +17,21 @@ void main() {
       builder: () => GoldenTestGroup(
         columns: 2,
         children: [
-          for (final locale in const [Locale('en'), Locale('ar')])
-            for (final mode in const [ThemeMode.light, ThemeMode.dark])
+          for (final language in [AppLanguage.english, AppLanguage.arabic])
+            for (final theme in [
+              AppThemePreference.light,
+              AppThemePreference.dark,
+            ])
               GoldenTestScenario(
-                name: '${locale.languageCode} ${mode.name}',
+                name: '${language.code} ${theme.name}',
                 child: SizedBox.fromSize(
                   size: _phone,
                   child: MediaQuery(
                     data: const MediaQueryData(size: _phone),
-                    child: GesturaApp(
-                      config: const AppConfig(flavor: Flavor.prod),
-                      locale: locale,
-                      themeMode: mode,
+                    child: appUnderTest(
+                      repository: FakeSettingsRepository(
+                        AppSettings(language: language, theme: theme),
+                      ),
                     ),
                   ),
                 ),

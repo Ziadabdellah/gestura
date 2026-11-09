@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
@@ -14,6 +15,15 @@ class HomePage extends StatelessWidget {
     final l10n = context.l10n;
 
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            tooltip: l10n.openSettings,
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => const SettingsRoute().go(context),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

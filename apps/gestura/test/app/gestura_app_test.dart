@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/app/view/flavor_banner.dart';
 import 'package:gestura/config/app_config.dart';
+import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
@@ -14,7 +15,11 @@ void main() {
       testWidgets('shows the tagline in ${locale.languageCode}', (
         tester,
       ) async {
-        await tester.pumpApp(locale: locale);
+        await tester.pumpApp(
+          settings: englishLight.copyWith(
+            language: AppLanguage.fromCode(locale.languageCode),
+          ),
+        );
 
         expect(
           find.text(lookupAppLocalizations(locale).tagline),
@@ -24,7 +29,9 @@ void main() {
     }
 
     testWidgets('lays out Arabic right to left', (tester) async {
-      await tester.pumpApp(locale: const Locale('ar'));
+      await tester.pumpApp(
+        settings: englishLight.copyWith(language: AppLanguage.arabic),
+      );
 
       final tagline = find.text(
         lookupAppLocalizations(const Locale('ar')).tagline,
@@ -34,32 +41,69 @@ void main() {
     });
 
     testWidgets('keeps every other language left to right', (tester) async {
-      for (final code in ['en', 'ru', 'es', 'fr', 'de']) {
-        final locale = Locale(code);
-        await tester.pumpApp(locale: locale);
-        final tagline = find.text(lookupAppLocalizations(locale).tagline);
+      for (final language in [
+        AppLanguage.english,
+        AppLanguage.russian,
+        AppLanguage.spanish,
+        AppLanguage.french,
+        AppLanguage.german,
+      ]) {
+        await tester.pumpApp(
+          settings: englishLight.copyWith(language: language),
+        );
+        final tagline = find.text(
+          lookupAppLocalizations(Locale(language.code!)).tagline,
+        );
 
         expect(
           Directionality.of(tester.element(tagline)),
           TextDirection.ltr,
-          reason: code,
+          reason: language.name,
         );
       }
     });
 
+    testWidgets('follows the device language when set to system', (
+      tester,
+    ) async {
+      tester.platformDispatcher.localesTestValue = const [Locale('fr')];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+
+      await tester.pumpApp(settings: AppSettings.defaults);
+
+      expect(
+        find.text(lookupAppLocalizations(const Locale('fr')).tagline),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('takes its title from the translations', (tester) async {
-      await tester.pumpApp(locale: const Locale('ru'));
+      await tester.pumpApp(
+        settings: englishLight.copyWith(language: AppLanguage.russian),
+      );
 
       expect(tester.widget<Title>(find.byType(Title)).title, 'Gestura');
     });
 
-    testWidgets('follows the dark theme', (tester) async {
-      await tester.pumpApp(themeMode: ThemeMode.dark);
+    testWidgets('uses the saved theme', (tester) async {
+      await tester.pumpApp(
+        settings: englishLight.copyWith(theme: AppThemePreference.dark),
+      );
 
       final context = tester.element(find.byType(Scaffold));
 
       expect(Theme.of(context).brightness, Brightness.dark);
       expect(Theme.of(context).colorScheme, GesturaColorSchemes.dark);
+    });
+
+    testWidgets('turns off animations when reduce motion is saved', (
+      tester,
+    ) async {
+      await tester.pumpApp(settings: englishLight.copyWith(reduceMotion: true));
+
+      final context = tester.element(find.byType(Scaffold));
+
+      expect(MediaQuery.disableAnimationsOf(context), isTrue);
     });
 
     testWidgets('marks dev and staging builds with their flavor', (
@@ -105,8 +149,7 @@ void main() {
       final handle = tester.ensureSemantics();
       await tester.pumpApp();
 
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
-      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await tester.expectAccessible();
       expect(
         tester.getSemantics(find.text('Gestura')),
         isSemantics(isHeader: true),

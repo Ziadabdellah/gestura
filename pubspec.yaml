@@ -30,7 +30,7 @@ melos:
       description: Run build_runner in every package that uses it.
       private: true
       exec:
-        command: dart run build_runner build --delete-conflicting-outputs
+        command: dart run build_runner build
         orderDependents: true
       packageFilters:
         dependsOn: build_runner
