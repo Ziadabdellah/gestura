@@ -20,3 +20,4 @@ coverage/
 app.*.symbols
 app.*.map.json
 /doc/
+/apps/gestura/firebase.json

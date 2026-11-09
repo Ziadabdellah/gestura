@@ -6,5 +6,6 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.config.dart"
     - lib/l10n/gen/**
+    - lib/firebase/firebase_options_*.dart
     - android/**
     - ios/**

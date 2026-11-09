@@ -1,5 +1,10 @@
 name: Setup
-description: Install the Flutter version pinned in .fvmrc and resolve the workspace.
+description: Install the Flutter version pinned in .fvmrc, restore the Firebase config and resolve the workspace.
+
+inputs:
+  firebase-config:
+    description: Base64 text made by tool/pack_firebase_config.sh.
+    required: true
 
 runs:
   using: composite
@@ -9,6 +14,17 @@ runs:
         flutter-version-file: .fvmrc
         channel: stable
         cache: true
+
+    - name: Restore the Firebase config
+      shell: bash
+      env:
+        FIREBASE_CONFIG: ${{ inputs.firebase-config }}
+      run: |
+        if [ -z "$FIREBASE_CONFIG" ]; then
+          echo "The FIREBASE_CONFIG_TGZ_B64 secret is missing. Create it with tool/pack_firebase_config.sh."
+          exit 1
+        fi
+        echo "$FIREBASE_CONFIG" | base64 --decode | tar -xzf - -C apps/gestura
 
     - name: Resolve the workspace
       shell: bash

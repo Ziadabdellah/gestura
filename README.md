@@ -99,7 +99,7 @@ fvm dart run melos run test:dart --no-select
 fvm dart run melos run test:flutter --no-select
 ```
 
-To run the app on an Android device or an iOS simulator:
+The app also needs its Firebase config, which is not in the repository; see [Firebase setup](#firebase-setup). Then, to run the app on an Android device or an iOS simulator:
 
 ```bash
 cd apps/gestura
@@ -112,6 +112,24 @@ To update the golden files after a UI change:
 cd packages/gestura_ui
 fvm flutter test --tags golden --update-goldens
 ```
+
+## Firebase setup
+
+Each flavor talks to Firebase: `dev` and `staging` share a development project, and `prod` has its own. The config files are not in the repository, so create your own two projects, install the [FlutterFire CLI](https://firebase.flutter.dev/docs/cli), and run this from `apps/gestura` for each flavor and each of its iOS build configurations (`Debug-<flavor>`, `Release-<flavor>` and `Profile-<flavor>`, plus the plain `Debug`, `Release` and `Profile` with the `prod` values):
+
+```bash
+flutterfire configure \
+  --project=<project-id> \
+  --platforms=android,ios \
+  --out=lib/firebase/firebase_options_<flavor>.dart \
+  --android-package-name=<application-id> \
+  --android-out=android/app/src/<flavor>/google-services.json \
+  --ios-bundle-id=<application-id> \
+  --ios-build-config=<build-configuration> \
+  --ios-out=ios/flavors/<flavor>/GoogleService-Info.plist
+```
+
+The application IDs are `app.gestura.com.dev`, `app.gestura.com.stg` and `app.gestura.com`. iOS builds call the FlutterFire CLI from an Xcode build phase, so it must be on your `PATH`.
 
 ## License
 

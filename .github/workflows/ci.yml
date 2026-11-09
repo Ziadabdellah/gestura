@@ -21,6 +21,8 @@ jobs:
       - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup
+        with:
+          firebase-config: ${{ secrets.FIREBASE_CONFIG_TGZ_B64 }}
 
       - name: Repository rules
         run: |
