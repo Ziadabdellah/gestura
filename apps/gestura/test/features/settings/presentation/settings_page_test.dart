@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gestura/app/view/home_page.dart';
+import 'package:gestura/app/router/app_routes.dart';
+import 'package:gestura/features/profile/presentation/pages/profile_page.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/presentation/pages/settings_page.dart';
 import 'package:gestura_core/gestura_core.dart';
 
 import '../../../helpers/pump_app.dart';
 
+final String _settings = const SettingsRoute().location;
+
 void main() {
   group('Settings', () {
-    testWidgets('opens from the home screen and goes back', (tester) async {
+    testWidgets('opens from the profile and goes back', (tester) async {
       await tester.pumpApp();
 
-      await tester.tap(find.byTooltip('Open settings'));
+      await tester.tapDestination('Profile');
+      await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
 
       expect(find.byType(SettingsPage), findsOneWidget);
@@ -21,11 +25,11 @@ void main() {
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      expect(find.byType(HomePage), findsOneWidget);
+      expect(find.byType(ProfilePage), findsOneWidget);
     });
 
     testWidgets('lists every language by its own name', (tester) async {
-      await tester.pumpApp(initialLocation: '/settings');
+      await tester.pumpApp(initialLocation: _settings);
 
       for (final name in [
         'Device language',
@@ -44,9 +48,10 @@ void main() {
     testWidgets('switches the whole app to the chosen language', (
       tester,
     ) async {
-      final repository = await tester.pumpApp(initialLocation: '/settings');
+      final repository = await tester.pumpApp(initialLocation: _settings);
 
       await tester.scrollUntilVisible(find.text('العربية'), 100);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('العربية'));
       await tester.pumpAndSettle();
 
@@ -60,11 +65,12 @@ void main() {
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
 
-      expect(find.text('لغة الإشارة بين يديك.'), findsOneWidget);
+      expect(find.byType(ProfilePage), findsOneWidget);
+      expect(find.text('الملف الشخصي'), findsWidgets);
     });
 
     testWidgets('switches the theme right away', (tester) async {
-      final repository = await tester.pumpApp(initialLocation: '/settings');
+      final repository = await tester.pumpApp(initialLocation: _settings);
 
       await tester.tap(find.text('Dark'));
       await tester.pumpAndSettle();
@@ -76,8 +82,9 @@ void main() {
     });
 
     testWidgets('turns reduce motion on for the whole app', (tester) async {
-      final repository = await tester.pumpApp(initialLocation: '/settings');
+      final repository = await tester.pumpApp(initialLocation: _settings);
 
+      await tester.scrollUntilVisible(find.byType(SwitchListTile), 100);
       await tester.ensureVisible(find.byType(SwitchListTile));
       await tester.pumpAndSettle();
       await tester.tap(find.byType(SwitchListTile));
@@ -92,7 +99,7 @@ void main() {
     testWidgets('tells the user and keeps the old choice when saving fails', (
       tester,
     ) async {
-      final repository = await tester.pumpApp(initialLocation: '/settings');
+      final repository = await tester.pumpApp(initialLocation: _settings);
       repository.failure = const UnexpectedFailure('disk');
 
       await tester.tap(find.text('Dark'));
@@ -117,7 +124,7 @@ void main() {
       testWidgets('meets the accessibility guidelines in '
           '${settings.language.name} ${settings.theme.name}', (tester) async {
         final handle = tester.ensureSemantics();
-        await tester.pumpApp(settings: settings, initialLocation: '/settings');
+        await tester.pumpApp(settings: settings, initialLocation: _settings);
 
         await tester.expectAccessible();
         handle.dispose();
@@ -126,7 +133,7 @@ void main() {
 
     testWidgets('fits at 200% text on a small phone', (tester) async {
       await tester.pumpApp(
-        initialLocation: '/settings',
+        initialLocation: _settings,
         surfaceSize: const Size(320, 640),
         textScale: 2,
       );

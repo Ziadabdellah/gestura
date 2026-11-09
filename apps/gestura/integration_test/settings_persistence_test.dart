@@ -60,10 +60,14 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final tagline = find.text('لغة الإشارة بين يديك.');
+    final learnTab = find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text('تعلّم'),
+    );
 
-    expect(tagline, findsOneWidget);
-    expect(Theme.of(tester.element(tagline)).brightness, Brightness.dark);
+    expect(learnTab, findsOneWidget);
+    expect(Theme.of(tester.element(learnTab)).brightness, Brightness.dark);
+    expect(find.text('أولى الإشارات'), findsOneWidget);
   });
 
   testWidgets('a language picked in settings is stored on the device', (
@@ -78,12 +82,13 @@ void main() {
       const ProviderScope(
         child: GesturaApp(
           config: AppConfig(flavor: Flavor.dev),
-          initialLocation: '/settings',
+          initialLocation: '/profile/settings',
         ),
       ),
     );
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Deutsch'), 100);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Deutsch'));
     await tester.pumpAndSettle();
 

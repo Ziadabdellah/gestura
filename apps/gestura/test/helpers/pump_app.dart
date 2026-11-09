@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/app/gestura_app.dart';
+import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/config/app_config.dart';
+import 'package:gestura/config/app_info.dart';
+import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
 
+import 'fake_content_repository.dart';
 import 'fake_settings_repository.dart';
 
 const AppSettings englishLight = AppSettings(
@@ -13,10 +18,22 @@ const AppSettings englishLight = AppSettings(
   theme: AppThemePreference.light,
 );
 
+const AppInfo testAppInfo = AppInfo(version: '1.0.0', buildNumber: '7');
+
+const Size phoneSize = Size(360, 780);
+const Size tabletSize = Size(800, 1280);
+
+Future<void> registerFakes({ContentRepository? content}) async {
+  await getIt.reset();
+  getIt
+    ..registerSingleton<ContentRepository>(content ?? FakeContentRepository())
+    ..registerSingleton<AppInfo>(testAppInfo);
+}
+
 Widget appUnderTest({
   required FakeSettingsRepository repository,
   Flavor flavor = Flavor.prod,
-  String initialLocation = '/',
+  String initialLocation = rootLocation,
 }) => ProviderScope(
   overrides: [settingsRepositoryProvider.overrideWithValue(repository)],
   child: GesturaApp(
@@ -29,9 +46,10 @@ extension PumpApp on WidgetTester {
   Future<FakeSettingsRepository> pumpApp({
     AppSettings settings = englishLight,
     Flavor flavor = Flavor.prod,
-    String initialLocation = '/',
-    Size surfaceSize = const Size(360, 780),
+    String initialLocation = rootLocation,
+    Size surfaceSize = phoneSize,
     double textScale = 1,
+    ContentRepository? content,
   }) async {
     view
       ..physicalSize = surfaceSize * 3
@@ -39,6 +57,8 @@ extension PumpApp on WidgetTester {
     platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(view.reset);
     addTearDown(platformDispatcher.clearTextScaleFactorTestValue);
+    await registerFakes(content: content);
+    addTearDown(getIt.reset);
 
     final repository = FakeSettingsRepository(settings);
     await pumpWidget(
@@ -56,5 +76,17 @@ extension PumpApp on WidgetTester {
     await expectLater(this, meetsGuideline(androidTapTargetGuideline));
     await expectLater(this, meetsGuideline(labeledTapTargetGuideline));
     await expectLater(this, meetsGuideline(textContrastGuideline));
+  }
+
+  Future<void> tapDestination(String label) async {
+    await tap(
+      find.descendant(
+        of: find.byWidgetPredicate(
+          (widget) => widget is NavigationBar || widget is NavigationRail,
+        ),
+        matching: find.text(label),
+      ),
+    );
+    await pumpAndSettle();
   }
 }

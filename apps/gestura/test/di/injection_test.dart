@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/config/app_config.dart';
+import 'package:gestura/config/app_info.dart';
 import 'package:gestura/core/errors/error_reporter.dart';
 import 'package:gestura/core/errors/logging_error_reporter.dart';
 import 'package:gestura/di/injection.dart';
@@ -9,15 +10,23 @@ import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/settings/data/shared_preferences_settings_repository.dart';
 import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:get_it/get_it.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 void main() {
-  setUp(
-    () => SharedPreferencesAsyncPlatform.instance =
-        InMemorySharedPreferencesAsync.empty(),
-  );
+  setUp(() {
+    SharedPreferencesAsyncPlatform.instance =
+        InMemorySharedPreferencesAsync.empty();
+    PackageInfo.setMockInitialValues(
+      appName: 'Gestura',
+      packageName: 'app.gestura.com',
+      version: '0.1.0',
+      buildNumber: '1',
+      buildSignature: '',
+    );
+  });
 
   for (final flavor in Flavor.values) {
     test('wires the ${flavor.name} environment', () async {
@@ -38,6 +47,10 @@ void main() {
       expect(container<ErrorReporter>(), isA<LoggingErrorReporter>());
       expect(container<AssetBundle>(), same(rootBundle));
       expect(container<ContentRepository>(), isA<BundledContentRepository>());
+      expect(
+        container<AppInfo>(),
+        const AppInfo(version: '0.1.0', buildNumber: '1'),
+      );
     });
   }
 

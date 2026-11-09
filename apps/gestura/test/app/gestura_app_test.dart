@@ -3,28 +3,40 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/app/view/flavor_banner.dart';
 import 'package:gestura/config/app_config.dart';
+import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
 import '../helpers/pump_app.dart';
 
+Finder _navigationLabel(String label) =>
+    find.descendant(of: find.byType(NavigationBar), matching: find.text(label));
+
 void main() {
   group('GesturaApp', () {
+    testWidgets('opens on the Learn tab', (tester) async {
+      await tester.pumpApp();
+
+      expect(find.byType(LearnPage), findsOneWidget);
+    });
+
     for (final locale in AppLocalizations.supportedLocales) {
-      testWidgets('shows the tagline in ${locale.languageCode}', (
-        tester,
-      ) async {
+      testWidgets('names the tabs in ${locale.languageCode}', (tester) async {
+        final l10n = lookupAppLocalizations(locale);
         await tester.pumpApp(
           settings: englishLight.copyWith(
             language: AppLanguage.fromCode(locale.languageCode),
           ),
         );
 
-        expect(
-          find.text(lookupAppLocalizations(locale).tagline),
-          findsOneWidget,
-        );
+        for (final label in [
+          l10n.tabLearn,
+          l10n.tabDictionary,
+          l10n.tabProfile,
+        ]) {
+          expect(_navigationLabel(label), findsOneWidget);
+        }
       });
     }
 
@@ -33,11 +45,12 @@ void main() {
         settings: englishLight.copyWith(language: AppLanguage.arabic),
       );
 
-      final tagline = find.text(
-        lookupAppLocalizations(const Locale('ar')).tagline,
-      );
+      final bar = tester.element(find.byType(NavigationBar));
+      final learn = tester.getCenter(_navigationLabel('تعلّم'));
+      final profile = tester.getCenter(_navigationLabel('الملف الشخصي'));
 
-      expect(Directionality.of(tester.element(tagline)), TextDirection.rtl);
+      expect(Directionality.of(bar), TextDirection.rtl);
+      expect(learn.dx, greaterThan(profile.dx));
     });
 
     testWidgets('keeps every other language left to right', (tester) async {
@@ -51,12 +64,9 @@ void main() {
         await tester.pumpApp(
           settings: englishLight.copyWith(language: language),
         );
-        final tagline = find.text(
-          lookupAppLocalizations(Locale(language.code!)).tagline,
-        );
 
         expect(
-          Directionality.of(tester.element(tagline)),
+          Directionality.of(tester.element(find.byType(NavigationBar))),
           TextDirection.ltr,
           reason: language.name,
         );
@@ -71,10 +81,7 @@ void main() {
 
       await tester.pumpApp(settings: AppSettings.defaults);
 
-      expect(
-        find.text(lookupAppLocalizations(const Locale('fr')).tagline),
-        findsOneWidget,
-      );
+      expect(_navigationLabel('Apprendre'), findsOneWidget);
     });
 
     testWidgets('takes its title from the translations', (tester) async {
@@ -90,7 +97,7 @@ void main() {
         settings: englishLight.copyWith(theme: AppThemePreference.dark),
       );
 
-      final context = tester.element(find.byType(Scaffold));
+      final context = tester.element(find.byType(LearnPage));
 
       expect(Theme.of(context).brightness, Brightness.dark);
       expect(Theme.of(context).colorScheme, GesturaColorSchemes.dark);
@@ -101,7 +108,7 @@ void main() {
     ) async {
       await tester.pumpApp(settings: englishLight.copyWith(reduceMotion: true));
 
-      final context = tester.element(find.byType(Scaffold));
+      final context = tester.element(find.byType(LearnPage));
 
       expect(MediaQuery.disableAnimationsOf(context), isTrue);
     });
@@ -130,9 +137,7 @@ void main() {
       await tester.pumpApp(surfaceSize: const Size(430, 932));
 
       final style = tester
-          .renderObject<RenderParagraph>(
-            find.text('Sign language, in your hands.'),
-          )
+          .renderObject<RenderParagraph>(find.text('Hello and thank you'))
           .text
           .style!;
 
@@ -151,7 +156,12 @@ void main() {
 
       await tester.expectAccessible();
       expect(
-        tester.getSemantics(find.text('Gestura')),
+        tester.getSemantics(
+          find.descendant(
+            of: find.byType(AppBar),
+            matching: find.text('Learn'),
+          ),
+        ),
         isSemantics(isHeader: true),
       );
       handle.dispose();

@@ -19,7 +19,6 @@
       }
     }
   },
-  "openSettings": "Open settings",
   "settingsTitle": "Settings",
   "settingsTheme": "Theme",
   "themeSystem": "System",
@@ -30,5 +29,43 @@
   "settingsAccessibility": "Accessibility",
   "reduceMotionTitle": "Reduce motion",
   "reduceMotionSubtitle": "Turn off animations across the app",
-  "settingsSaveFailed": "Couldn't save your settings. Please try again."
+  "settingsSaveFailed": "Couldn't save your settings. Please try again.",
+  "tabLearn": "Learn",
+  "tabDictionary": "Dictionary",
+  "tabProfile": "Profile",
+  "placeholderContentNotice": "Demo content: real sign videos are on their way.",
+  "unitLessonCount": "{count, plural, =1{1 lesson} other{{count} lessons}}",
+  "@unitLessonCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "courseLevel": "Level {level}",
+  "@courseLevel": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutApp": "About Gestura",
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutLegalese": "A learning companion, not a replacement for Deaf teachers and communities.",
+  "errorTitle": "Something went wrong",
+  "retry": "Try again",
+  "loading": "Loading",
+  "failureNetwork": "You're offline. Check your connection and try again.",
+  "failureNotFound": "We couldn't find what you're looking for.",
+  "failurePermissionDenied": "You don't have access to this.",
+  "failureStorageFull": "Your device is out of space. Free some up and try again.",
+  "failureUnexpected": "Something unexpected happened. Please try again."
 }

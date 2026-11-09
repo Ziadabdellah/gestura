@@ -10,9 +10,11 @@ environment:
 resolution: workspace
 
 dependencies:
+  equatable: ^3.0.0
   firebase_core: ^5.1.0
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ^3.5.0
@@ -25,11 +27,13 @@ dependencies:
   injectable: ^3.0.0
   intl: ^0.20.3
   meta: ^1.19.0
+  package_info_plus: ^10.2.2
   riverpod_annotation: ^4.0.8
   shared_preferences: ^2.5.6
 
 dev_dependencies:
   alchemist: ^0.14.1
+  bloc_test: ^10.0.0
   build_runner: ^2.16.1
   flutter_test:
     sdk: flutter
