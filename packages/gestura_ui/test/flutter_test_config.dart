@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
+const double crossPlatformAntiAliasingTolerance = 0.001;
+
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await _loadFontsUnderPackageNames();
@@ -14,6 +16,9 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   await AlchemistConfig.runWithConfig(
     config: AlchemistConfig(
       platformGoldensConfig: PlatformGoldensConfig(enabled: !isCi),
+      ciGoldensConfig: const CiGoldensConfig(
+        diffThreshold: crossPlatformAntiAliasingTolerance,
+      ),
     ),
     run: testMain,
   );
