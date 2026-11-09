@@ -1,0 +1,550 @@
+{
+  "version": 1,
+  "pack": {
+    "code": "demo",
+    "placeholder": true,
+    "fingerspelling": "oneHanded",
+    "name": {
+      "en": "Demo pack",
+      "ar": "حزمة تجريبية",
+      "ru": "Демо-набор",
+      "es": "Paquete de demostración",
+      "fr": "Pack de démonstration",
+      "de": "Demo-Paket"
+    }
+  },
+  "categories": [
+    {
+      "id": "greetings",
+      "name": {
+        "en": "Greetings",
+        "ar": "التحيات",
+        "ru": "Приветствия",
+        "es": "Saludos",
+        "fr": "Salutations",
+        "de": "Begrüßungen"
+      }
+    },
+    {
+      "id": "family",
+      "name": {
+        "en": "Family",
+        "ar": "العائلة",
+        "ru": "Семья",
+        "es": "Familia",
+        "fr": "Famille",
+        "de": "Familie"
+      }
+    }
+  ],
+  "courses": [
+    {
+      "id": "demo-a1",
+      "level": "a1",
+      "title": {
+        "en": "First signs",
+        "ar": "أولى الإشارات",
+        "ru": "Первые жесты",
+        "es": "Primeros signos",
+        "fr": "Premiers signes",
+        "de": "Erste Gebärden"
+      },
+      "units": [
+        {
+          "index": 0,
+          "title": {
+            "en": "Greetings",
+            "ar": "التحيات",
+            "ru": "Приветствия",
+            "es": "Saludos",
+            "fr": "Salutations",
+            "de": "Begrüßungen"
+          }
+        },
+        {
+          "index": 1,
+          "title": {
+            "en": "Family",
+            "ar": "العائلة",
+            "ru": "Семья",
+            "es": "Familia",
+            "fr": "Famille",
+            "de": "Familie"
+          }
+        }
+      ],
+      "lessons": [
+        {
+          "id": "demo-a1-1",
+          "unit": 0,
+          "order": 0,
+          "title": {
+            "en": "Hello and thank you",
+            "ar": "مرحبًا وشكرًا",
+            "ru": "Привет и спасибо",
+            "es": "Hola y gracias",
+            "fr": "Bonjour et merci",
+            "de": "Hallo und danke"
+          },
+          "steps": [
+            {
+              "type": "learn",
+              "sign": "hello"
+            },
+            {
+              "type": "learn",
+              "sign": "thank-you"
+            },
+            {
+              "type": "learn",
+              "sign": "please"
+            },
+            {
+              "type": "chooseWord",
+              "sign": "hello",
+              "options": [
+                "thank-you",
+                "please",
+                "sorry",
+                "hello"
+              ]
+            },
+            {
+              "type": "chooseWord",
+              "sign": "please",
+              "options": [
+                "yes",
+                "thank-you",
+                "please",
+                "hello"
+              ]
+            },
+            {
+              "type": "chooseVideo",
+              "sign": "thank-you",
+              "options": [
+                "no",
+                "thank-you",
+                "hello",
+                "please"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "demo-a1-2",
+          "unit": 0,
+          "order": 1,
+          "title": {
+            "en": "Yes, no and sorry",
+            "ar": "نعم ولا وآسف",
+            "ru": "Да, нет и извините",
+            "es": "Sí, no y lo siento",
+            "fr": "Oui, non et pardon",
+            "de": "Ja, nein und Entschuldigung"
+          },
+          "steps": [
+            {
+              "type": "learn",
+              "sign": "sorry"
+            },
+            {
+              "type": "learn",
+              "sign": "yes"
+            },
+            {
+              "type": "learn",
+              "sign": "no"
+            },
+            {
+              "type": "chooseWord",
+              "sign": "sorry",
+              "options": [
+                "yes",
+                "no",
+                "hello",
+                "sorry"
+              ]
+            },
+            {
+              "type": "chooseWord",
+              "sign": "no",
+              "options": [
+                "sorry",
+                "thank-you",
+                "no",
+                "yes"
+              ]
+            },
+            {
+              "type": "chooseVideo",
+              "sign": "yes",
+              "options": [
+                "please",
+                "yes",
+                "no",
+                "sorry"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "demo-a1-3",
+          "unit": 1,
+          "order": 0,
+          "title": {
+            "en": "Parents",
+            "ar": "الوالدان",
+            "ru": "Родители",
+            "es": "Los padres",
+            "fr": "Les parents",
+            "de": "Eltern"
+          },
+          "steps": [
+            {
+              "type": "learn",
+              "sign": "mother"
+            },
+            {
+              "type": "learn",
+              "sign": "father"
+            },
+            {
+              "type": "learn",
+              "sign": "family"
+            },
+            {
+              "type": "chooseWord",
+              "sign": "mother",
+              "options": [
+                "father",
+                "family",
+                "sister",
+                "mother"
+              ]
+            },
+            {
+              "type": "chooseWord",
+              "sign": "family",
+              "options": [
+                "father",
+                "friend",
+                "family",
+                "mother"
+              ]
+            },
+            {
+              "type": "chooseVideo",
+              "sign": "father",
+              "options": [
+                "family",
+                "father",
+                "mother",
+                "brother"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "demo-a1-4",
+          "unit": 1,
+          "order": 1,
+          "title": {
+            "en": "Brothers, sisters and friends",
+            "ar": "الإخوة والأصدقاء",
+            "ru": "Братья, сёстры и друзья",
+            "es": "Hermanos y amigos",
+            "fr": "Frères, sœurs et amis",
+            "de": "Geschwister und Freunde"
+          },
+          "steps": [
+            {
+              "type": "learn",
+              "sign": "brother"
+            },
+            {
+              "type": "learn",
+              "sign": "sister"
+            },
+            {
+              "type": "learn",
+              "sign": "friend"
+            },
+            {
+              "type": "chooseWord",
+              "sign": "brother",
+              "options": [
+                "sister",
+                "friend",
+                "father",
+                "brother"
+              ]
+            },
+            {
+              "type": "chooseWord",
+              "sign": "friend",
+              "options": [
+                "sister",
+                "family",
+                "friend",
+                "brother"
+              ]
+            },
+            {
+              "type": "chooseVideo",
+              "sign": "sister",
+              "options": [
+                "friend",
+                "sister",
+                "brother",
+                "mother"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "signs": [
+    {
+      "id": "hello",
+      "gloss": "HELLO",
+      "category": "greetings",
+      "meaning": {
+        "en": "Hello",
+        "ar": "مرحبًا",
+        "ru": "Привет",
+        "es": "Hola",
+        "fr": "Bonjour",
+        "de": "Hallo"
+      },
+      "video": "assets/content/demo/media/hello.mp4",
+      "thumbnail": "assets/content/demo/media/hello.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "thank-you",
+      "gloss": "THANK-YOU",
+      "category": "greetings",
+      "meaning": {
+        "en": "Thank you",
+        "ar": "شكرًا",
+        "ru": "Спасибо",
+        "es": "Gracias",
+        "fr": "Merci",
+        "de": "Danke"
+      },
+      "video": "assets/content/demo/media/thank-you.mp4",
+      "thumbnail": "assets/content/demo/media/thank-you.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "please",
+      "gloss": "PLEASE",
+      "category": "greetings",
+      "meaning": {
+        "en": "Please",
+        "ar": "من فضلك",
+        "ru": "Пожалуйста",
+        "es": "Por favor",
+        "fr": "S'il vous plaît",
+        "de": "Bitte"
+      },
+      "video": "assets/content/demo/media/please.mp4",
+      "thumbnail": "assets/content/demo/media/please.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "sorry",
+      "gloss": "SORRY",
+      "category": "greetings",
+      "meaning": {
+        "en": "Sorry",
+        "ar": "آسف",
+        "ru": "Извините",
+        "es": "Lo siento",
+        "fr": "Pardon",
+        "de": "Entschuldigung"
+      },
+      "video": "assets/content/demo/media/sorry.mp4",
+      "thumbnail": "assets/content/demo/media/sorry.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "yes",
+      "gloss": "YES",
+      "category": "greetings",
+      "meaning": {
+        "en": "Yes",
+        "ar": "نعم",
+        "ru": "Да",
+        "es": "Sí",
+        "fr": "Oui",
+        "de": "Ja"
+      },
+      "video": "assets/content/demo/media/yes.mp4",
+      "thumbnail": "assets/content/demo/media/yes.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "no",
+      "gloss": "NO",
+      "category": "greetings",
+      "meaning": {
+        "en": "No",
+        "ar": "لا",
+        "ru": "Нет",
+        "es": "No",
+        "fr": "Non",
+        "de": "Nein"
+      },
+      "video": "assets/content/demo/media/no.mp4",
+      "thumbnail": "assets/content/demo/media/no.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "mother",
+      "gloss": "MOTHER",
+      "category": "family",
+      "meaning": {
+        "en": "Mother",
+        "ar": "أم",
+        "ru": "Мама",
+        "es": "Madre",
+        "fr": "Mère",
+        "de": "Mutter"
+      },
+      "video": "assets/content/demo/media/mother.mp4",
+      "thumbnail": "assets/content/demo/media/mother.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "father",
+      "gloss": "FATHER",
+      "category": "family",
+      "meaning": {
+        "en": "Father",
+        "ar": "أب",
+        "ru": "Папа",
+        "es": "Padre",
+        "fr": "Père",
+        "de": "Vater"
+      },
+      "video": "assets/content/demo/media/father.mp4",
+      "thumbnail": "assets/content/demo/media/father.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "family",
+      "gloss": "FAMILY",
+      "category": "family",
+      "meaning": {
+        "en": "Family",
+        "ar": "عائلة",
+        "ru": "Семья",
+        "es": "Familia",
+        "fr": "Famille",
+        "de": "Familie"
+      },
+      "video": "assets/content/demo/media/family.mp4",
+      "thumbnail": "assets/content/demo/media/family.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "brother",
+      "gloss": "BROTHER",
+      "category": "family",
+      "meaning": {
+        "en": "Brother",
+        "ar": "أخ",
+        "ru": "Брат",
+        "es": "Hermano",
+        "fr": "Frère",
+        "de": "Bruder"
+      },
+      "video": "assets/content/demo/media/brother.mp4",
+      "thumbnail": "assets/content/demo/media/brother.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "sister",
+      "gloss": "SISTER",
+      "category": "family",
+      "meaning": {
+        "en": "Sister",
+        "ar": "أخت",
+        "ru": "Сестра",
+        "es": "Hermana",
+        "fr": "Sœur",
+        "de": "Schwester"
+      },
+      "video": "assets/content/demo/media/sister.mp4",
+      "thumbnail": "assets/content/demo/media/sister.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "id": "friend",
+      "gloss": "FRIEND",
+      "category": "family",
+      "meaning": {
+        "en": "Friend",
+        "ar": "صديق",
+        "ru": "Друг",
+        "es": "Amigo",
+        "fr": "Ami",
+        "de": "Freund"
+      },
+      "video": "assets/content/demo/media/friend.mp4",
+      "thumbnail": "assets/content/demo/media/friend.webp",
+      "durationMs": 2500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    }
+  ]
+}
