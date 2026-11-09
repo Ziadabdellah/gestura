@@ -1,3 +1,11 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.47.4"
+  "dart.flutterSdkPath": ".fvm/versions/3.47.4",
+  "git.autoRepositoryDetection": "subFolders",
+  "git.repositoryScanIgnoredFolders": [".fvm", "node_modules"],
+  "search.exclude": {
+    "**/.fvm": true
+  },
+  "files.watcherExclude": {
+    "**/.fvm/**": true
+  }
 }
