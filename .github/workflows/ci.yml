@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Rules · Format · Analyze · Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+
+      - name: Repository rules
+        run: |
+          if git grep -nE '^[[:space:]]*(//|/\*)|[[:space:]]//[[:space:]]' -- '*.dart'; then
+            echo "Comments are not allowed in Dart files."
+            exit 1
+          fi
+          if git grep -nE '^[[:space:]]*#' -- '*.yaml' '*.yml' '.gitignore'; then
+            echo "Comments are not allowed in YAML files or .gitignore."
+            exit 1
+          fi
+
+      - name: Format
+        run: dart run melos run format --no-select
+
+      - name: Code generation
+        run: dart run melos run gen --no-select
+
+      - name: Analyze
+        run: dart run melos run analyze --no-select
+
+      - name: Dart tests
+        run: dart run melos run test:dart --no-select
+
+      - name: Flutter tests
+        run: dart run melos run test:flutter --no-select
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: packages/*/coverage/lcov.info
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload golden failures
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: golden-failures
+          path: packages/**/failures/**
+          if-no-files-found: ignore
+          retention-days: 7
