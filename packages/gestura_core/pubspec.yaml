@@ -1,0 +1,16 @@
+name: gestura_core
+description: Pure Dart building blocks shared by the Gestura apps.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dependencies:
+  meta: ^1.19.0
+
+dev_dependencies:
+  coverage: ^1.16.0
+  test: ^1.31.1

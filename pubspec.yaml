@@ -1,0 +1,48 @@
+name: gestura_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - packages/gestura_core
+  - packages/gestura_ui
+
+dev_dependencies:
+  melos: ^8.10.1
+  very_good_analysis: ^11.0.0
+
+melos:
+  scripts:
+    gen:
+      description: Run every code generator in the workspace.
+      dependsOn:
+        - gen:build_runner
+    gen:build_runner:
+      description: Run build_runner in every package that uses it.
+      private: true
+      exec:
+        command: dart run build_runner build --delete-conflicting-outputs
+        orderDependents: true
+      packageFilters:
+        dependsOn: build_runner
+    format:
+      description: Check formatting of every package.
+      exec: dart format --output=none --set-exit-if-changed .
+    analyze:
+      description: Analyze every package with fatal infos.
+      exec: dart analyze --fatal-infos .
+    test:flutter:
+      description: Run Flutter tests with coverage.
+      exec:
+        command: flutter test --coverage
+        concurrency: 1
+      packageFilters:
+        flutter: true
+        dirExists: test
+    test:dart:
+      description: Run pure Dart tests with coverage.
+      exec: dart run coverage:test_with_coverage
+      packageFilters:
+        flutter: false
+        dirExists: test
