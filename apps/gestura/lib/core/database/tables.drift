@@ -1,0 +1,6 @@
+CREATE TABLE progress (
+  lesson_id TEXT NOT NULL PRIMARY KEY,
+  best_score INTEGER NOT NULL CHECK (best_score BETWEEN 0 AND 100),
+  completed_at DATETIME NOT NULL,
+  updated_at DATETIME NOT NULL
+) AS LessonProgressRow;

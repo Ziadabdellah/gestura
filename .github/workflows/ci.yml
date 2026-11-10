@@ -38,6 +38,10 @@ jobs:
             echo "Comments are not allowed in XML, plist or scheme files."
             exit 1
           fi
+          if git grep -nE '(^|[[:space:]])--|/\*' -- '*.drift'; then
+            echo "Comments are not allowed in Drift files."
+            exit 1
+          fi
 
       - name: Format
         run: dart run melos run format --no-select

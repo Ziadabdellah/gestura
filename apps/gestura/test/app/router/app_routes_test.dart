@@ -8,6 +8,10 @@ void main() {
     expect(const DictionaryRoute().location, '/dictionary');
     expect(const ProfileRoute().location, '/profile');
     expect(const SettingsRoute().location, '/profile/settings');
+    expect(
+      const LessonRoute(lessonId: 'demo-a1-1').location,
+      '/lesson/demo-a1-1',
+    );
   });
 
   test('each tab is a branch of its own', () {

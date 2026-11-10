@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:gestura/features/content/domain/content_catalog.dart';
 import 'package:gestura/features/content/domain/course.dart';
+import 'package:gestura/features/learn/domain/course_outline.dart';
 import 'package:gestura_core/gestura_core.dart';
 
 sealed class LearnState extends Equatable {
@@ -15,13 +16,14 @@ final class LearnLoading extends LearnState {
 }
 
 final class LearnLoaded extends LearnState {
-  const new({required this.pack, required this.course});
+  const new({required this.pack, required this.course, required this.outline});
 
   final SignLanguagePack pack;
   final Course course;
+  final CourseOutline outline;
 
   @override
-  List<Object?> get props => [pack, course];
+  List<Object?> get props => [pack, course, outline];
 }
 
 final class LearnFailed extends LearnState {

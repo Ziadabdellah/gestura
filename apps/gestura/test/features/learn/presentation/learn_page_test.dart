@@ -6,12 +6,30 @@ import 'package:gestura/core/widgets/list_skeleton.dart';
 import 'package:gestura/core/widgets/placeholder_content_notice.dart';
 import 'package:gestura/core/widgets/readable_inset.dart';
 import 'package:gestura/features/content/domain/content_catalog.dart';
+import 'package:gestura/features/content/domain/content_ids.dart';
+import 'package:gestura/features/learn/presentation/widgets/unit_progress_ring.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura_core/gestura_core.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
 import '../../../helpers/fake_content_repository.dart';
+import '../../../helpers/fake_progress_repository.dart';
 import '../../../helpers/pump_app.dart';
+
+const AppSettings _arabicDark = AppSettings(
+  language: AppLanguage.arabic,
+  theme: AppThemePreference.dark,
+);
+
+FakeProgressRepository _firstDone() =>
+    FakeProgressRepository([completed('demo-a1-1')]);
+
+Future<void> _openUnit(WidgetTester tester, String title) async {
+  await tester.ensureVisible(find.text(title));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(title));
+  await tester.pumpAndSettle();
+}
 
 void main() {
   group('Learn', () {
@@ -23,48 +41,123 @@ void main() {
       expect(find.text('Demo pack'), findsOneWidget);
     });
 
-    testWidgets('lists every unit with its lessons in order', (tester) async {
-      await tester.pumpApp(surfaceSize: const Size(360, 1200));
+    testWidgets('starts with only the first lesson open', (tester) async {
+      await tester.pumpApp();
 
-      expect(find.text('Greetings'), findsOneWidget);
-      expect(find.text('Family'), findsOneWidget);
-      expect(find.text('2 lessons'), findsNWidgets(2));
-      final titles = [
-        'Hello and thank you',
-        'Yes, no and sorry',
-        'Parents',
-        'Brothers, sisters and friends',
-      ];
-      final tops = [
-        for (final title in titles) tester.getTopLeft(find.text(title)).dy,
-      ];
-      expect(tops, orderedEquals([...tops]..sort()));
+      expect(find.text('0 of 4 done'), findsOneWidget);
+      expect(find.text('2 lessons · 0 of 2 done'), findsNWidgets(2));
+      expect(find.text('Up next'), findsOneWidget);
+      expect(find.text('Locked'), findsOneWidget);
     });
 
-    testWidgets('numbers the lessons inside each unit', (tester) async {
+    testWidgets('shows finished lessons with their best score', (tester) async {
+      await tester.pumpApp(progress: _firstDone());
+
+      expect(find.text('1 of 4 done'), findsOneWidget);
+      expect(find.text('2 lessons · 1 of 2 done'), findsOneWidget);
+      expect(find.text('Completed · Best score 90%'), findsOneWidget);
+      expect(find.text('Up next'), findsOneWidget);
+    });
+
+    testWidgets('opens the unit with the next lesson and folds the others', (
+      tester,
+    ) async {
+      await tester.pumpApp(progress: _firstDone());
+
+      expect(find.text('Hello and thank you'), findsOneWidget);
+      expect(find.text('Parents'), findsNothing);
+
+      await _openUnit(tester, 'Family');
+
+      expect(find.text('Parents'), findsOneWidget);
+      expect(find.text('Brothers, sisters and friends'), findsOneWidget);
+      expect(find.text('Locked'), findsNWidgets(2));
+      expect(
+        tester.getTopLeft(find.text('Parents')).dy,
+        lessThan(
+          tester.getTopLeft(find.text('Brothers, sisters and friends')).dy,
+        ),
+      );
+    });
+
+    testWidgets('updates as soon as a lesson is finished', (tester) async {
+      final progress = _firstDone();
+      await tester.pumpApp(progress: progress);
+
+      await progress.recordCompletion(const LessonId('demo-a1-2'), score: 75);
+      await tester.pumpAndSettle();
+
+      expect(find.text('2 of 4 done'), findsOneWidget);
+      expect(find.text('Completed · Best score 75%'), findsOneWidget);
+      expect(find.byIcon(Icons.check_rounded), findsWidgets);
+      expect(
+        find.descendant(
+          of: find.byType(UnitProgressRing),
+          matching: find.byIcon(Icons.check_rounded),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('reads each lesson as one item to screen readers', (
+      tester,
+    ) async {
       final handle = tester.ensureSemantics();
-      await tester.pumpApp();
+      await tester.pumpApp(progress: _firstDone());
 
       expect(
         tester.getSemantics(find.text('Hello and thank you')),
-        isSemantics(label: '1\nHello and thank you'),
+        isSemantics(
+          label: 'Lesson 1\nHello and thank you\nCompleted · Best score 90%',
+        ),
       );
       expect(
-        tester.getSemantics(find.text('Greetings')),
-        isSemantics(label: 'Greetings\n2 lessons', isHeader: true),
+        tester.getSemantics(find.text('Yes, no and sorry')),
+        isSemantics(label: 'Lesson 2\nYes, no and sorry\nUp next'),
+      );
+      expect(
+        tester.getSemantics(find.text('Family')),
+        isSemantics(
+          label: 'Family\n2 lessons · 0 of 2 done',
+          hint: 'Collapsed',
+          isHeader: true,
+          hasTapAction: true,
+          isFocusable: true,
+          hasFocusAction: true,
+          hasEnabledState: true,
+          isEnabled: true,
+        ),
       );
       handle.dispose();
+    });
+
+    testWidgets('folds and unfolds without animation under reduce motion', (
+      tester,
+    ) async {
+      await tester.pumpApp(settings: englishLight.copyWith(reduceMotion: true));
+
+      final tiles = tester.widgetList<ExpansionTile>(
+        find.byType(ExpansionTile),
+      );
+
+      expect(
+        tiles.map((tile) => tile.expansionAnimationStyle),
+        everyElement(AnimationStyle.noAnimation),
+      );
     });
 
     testWidgets('speaks the language of the interface', (tester) async {
       await tester.pumpApp(
         settings: englishLight.copyWith(language: AppLanguage.arabic),
+        progress: _firstDone(),
       );
 
       expect(find.text('أولى الإشارات'), findsOneWidget);
       expect(find.text('المستوى A1'), findsOneWidget);
-      expect(find.text('التحيات'), findsOneWidget);
-      expect(find.text('درسان'), findsWidgets);
+      expect(find.text('أنجزت 1 من 4'), findsOneWidget);
+      expect(find.text('درسان · أنجزت 1 من 2'), findsOneWidget);
+      expect(find.text('مكتمل · أفضل نتيجة 90%'), findsOneWidget);
+      expect(find.text('التالي'), findsOneWidget);
     });
 
     testWidgets('says when the content is a placeholder', (tester) async {
@@ -134,6 +227,23 @@ void main() {
       expect(find.text('First signs'), findsOneWidget);
     });
 
+    testWidgets('explains progress that cannot be read', (tester) async {
+      final progress = FakeProgressRepository()
+        ..watchFailure = const UnexpectedFailure('locked database');
+      await tester.pumpApp(progress: progress);
+
+      expect(
+        find.text('Something unexpected happened. Please try again.'),
+        findsOneWidget,
+      );
+
+      progress.watchFailure = null;
+      await tester.tap(find.text('Try again'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('0 of 4 done'), findsOneWidget);
+    });
+
     testWidgets('keeps lines short enough to read on a tablet', (tester) async {
       const landscape = Size(1280, 800);
       await tester.pumpApp(surfaceSize: landscape);
@@ -148,9 +258,30 @@ void main() {
       );
     });
 
-    testWidgets('fits at 200% text on a small phone', (tester) async {
-      await tester.pumpApp(surfaceSize: const Size(320, 640), textScale: 2);
+    for (final settings in [englishLight, _arabicDark]) {
+      testWidgets('meets the accessibility guidelines with progress in '
+          '${settings.language.name} ${settings.theme.name}', (tester) async {
+        final handle = tester.ensureSemantics();
+        await tester.pumpApp(settings: settings, progress: _firstDone());
+        await _openUnit(
+          tester,
+          settings.language == AppLanguage.arabic ? 'العائلة' : 'Family',
+        );
 
+        await tester.expectAccessible();
+        handle.dispose();
+      });
+    }
+
+    testWidgets('fits at 200% text on a small phone', (tester) async {
+      await tester.pumpApp(
+        surfaceSize: const Size(320, 640),
+        textScale: 2,
+        progress: _firstDone(),
+      );
+
+      await tester.scrollUntilVisible(find.text('Family'), 200);
+      await _openUnit(tester, 'Family');
       await tester.scrollUntilVisible(
         find.text('Brothers, sisters and friends'),
         200,

@@ -1,7 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:gestura/app/view/app_shell.dart';
+import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/dictionary/presentation/pages/dictionary_page.dart';
 import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
+import 'package:gestura/features/lesson/presentation/pages/lesson_page.dart';
 import 'package:gestura/features/profile/presentation/pages/profile_page.dart';
 import 'package:gestura/features/settings/presentation/pages/settings_page.dart';
 import 'package:go_router/go_router.dart';
@@ -86,6 +88,18 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SettingsPage();
+}
+
+@TypedGoRoute<LessonRoute>(path: '/lesson/:lessonId')
+@immutable
+class LessonRoute extends GoRouteData with $LessonRoute {
+  const new({required this.lessonId});
+
+  final String lessonId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      LessonPage(lessonId: LessonId(lessonId));
 }
 
 const String rootLocation = '/';

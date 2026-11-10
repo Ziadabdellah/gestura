@@ -67,5 +67,106 @@
   "failureNotFound": "We couldn't find what you're looking for.",
   "failurePermissionDenied": "You don't have access to this.",
   "failureStorageFull": "Your device is out of space. Free some up and try again.",
-  "failureUnexpected": "Something unexpected happened. Please try again."
+  "failureUnexpected": "Something unexpected happened. Please try again.",
+  "progressDone": "{completed} of {total} done",
+  "@progressDone": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonNumber": "Lesson {number}",
+  "@lessonNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "lessonCompleted": "Completed",
+  "lessonUpNext": "Up next",
+  "lessonLocked": "Locked",
+  "bestScore": "Best score {score}%",
+  "@bestScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "closeLesson": "Close lesson",
+  "lessonStepProgress": "Step {current} of {total}",
+  "@lessonStepProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "newSignTitle": "New sign",
+  "signDescriptionPending": "A description of how to make this sign comes with the recorded video.",
+  "chooseWordPrompt": "What does this sign mean?",
+  "chooseVideoPrompt": "Which video shows “{word}”?",
+  "@chooseVideoPrompt": {
+    "placeholders": {
+      "word": {
+        "type": "String"
+      }
+    }
+  },
+  "chooseVideoHint": "Tap a video to watch it, then check your answer.",
+  "videoOption": "Video {number}",
+  "@videoOption": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "checkAnswer": "Check",
+  "continueAction": "Continue",
+  "answerCorrect": "Correct!",
+  "answerIncorrect": "Not quite",
+  "correctAnswerIs": "Answer: {answer}",
+  "@correctAnswerIs": {
+    "placeholders": {
+      "answer": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveLessonTitle": "Leave this lesson?",
+  "leaveLessonMessage": "Your answers in this lesson won't be saved.",
+  "leaveLessonStay": "Keep going",
+  "leaveLessonLeave": "Leave",
+  "lessonCompleteTitle": "Lesson complete!",
+  "resultAccuracy": "Accuracy",
+  "resultTime": "Time",
+  "resultNewSigns": "New signs",
+  "percentValue": "{value}%",
+  "@percentValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "progressSaveFailed": "Couldn't save your progress.",
+  "videoSpeed": "Playback speed",
+  "speedHalf": "0.5×",
+  "speedThreeQuarters": "0.75×",
+  "speedNormal": "1×",
+  "videoLoop": "Loop",
+  "videoMirror": "Mirror",
+  "videoReplay": "Replay",
+  "videoPlay": "Play",
+  "videoPause": "Pause",
+  "signVideo": "Sign video"
 }

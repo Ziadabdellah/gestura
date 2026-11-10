@@ -2,14 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:gestura/features/content/domain/content_catalog.dart';
 import 'package:gestura/features/content/domain/course.dart';
 import 'package:gestura/features/content/presentation/content_presentation.dart';
+import 'package:gestura/features/learn/domain/course_outline.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
 class CourseHeader extends StatelessWidget {
-  const new({required this.course, required this.pack, super.key});
+  const new({
+    required this.course,
+    required this.pack,
+    required this.outline,
+    super.key,
+  });
+
+  static const double progressBarHeight = 8;
 
   final Course course;
   final SignLanguagePack pack;
+  final CourseOutline outline;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +67,21 @@ class CourseHeader extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        SizedBox(height: sizes.md),
+        ExcludeSemantics(
+          child: LinearProgressIndicator(
+            value: outline.total == 0 ? 0 : outline.completed / outline.total,
+            minHeight: sizes.scaled(progressBarHeight),
+            borderRadius: BorderRadius.circular(sizes.radiusSm),
+          ),
+        ),
+        SizedBox(height: sizes.xs),
+        Text(
+          context.l10n.progressDone(outline.completed, outline.total),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
         ),
       ],
     );

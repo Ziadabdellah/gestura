@@ -7,11 +7,15 @@ import 'package:gestura/config/app_config.dart';
 import 'package:gestura/config/app_info.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
+import 'package:gestura/features/progress/domain/progress_repository.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'fake_content_repository.dart';
+import 'fake_progress_repository.dart';
 import 'fake_settings_repository.dart';
+import 'fake_video_player_platform.dart';
 
 const AppSettings englishLight = AppSettings(
   language: AppLanguage.english,
@@ -23,10 +27,20 @@ const AppInfo testAppInfo = AppInfo(version: '1.0.0', buildNumber: '7');
 const Size phoneSize = Size(360, 780);
 const Size tabletSize = Size(800, 1280);
 
-Future<void> registerFakes({ContentRepository? content}) async {
+FakeVideoPlayerPlatform get fakeVideo =>
+    VideoPlayerPlatform.instance as FakeVideoPlayerPlatform;
+
+Future<void> registerFakes({
+  ContentRepository? content,
+  ProgressRepository? progress,
+}) async {
+  VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
   await getIt.reset();
   getIt
     ..registerSingleton<ContentRepository>(content ?? FakeContentRepository())
+    ..registerSingleton<ProgressRepository>(
+      progress ?? FakeProgressRepository(),
+    )
     ..registerSingleton<AppInfo>(testAppInfo);
 }
 
@@ -50,6 +64,7 @@ extension PumpApp on WidgetTester {
     Size surfaceSize = phoneSize,
     double textScale = 1,
     ContentRepository? content,
+    ProgressRepository? progress,
   }) async {
     view
       ..physicalSize = surfaceSize * 3
@@ -57,7 +72,7 @@ extension PumpApp on WidgetTester {
     platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(view.reset);
     addTearDown(platformDispatcher.clearTextScaleFactorTestValue);
-    await registerFakes(content: content);
+    await registerFakes(content: content, progress: progress);
     addTearDown(getIt.reset);
 
     final repository = FakeSettingsRepository(settings);
