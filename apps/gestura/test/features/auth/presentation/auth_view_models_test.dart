@@ -10,17 +10,28 @@ import 'package:gestura/features/auth/presentation/view_models/auth_form_state.d
 import 'package:gestura/features/auth/presentation/view_models/auth_form_view_model.dart';
 import 'package:gestura/features/auth/presentation/view_models/verify_email_state.dart';
 import 'package:gestura/features/auth/presentation/view_models/verify_email_view_model.dart';
+import 'package:gestura/features/learner/learner_data.dart';
 import 'package:gestura_core/gestura_core.dart';
 
+import '../../../helpers/fake_activity_repository.dart';
 import '../../../helpers/fake_auth_repository.dart';
+import '../../../helpers/fake_learner_cloud.dart';
 import '../../../helpers/fake_progress_repository.dart';
-import '../../../helpers/fake_remote_progress_store.dart';
+import '../../../helpers/fake_review_repository.dart';
+import '../../../helpers/fake_saved_signs_repository.dart';
 import '../../../helpers/fake_telemetry.dart';
 
 const MemberUser _unconfirmed = MemberUser(
   'member-uid',
   email: 'learner@example.com',
   emailVerified: false,
+);
+
+LearnerData _local([FakeProgressRepository? progress]) => LearnerData(
+  progress ?? FakeProgressRepository(),
+  FakeReviewRepository(),
+  FakeActivityRepository(),
+  FakeSavedSignsRepository(),
 );
 
 void main() {
@@ -297,11 +308,7 @@ void main() {
     blocTest<AccountViewModel, AccountState>(
       'follows the signed-in user',
       setUp: () => auth = FakeAuthRepository(),
-      build: () => AccountViewModel(
-        auth,
-        FakeProgressRepository(),
-        FakeRemoteProgressStore(),
-      ),
+      build: () => AccountViewModel(auth, _local(), FakeLearnerCloud().cloud),
       act: (viewModel) async {
         auth.user = _unconfirmed;
         await Future<void>.delayed(Duration.zero);
@@ -315,8 +322,8 @@ void main() {
       verify: (viewModel) => expect(
         AccountViewModel(
           FakeAuthRepository(testMember),
-          FakeProgressRepository(),
-          FakeRemoteProgressStore(),
+          _local(),
+          FakeLearnerCloud().cloud,
         ).state,
         const AccountMember(email: 'learner@example.com', emailVerified: true),
       ),
@@ -325,11 +332,7 @@ void main() {
     blocTest<AccountViewModel, AccountState>(
       'signs out',
       setUp: () => auth = FakeAuthRepository(testMember),
-      build: () => AccountViewModel(
-        auth,
-        FakeProgressRepository(),
-        FakeRemoteProgressStore(),
-      ),
+      build: () => AccountViewModel(auth, _local(), FakeLearnerCloud().cloud),
       act: (viewModel) async {
         expect(await viewModel.signOut(), const Ok<void>(null));
         await Future<void>.delayed(Duration.zero);
@@ -340,11 +343,11 @@ void main() {
     test('deletes the account and the progress on the device', () async {
       auth = FakeAuthRepository(testMember);
       final progress = FakeProgressRepository([completed('demo-a1-1')]);
-      final remote = FakeRemoteProgressStore()
-        ..users['member-uid'] = {
-          completed('demo-a1-1').lessonId: completed('demo-a1-1'),
-        };
-      final viewModel = AccountViewModel(auth, progress, remote);
+      final remote = FakeLearnerCloud();
+      remote.progress.users['member-uid'] = {
+        'demo-a1-1': completed('demo-a1-1'),
+      };
+      final viewModel = AccountViewModel(auth, _local(progress), remote.cloud);
       final states = <AccountState>[];
       final subscription = viewModel.stream.listen(states.add);
 
@@ -354,8 +357,12 @@ void main() {
 
       expect(result, const Ok<void>(null));
       expect(auth.calls, ['reauth:secret123', 'delete']);
-      expect(remote.calls, ['delete:member-uid']);
-      expect(remote.users, isEmpty);
+      expect(remote.calls, [
+        'progress.delete:member-uid',
+        'cards.delete:member-uid',
+        'activity.delete:member-uid',
+      ]);
+      expect(remote.progress.users, isEmpty);
       expect(progress.stored, isEmpty);
       expect(states, [const AccountDeleting(), const AccountSignedOut()]);
     });
@@ -366,8 +373,8 @@ void main() {
       final progress = FakeProgressRepository([completed('demo-a1-1')]);
       final viewModel = AccountViewModel(
         auth,
-        progress,
-        FakeRemoteProgressStore(),
+        _local(progress),
+        FakeLearnerCloud().cloud,
       );
 
       final result = await viewModel.deleteAccount(password: 'wrong');
@@ -385,13 +392,9 @@ void main() {
 
     test('keeps the account when its cloud data cannot be deleted', () async {
       auth = FakeAuthRepository();
-      final remote = FakeRemoteProgressStore()
-        ..deleteFailure = const NetworkFailure();
-      final viewModel = AccountViewModel(
-        auth,
-        FakeProgressRepository(),
-        remote,
-      );
+      final remote = FakeLearnerCloud();
+      remote.cards.deleteFailure = const NetworkFailure();
+      final viewModel = AccountViewModel(auth, _local(), remote.cloud);
 
       expect(
         await viewModel.deleteAccount(),
@@ -404,8 +407,8 @@ void main() {
     test('has nothing to delete without a user', () async {
       final viewModel = AccountViewModel(
         FakeAuthRepository(null),
-        FakeProgressRepository(),
-        FakeRemoteProgressStore(),
+        _local(),
+        FakeLearnerCloud().cloud,
       );
 
       expect(await viewModel.deleteAccount(), const Ok<void>(null));
@@ -417,8 +420,8 @@ void main() {
       final hold = auth.hold = Completer<void>();
       final viewModel = AccountViewModel(
         auth,
-        FakeProgressRepository(),
-        FakeRemoteProgressStore(),
+        _local(),
+        FakeLearnerCloud().cloud,
       );
 
       final deleting = viewModel.deleteAccount();
@@ -433,8 +436,8 @@ void main() {
       auth = FakeAuthRepository();
       final viewModel = AccountViewModel(
         auth,
-        FakeProgressRepository(),
-        FakeRemoteProgressStore(),
+        _local(),
+        FakeLearnerCloud().cloud,
       );
       await viewModel.close();
 

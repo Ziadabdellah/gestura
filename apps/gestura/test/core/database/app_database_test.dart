@@ -15,13 +15,13 @@ void main() {
     setUp(() => database = AppDatabase(NativeDatabase.memory()));
     tearDown(() => database.close());
 
-    test('starts at schema version 1 with the lesson progress table', () async {
+    test('is at schema version 2 with the lesson progress table', () async {
       final columns = await database
           .customSelect("SELECT name FROM pragma_table_info('progress')")
           .map((row) => row.read<String>('name'))
           .get();
 
-      expect(database.schemaVersion, 1);
+      expect(database.schemaVersion, 2);
       expect(columns, [
         'lesson_id',
         'best_score',
@@ -58,6 +58,70 @@ void main() {
       };
 
       expect(actual, expected);
+    });
+
+    test('upgrades a version 1 database and keeps its progress', () async {
+      final upgraded = AppDatabase(
+        NativeDatabase.memory(
+          setup: (raw) => raw
+            ..execute(
+              'CREATE TABLE progress (lesson_id TEXT NOT NULL PRIMARY KEY, '
+              'best_score INTEGER NOT NULL '
+              'CHECK (best_score BETWEEN 0 AND 100), '
+              'completed_at TEXT NOT NULL, updated_at TEXT NOT NULL)',
+            )
+            ..execute(
+              "INSERT INTO progress VALUES ('demo-a1-1', 80, "
+              "'2026-11-10T09:00:00.000Z', '2026-11-10T09:00:00.000Z')",
+            )
+            ..execute('PRAGMA user_version = 1'),
+        ),
+      );
+      addTearDown(upgraded.close);
+
+      final tables = await upgraded
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type = 'table' "
+            "AND name NOT LIKE 'sqlite_%' ORDER BY name",
+          )
+          .map((row) => row.read<String>('name'))
+          .get();
+      final kept = await upgraded.select(upgraded.progress).getSingle();
+
+      expect(tables, [
+        'collection_items',
+        'collections',
+        'daily_activity',
+        'progress',
+        'review_cards',
+      ]);
+      expect(kept.bestScore, 80);
+    });
+
+    test('removes the signs of a deleted collection', () async {
+      final now = DateTime.utc(2026, 11, 15);
+      await database
+          .into(database.collections)
+          .insert(
+            CollectionsCompanion.insert(
+              id: 'favourites',
+              name: 'Favourites',
+              createdAt: now,
+            ),
+          );
+      await database
+          .into(database.collectionItems)
+          .insert(
+            CollectionItemsCompanion.insert(
+              collectionId: 'favourites',
+              signId: 'hello',
+              addedAt: now,
+            ),
+          );
+
+      await database.delete(database.collections).go();
+
+      expect(await database.select(database.collectionItems).get(), isEmpty);
     });
 
     test('refuses a best score outside 0 to 100', () async {

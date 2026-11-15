@@ -4,3 +4,33 @@ CREATE TABLE progress (
   completed_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL
 ) AS LessonProgressRow;
+
+CREATE TABLE review_cards (
+  sign_id TEXT NOT NULL PRIMARY KEY,
+  repetitions INTEGER NOT NULL CHECK (repetitions >= 0),
+  interval_days INTEGER NOT NULL CHECK (interval_days >= 0),
+  ease REAL NOT NULL CHECK (ease >= 1.3),
+  due_at DATETIME NOT NULL,
+  lapses INTEGER NOT NULL DEFAULT 0 CHECK (lapses >= 0),
+  updated_at DATETIME NOT NULL
+) AS ReviewCardRow;
+
+CREATE TABLE collections (
+  id TEXT NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 60),
+  created_at DATETIME NOT NULL
+) AS CollectionRow;
+
+CREATE TABLE collection_items (
+  collection_id TEXT NOT NULL REFERENCES collections (id) ON DELETE CASCADE,
+  sign_id TEXT NOT NULL,
+  added_at DATETIME NOT NULL,
+  PRIMARY KEY (collection_id, sign_id)
+) AS CollectionItemRow;
+
+CREATE TABLE daily_activity (
+  day TEXT NOT NULL PRIMARY KEY,
+  lessons INTEGER NOT NULL DEFAULT 0 CHECK (lessons >= 0),
+  reviews INTEGER NOT NULL DEFAULT 0 CHECK (reviews >= 0),
+  seconds INTEGER NOT NULL DEFAULT 0 CHECK (seconds >= 0)
+) AS DailyActivityRow;

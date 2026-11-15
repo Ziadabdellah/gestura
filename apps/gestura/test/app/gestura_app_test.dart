@@ -9,7 +9,7 @@ import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
-import '../helpers/fake_remote_progress_store.dart';
+import '../helpers/fake_learner_cloud.dart';
 import '../helpers/fake_telemetry.dart';
 import '../helpers/pump_app.dart';
 
@@ -120,10 +120,18 @@ void main() {
     testWidgets('syncs progress when the learner comes back to the app', (
       tester,
     ) async {
-      final remote = FakeRemoteProgressStore();
-      await tester.pumpApp(remote: remote);
+      final remote = FakeLearnerCloud();
+      await tester.pumpApp(cloud: remote.cloud);
 
-      expect(remote.calls, ['fetch:guest-uid', 'save:guest-uid:0']);
+      const once = [
+        'progress.fetch:guest-uid',
+        'progress.save:guest-uid:0',
+        'cards.fetch:guest-uid',
+        'cards.save:guest-uid:0',
+        'activity.fetch:guest-uid',
+        'activity.save:guest-uid:0',
+      ];
+      expect(remote.calls, once);
 
       tester.binding
         ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
@@ -134,12 +142,7 @@ void main() {
         ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
 
-      expect(remote.calls, [
-        'fetch:guest-uid',
-        'save:guest-uid:0',
-        'fetch:guest-uid',
-        'save:guest-uid:0',
-      ]);
+      expect(remote.calls, [...once, ...once]);
     });
 
     testWidgets('uses the saved theme', (tester) async {

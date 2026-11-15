@@ -45,6 +45,18 @@ const progress = (overrides = {}) => ({
   ...overrides,
 });
 
+const card = (overrides = {}) => ({
+  repetitions: 1,
+  intervalDays: 1,
+  ease: 2.5,
+  dueAt: now(),
+  lapses: 0,
+  updatedAt: now(),
+  ...overrides,
+});
+
+const day = (overrides = {}) => ({ lessons: 1, reviews: 4, seconds: 300, ...overrides });
+
 const guest = () => env.authenticatedContext('guest', { firebase: { sign_in_provider: 'anonymous' } }).firestore();
 const member = (uid, email, verified = true) =>
   env.authenticatedContext(uid, { email, email_verified: verified }).firestore();
@@ -215,5 +227,52 @@ describe('progress', () => {
   test('the user document itself is closed', async () => {
     await assertFails(setDoc(doc(member('alice', 'a@b.co'), 'users/alice'), { name: 'A' }));
     await assertFails(getDoc(doc(member('alice', 'a@b.co'), 'users/alice')));
+  });
+});
+
+describe('review cards and activity', () => {
+  test('a learner keeps their own cards and days', async () => {
+    const db = guest();
+    await assertSucceeds(setDoc(doc(db, 'users/guest/cards/hello'), card()));
+    await assertSucceeds(getDoc(doc(db, 'users/guest/cards/hello')));
+    await assertSucceeds(deleteDoc(doc(db, 'users/guest/cards/hello')));
+    await assertSucceeds(setDoc(doc(db, 'users/guest/activity/2026-11-15'), day()));
+    await assertSucceeds(getDoc(doc(db, 'users/guest/activity/2026-11-15')));
+    await assertSucceeds(deleteDoc(doc(db, 'users/guest/activity/2026-11-15')));
+  });
+
+  test("nobody touches someone else's cards or days", async () => {
+    const db = member('bob', 'bob@example.com');
+    await assertFails(setDoc(doc(db, 'users/alice/cards/hello'), card()));
+    await assertFails(getDoc(doc(db, 'users/alice/cards/hello')));
+    await assertFails(setDoc(doc(db, 'users/alice/activity/2026-11-15'), day()));
+    await assertFails(getDoc(doc(db, 'users/alice/activity/2026-11-15')));
+    await assertFails(setDoc(doc(nobody(), 'users/alice/cards/hello'), card()));
+  });
+
+  test('cards keep their shape', async () => {
+    const write = (data, id = 'hello') => setDoc(doc(guest(), `users/guest/cards/${id}`), data);
+    await assertFails(write(card({ ease: 1.0 })));
+    await assertFails(write(card({ ease: '2.5' })));
+    await assertFails(write(card({ repetitions: -1 })));
+    await assertFails(write(card({ intervalDays: 1.5 })));
+    await assertFails(write(card({ lapses: -1 })));
+    await assertFails(write(card({ dueAt: 'tomorrow' })));
+    await assertFails(write(card({ updatedAt: Timestamp.fromMillis(Date.now() + 3 * 86400000) })));
+    await assertFails(write(card({ extra: true })));
+    await assertFails(write({ repetitions: 1 }));
+    await assertFails(write(card(), 'x'.repeat(65)));
+    await assertSucceeds(write(card({ ease: 3 })));
+  });
+
+  test('days keep their shape', async () => {
+    const write = (data, id = '2026-11-15') => setDoc(doc(guest(), `users/guest/activity/${id}`), data);
+    await assertFails(write(day(), 'today'));
+    await assertFails(write(day({ seconds: 86401 })));
+    await assertFails(write(day({ lessons: -1 })));
+    await assertFails(write(day({ reviews: 0.5 })));
+    await assertFails(write(day({ extra: 1 })));
+    await assertFails(write({ lessons: 1 }));
+    await assertSucceeds(write(day({ lessons: 0, reviews: 0, seconds: 0 })));
   });
 });

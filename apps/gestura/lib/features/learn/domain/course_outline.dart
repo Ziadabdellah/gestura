@@ -87,6 +87,12 @@ final class CourseOutline extends Equatable {
 
   final List<UnitOutline> units;
 
+  LessonOutline? get nextLesson => [
+    for (final unit in units)
+      for (final lesson in unit.lessons)
+        if (lesson.status is LessonAvailable) lesson,
+  ].firstOrNull;
+
   int get completed => units.fold(0, (sum, unit) => sum + unit.completed);
 
   int get total => units.fold(0, (sum, unit) => sum + unit.lessons.length);

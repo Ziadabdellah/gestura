@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/config/app_info.dart';
+import 'package:gestura/core/cloud/cloud_set.dart';
+import 'package:gestura/core/cloud/user_documents.dart';
 import 'package:gestura/core/database/app_database.dart';
 import 'package:gestura/core/errors/crashlytics_error_reporter.dart';
 import 'package:gestura/core/errors/error_reporter.dart';
@@ -23,13 +25,11 @@ import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/data/bundled_content_repository.dart';
 import 'package:gestura/features/content/data/remote_content_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
+import 'package:gestura/features/learner/learner_cloud.dart';
+import 'package:gestura/features/learner/learner_sync.dart';
 import 'package:gestura/features/progress/data/drift_progress_repository.dart';
-import 'package:gestura/features/progress/data/firestore_remote_progress.dart';
-import 'package:gestura/features/progress/data/local_only_progress.dart';
-import 'package:gestura/features/progress/data/progress_documents.dart';
-import 'package:gestura/features/progress/data/progress_sync.dart';
+import 'package:gestura/features/progress/domain/lesson_progress.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
-import 'package:gestura/features/progress/domain/remote_progress_store.dart';
 import 'package:gestura/features/settings/data/shared_preferences_settings_repository.dart';
 import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:get_it/get_it.dart';
@@ -111,17 +111,17 @@ void main() {
         AppConfig(flavor: flavor).isProd,
       );
       expect(
-        container<RemoteProgressStore>(),
+        container<LearnerCloud>().progress,
         AppConfig(flavor: flavor).isProd
-            ? isA<FirestoreRemoteProgress>()
-            : isA<LocalOnlyProgress>(),
+            ? isA<FirestoreCloudSet<LessonProgress>>()
+            : isA<DeviceOnlySet<LessonProgress>>(),
       );
-      expect(container<ProgressDocuments>(), isA<FirestoreProgressDocuments>());
+      expect(container<UserDocuments>(), isA<FirestoreUserDocuments>());
       expect(
         container<FirebaseFirestore>().settings.persistenceEnabled,
         isFalse,
       );
-      expect(container<ProgressSync>(), isNotNull);
+      expect(container<LearnerSync>(), isNotNull);
       expect(container<AssetBundle>(), same(rootBundle));
       expect(
         container<ContentRepository>(),

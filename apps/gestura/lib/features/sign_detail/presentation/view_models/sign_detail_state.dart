@@ -29,20 +29,24 @@ final class SignDetailLoaded extends SignDetailState {
     required this.related,
     required this.playback,
     this.category,
+    this.saved = false,
   });
 
   final Sign sign;
   final SignCategory? category;
   final List<Sign> related;
   final Playback playback;
+  final bool saved;
 
-  SignDetailLoaded withPlayback(Playback playback) => SignDetailLoaded(
-    sign: sign,
-    category: category,
-    related: related,
-    playback: playback,
-  );
+  SignDetailLoaded copyWith({Playback? playback, bool? saved}) =>
+      SignDetailLoaded(
+        sign: sign,
+        category: category,
+        related: related,
+        playback: playback ?? this.playback,
+        saved: saved ?? this.saved,
+      );
 
   @override
-  List<Object?> get props => [sign, category, related, playback];
+  List<Object?> get props => [sign, category, related, playback, saved];
 }

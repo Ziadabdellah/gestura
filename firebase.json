@@ -41,7 +41,26 @@
               "value": "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; media-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
             }
           ]
+        },
+        {
+          "source": "/.well-known/apple-app-site-association",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
         }
+      ],
+      "rewrites": [
+        {
+          "source": "/sign/**",
+          "destination": "/sign.html"
+        }
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/node_modules/**"
       ]
     },
     {

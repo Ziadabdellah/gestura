@@ -13,14 +13,20 @@ import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
 import 'package:gestura/features/lesson/presentation/pages/lesson_page.dart';
 import 'package:gestura/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:gestura/features/profile/presentation/pages/profile_page.dart';
+import 'package:gestura/features/review/presentation/pages/review_page.dart';
+import 'package:gestura/features/saved/presentation/pages/saved_signs_page.dart';
 import 'package:gestura/features/settings/presentation/pages/settings_page.dart';
 import 'package:gestura/features/sign_detail/presentation/pages/sign_detail_page.dart';
+import 'package:gestura/features/today/presentation/pages/today_page.dart';
 import 'package:go_router/go_router.dart';
 
 part 'app_routes.g.dart';
 
 @TypedStatefulShellRoute<AppShellRoute>(
   branches: [
+    TypedStatefulShellBranch<TodayBranch>(
+      routes: [TypedGoRoute<TodayRoute>(path: '/today')],
+    ),
     TypedStatefulShellBranch<LearnBranch>(
       routes: [TypedGoRoute<LearnRoute>(path: '/learn')],
     ),
@@ -28,7 +34,10 @@ part 'app_routes.g.dart';
       routes: [
         TypedGoRoute<DictionaryRoute>(
           path: '/dictionary',
-          routes: [TypedGoRoute<SignRoute>(path: 'sign/:signId')],
+          routes: [
+            TypedGoRoute<SignRoute>(path: 'sign/:signId'),
+            TypedGoRoute<SavedSignsRoute>(path: 'saved'),
+          ],
         ),
       ],
     ),
@@ -55,6 +64,11 @@ class AppShellRoute extends StatefulShellRouteData {
 }
 
 @immutable
+class TodayBranch extends StatefulShellBranchData {
+  const new();
+}
+
+@immutable
 class LearnBranch extends StatefulShellBranchData {
   const new();
 }
@@ -67,6 +81,14 @@ class DictionaryBranch extends StatefulShellBranchData {
 @immutable
 class ProfileBranch extends StatefulShellBranchData {
   const new();
+}
+
+@immutable
+class TodayRoute extends GoRouteData with $TodayRoute, MaterialTransitions {
+  const new();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const TodayPage();
 }
 
 @immutable
@@ -85,6 +107,16 @@ class DictionaryRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const DictionaryPage();
+}
+
+@immutable
+class SavedSignsRoute extends GoRouteData
+    with $SavedSignsRoute, MaterialTransitions {
+  const new();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SavedSignsPage();
 }
 
 @immutable
@@ -127,6 +159,15 @@ class LessonRoute extends GoRouteData with $LessonRoute, MaterialTransitions {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       LessonPage(lessonId: LessonId(lessonId));
+}
+
+@TypedGoRoute<ReviewRoute>(path: '/review')
+@immutable
+class ReviewRoute extends GoRouteData with $ReviewRoute, MaterialTransitions {
+  const new();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const ReviewPage();
 }
 
 @TypedGoRoute<OnboardingRoute>(path: '/onboarding')
@@ -228,10 +269,15 @@ String? gateRedirect(
     return path == welcome || isAuthForm ? null : welcome;
   }
   if (path == rootLocation || path == onboarding || path == welcome) {
-    return const LearnRoute().location;
+    return const TodayRoute().location;
+  }
+  if (sharedSignPath.firstMatch(path) case final RegExpMatch match) {
+    return SignRoute(signId: match.group(1)!).location;
   }
   return null;
 }
+
+final RegExp sharedSignPath = RegExp(r'^/sign/([A-Za-z0-9_-]{1,64})/?$');
 
 GoRouter createAppRouter({
   required AppGate gate,

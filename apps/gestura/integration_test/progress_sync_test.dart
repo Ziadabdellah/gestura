@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/config/app_config.dart';
+import 'package:gestura/core/cloud/user_documents.dart';
 import 'package:gestura/core/database/app_database.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/activity/domain/activity_repository.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/auth/presentation/view_models/account_view_model.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
-import 'package:gestura/features/progress/data/firestore_remote_progress.dart';
-import 'package:gestura/features/progress/data/progress_documents.dart';
-import 'package:gestura/features/progress/data/progress_sync.dart';
+import 'package:gestura/features/learner/data/learner_cloud_module.dart';
+import 'package:gestura/features/learner/learner_cloud.dart';
+import 'package:gestura/features/learner/learner_data.dart';
+import 'package:gestura/features/learner/learner_sync.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
-import 'package:gestura/features/progress/domain/remote_progress_store.dart';
+import 'package:gestura/features/review/domain/review_repository.dart';
 import 'package:gestura_core/gestura_core.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -26,6 +29,8 @@ DocumentReference<Map<String, dynamic>> _cloud(String uid, LessonId lesson) =>
 Future<void> _clearLocal() async {
   final database = getIt<AppDatabase>();
   await database.delete(database.progress).go();
+  await database.delete(database.reviewCards).go();
+  await database.delete(database.dailyActivity).go();
 }
 
 void main() {
@@ -35,16 +40,18 @@ void main() {
     await emulatedAuth();
     await configureDependencies(_dev);
     getIt
-      ..unregister<RemoteProgressStore>()
-      ..registerSingleton<RemoteProgressStore>(
-        FirestoreRemoteProgress(getIt<ProgressDocuments>()),
+      ..unregister<LearnerCloud>()
+      ..registerSingleton<LearnerCloud>(
+        firestoreLearnerCloud(getIt<UserDocuments>()),
       )
-      ..unregister<ProgressSync>()
-      ..registerSingleton(ProgressSync(getIt(), getIt(), getIt()));
+      ..unregister<LearnerSync>()
+      ..registerSingleton(
+        LearnerSync(getIt(), getIt(), getIt(), getIt(), getIt()),
+      );
   });
 
   tearDown(() async {
-    getIt<ProgressSync>().stop();
+    getIt<LearnerSync>().stop();
     await _clearLocal();
     await getIt.reset();
     await signOutEverywhere();
@@ -53,7 +60,7 @@ void main() {
   testWidgets('a finished lesson reaches the cloud and comes back on a new '
       'device', (tester) async {
     final guest = await signInAsGuest();
-    final sync = getIt<ProgressSync>()..start();
+    final sync = getIt<LearnerSync>()..start();
     await getIt<ProgressRepository>().recordCompletion(_first, score: 80);
     await tester.pump(const Duration(seconds: 2));
 
@@ -75,14 +82,38 @@ void main() {
     expect(local[_second]?.bestScore, 60);
   });
 
+  testWidgets('review cards and daily activity follow the learner', (
+    tester,
+  ) async {
+    final guest = await signInAsGuest();
+    final sync = getIt<LearnerSync>()..start();
+    await getIt<ReviewRepository>().addSigns({const SignId('hello')});
+    await getIt<ActivityRepository>().recordLesson(const Duration(minutes: 2));
+    await tester.pump(const Duration(seconds: 2));
+
+    final users = FirebaseFirestore.instance.doc('users/${guest.uid}');
+    final card = await users.collection('cards').doc('hello').get();
+    expect(card.data()?['repetitions'], 0);
+    final days = await users.collection('activity').get();
+    expect(days.docs.single.data()['lessons'], 1);
+
+    await _clearLocal();
+    expect(await sync.sync(guest.uid), const Ok<void>(null));
+
+    final cards = (await getIt<ReviewRepository>().readAll()).valueOrNull!;
+    expect(cards.single.signId, const SignId('hello'));
+    final activity = (await getIt<ActivityRepository>().readAll()).valueOrNull!;
+    expect(activity.single.seconds, 120);
+  });
+
   testWidgets("the cloud refuses to write another learner's progress", (
     tester,
   ) async {
     await signInAsGuest();
-    final documents = getIt<ProgressDocuments>();
+    final documents = getIt<UserDocuments>();
 
     await expectLater(
-      documents.write('somebody-else', [
+      documents.write('somebody-else', 'progress', [
         (
           id: 'demo-a1-1',
           data: {
@@ -113,13 +144,16 @@ void main() {
     );
     final uid = credential.user!.uid;
     await getIt<ProgressRepository>().recordCompletion(_first, score: 90);
-    expect(await getIt<ProgressSync>().sync(uid), const Ok<void>(null));
+    await getIt<ReviewRepository>().addSigns({const SignId('hello')});
+    expect(await getIt<LearnerSync>().sync(uid), const Ok<void>(null));
     expect((await _cloud(uid, _first).get()).exists, isTrue);
+    final card = FirebaseFirestore.instance.doc('users/$uid/cards/hello');
+    expect((await card.get()).exists, isTrue);
 
     final account = AccountViewModel(
       getIt<AuthRepository>(),
-      getIt<ProgressRepository>(),
-      getIt<RemoteProgressStore>(),
+      getIt<LearnerData>(),
+      getIt<LearnerCloud>(),
     );
     final result = await account.deleteAccount(password: 'signing-is-fun');
     await account.close();
@@ -135,5 +169,6 @@ void main() {
       _cloud(uid, _first).get(),
       throwsA(isA<FirebaseException>()),
     );
+    await expectLater(card.get(), throwsA(isA<FirebaseException>()));
   });
 }

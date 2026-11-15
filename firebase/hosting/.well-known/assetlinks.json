@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.gestura.com",
+      "sha256_cert_fingerprints": [
+        "BD:62:24:69:87:04:91:15:C8:71:81:6B:9E:C2:93:D1:A1:75:32:DA:FA:35:D8:F9:11:31:57:5A:00:81:6E:D2"
+      ]
+    }
+  }
+]

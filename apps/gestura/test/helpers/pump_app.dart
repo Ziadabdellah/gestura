@@ -6,23 +6,32 @@ import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/config/app_info.dart';
 import 'package:gestura/core/media/media_cache.dart';
+import 'package:gestura/core/share/link_sharer.dart';
 import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/activity/domain/activity_repository.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
-import 'package:gestura/features/progress/data/progress_sync.dart';
+import 'package:gestura/features/learner/learner_cloud.dart';
+import 'package:gestura/features/learner/learner_data.dart';
+import 'package:gestura/features/learner/learner_sync.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
-import 'package:gestura/features/progress/domain/remote_progress_store.dart';
+import 'package:gestura/features/review/domain/review_repository.dart';
+import 'package:gestura/features/saved/domain/saved_signs_repository.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+import 'fake_activity_repository.dart';
 import 'fake_auth_repository.dart';
 import 'fake_content_repository.dart';
+import 'fake_learner_cloud.dart';
+import 'fake_link_sharer.dart';
 import 'fake_media_cache.dart';
 import 'fake_progress_repository.dart';
-import 'fake_remote_progress_store.dart';
+import 'fake_review_repository.dart';
+import 'fake_saved_signs_repository.dart';
 import 'fake_settings_repository.dart';
 import 'fake_telemetry.dart';
 import 'fake_url_launcher.dart';
@@ -35,6 +44,8 @@ const AppSettings englishLight = AppSettings(
 );
 
 const AppInfo testAppInfo = AppInfo(version: '1.0.0', buildNumber: '7');
+
+const String learnLocation = '/learn';
 
 const Size phoneSize = Size(360, 780);
 const Size tabletSize = Size(800, 1280);
@@ -50,7 +61,10 @@ Future<void> registerFakes({
   ProgressRepository? progress,
   AuthRepository? auth,
   Telemetry? telemetry,
-  RemoteProgressStore? remote,
+  LearnerCloud? cloud,
+  ReviewRepository? reviews,
+  ActivityRepository? activity,
+  SavedSignsRepository? saved,
 }) async {
   VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
   UrlLauncherPlatform.instance = FakeUrlLauncher();
@@ -62,14 +76,23 @@ Future<void> registerFakes({
     )
     ..registerSingleton<AuthRepository>(auth ?? FakeAuthRepository())
     ..registerSingleton<Telemetry>(telemetry ?? FakeTelemetry())
-    ..registerSingleton<RemoteProgressStore>(
-      remote ?? FakeRemoteProgressStore(),
-    )
+    ..registerSingleton<LearnerCloud>(cloud ?? FakeLearnerCloud().cloud)
     ..registerLazySingleton(
-      () => ProgressSync(getIt(), getIt(), getIt()),
+      () => LearnerSync(getIt(), getIt(), getIt(), getIt(), getIt()),
       dispose: (sync) => sync.stop(),
     )
     ..registerSingleton<MediaCache>(FakeMediaCache('assets/content/demo/media'))
+    ..registerSingleton<ReviewRepository>(reviews ?? FakeReviewRepository())
+    ..registerSingleton<ActivityRepository>(
+      activity ?? FakeActivityRepository(),
+    )
+    ..registerSingleton<SavedSignsRepository>(
+      saved ?? FakeSavedSignsRepository(),
+    )
+    ..registerLazySingleton(
+      () => LearnerData(getIt(), getIt(), getIt(), getIt()),
+    )
+    ..registerSingleton<LinkSharer>(FakeLinkSharer())
     ..registerSingleton<AppInfo>(testAppInfo);
 }
 
@@ -89,14 +112,17 @@ extension PumpApp on WidgetTester {
   Future<FakeSettingsRepository> pumpApp({
     AppSettings settings = englishLight,
     Flavor flavor = Flavor.prod,
-    String initialLocation = rootLocation,
+    String initialLocation = learnLocation,
     Size surfaceSize = phoneSize,
     double textScale = 1,
     ContentRepository? content,
     ProgressRepository? progress,
     AuthRepository? auth,
     Telemetry? telemetry,
-    RemoteProgressStore? remote,
+    LearnerCloud? cloud,
+    ReviewRepository? reviews,
+    ActivityRepository? activity,
+    SavedSignsRepository? saved,
   }) async {
     view
       ..physicalSize = surfaceSize * 3
@@ -109,7 +135,10 @@ extension PumpApp on WidgetTester {
       progress: progress,
       auth: auth,
       telemetry: telemetry,
-      remote: remote,
+      cloud: cloud,
+      reviews: reviews,
+      activity: activity,
+      saved: saved,
     );
     addTearDown(getIt.reset);
 

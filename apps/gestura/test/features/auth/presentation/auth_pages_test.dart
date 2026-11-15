@@ -11,6 +11,7 @@ import 'package:gestura/features/auth/presentation/pages/verify_email_page.dart'
 import 'package:gestura/features/auth/presentation/pages/welcome_page.dart';
 import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
+import 'package:gestura/features/today/presentation/pages/today_page.dart';
 import 'package:gestura_core/gestura_core.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
@@ -76,13 +77,13 @@ void main() {
       expect(find.text('I already have an account'), findsOneWidget);
     });
 
-    testWidgets('continues as a guest straight into Learn', (tester) async {
+    testWidgets('continues as a guest straight into Today', (tester) async {
       final auth = await _signedOut(tester);
 
       await _tapButton(tester, 'Continue as guest');
 
       expect(auth.user, testGuest);
-      expect(find.byType(LearnPage), findsOneWidget);
+      expect(find.byType(TodayPage), findsOneWidget);
     });
 
     testWidgets('explains why guest mode failed', (tester) async {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:clock/clock.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gestura/core/telemetry/telemetry.dart';
+import 'package:gestura/features/activity/domain/activity_repository.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/content/domain/lesson.dart';
@@ -11,19 +12,24 @@ import 'package:gestura/features/lesson/domain/lesson_result.dart';
 import 'package:gestura/features/lesson/domain/playback.dart';
 import 'package:gestura/features/lesson/presentation/view_models/lesson_player_state.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
+import 'package:gestura/features/review/domain/review_repository.dart';
 import 'package:gestura_core/gestura_core.dart';
 
 class LessonPlayerViewModel extends Cubit<LessonPlayerState> {
   new(
     this._content,
     this._progress,
-    this._telemetry, {
+    this._telemetry,
+    this._reviews,
+    this._activity, {
     this.playback = const Playback(),
   }) : super(const LessonPlayerLoading());
 
   final ContentRepository _content;
   final ProgressRepository _progress;
   final Telemetry _telemetry;
+  final ReviewRepository _reviews;
+  final ActivityRepository _activity;
   final Playback playback;
   DateTime _startedAt = clock.now();
 
@@ -102,6 +108,13 @@ class LessonPlayerViewModel extends Cubit<LessonPlayerState> {
           LessonCompleted(lessonId: result.lessonId.value, score: result.score),
         ),
       );
+      unawaited(
+        _reviews.addSigns({
+          for (final step in steps)
+            if (step is LearnSignStep) step.sign,
+        }),
+      );
+      unawaited(_activity.recordLesson(result.duration));
       await _save(active.lesson, result);
     }
   }

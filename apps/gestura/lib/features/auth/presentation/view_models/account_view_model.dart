@@ -4,19 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gestura/features/auth/domain/app_user.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/auth/presentation/view_models/account_state.dart';
-import 'package:gestura/features/progress/domain/progress_repository.dart';
-import 'package:gestura/features/progress/domain/remote_progress_store.dart';
+import 'package:gestura/features/learner/learner_cloud.dart';
+import 'package:gestura/features/learner/learner_data.dart';
 import 'package:gestura_core/gestura_core.dart';
 
 class AccountViewModel extends Cubit<AccountState> {
-  new(this._auth, this._progress, this._remote)
+  new(this._auth, this._local, this._cloud)
     : super(stateOf(_auth.currentUser)) {
     _subscription = _auth.watchUser().listen((user) => emit(stateOf(user)));
   }
 
   final AuthRepository _auth;
-  final ProgressRepository _progress;
-  final RemoteProgressStore _remote;
+  final LearnerData _local;
+  final LearnerCloud _cloud;
   late final StreamSubscription<AppUser?> _subscription;
 
   static AccountState stateOf(AppUser? user) => switch (user) {
@@ -36,7 +36,7 @@ class AccountViewModel extends Cubit<AccountState> {
     emit(const AccountDeleting());
     final steps = <Future<Result<void>> Function()>[
       if (password != null) () => _auth.reauthenticate(password: password),
-      () => _remote.deleteAll(user.id),
+      () => _cloud.deleteAll(user.id),
       _auth.deleteAccount,
     ];
     for (final step in steps) {
@@ -46,7 +46,7 @@ class AccountViewModel extends Cubit<AccountState> {
         return result;
       }
     }
-    return await _progress.clear();
+    return await _local.clear();
   }
 
   @override

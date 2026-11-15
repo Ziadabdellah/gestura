@@ -11,5 +11,18 @@ class AppDatabase extends _$AppDatabase {
   static const String fileName = 'gestura';
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await migrator.createTable(reviewCards);
+        await migrator.createTable(collections);
+        await migrator.createTable(collectionItems);
+        await migrator.createTable(dailyActivity);
+      }
+    },
+    beforeOpen: (details) => customStatement('PRAGMA foreign_keys = ON'),
+  );
 }

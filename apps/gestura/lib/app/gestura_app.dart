@@ -10,7 +10,7 @@ import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/auth/domain/app_user.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
-import 'package:gestura/features/progress/data/progress_sync.dart';
+import 'package:gestura/features/learner/learner_sync.dart';
 import 'package:gestura/features/settings/presentation/settings_presentation.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_state.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
@@ -33,7 +33,7 @@ class GesturaApp extends ConsumerStatefulWidget {
 class _GesturaAppState extends ConsumerState<GesturaApp> {
   final AuthRepository _auth = getIt<AuthRepository>();
   final Telemetry _telemetry = getIt<Telemetry>();
-  final ProgressSync _sync = getIt<ProgressSync>();
+  final LearnerSync _sync = getIt<LearnerSync>();
   late final AppLifecycleListener _lifecycle;
   late final AppGate _gate;
   late final StreamSubscription<AppUser?> _user;

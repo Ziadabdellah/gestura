@@ -21,7 +21,17 @@ class DictionaryPage extends StatelessWidget {
       return viewModel;
     },
     child: Scaffold(
-      appBar: AppBar(title: Text(context.l10n.tabDictionary)),
+      appBar: AppBar(
+        title: Text(context.l10n.tabDictionary),
+        actions: [
+          IconButton(
+            tooltip: context.l10n.savedSigns,
+            icon: const Icon(Icons.favorite_border_rounded),
+            onPressed: () =>
+                unawaited(const SavedSignsRoute().push<void>(context)),
+          ),
+        ],
+      ),
       body: BlocBuilder<DictionaryViewModel, DictionaryState>(
         builder: (context, state) {
           final viewModel = context.read<DictionaryViewModel>();

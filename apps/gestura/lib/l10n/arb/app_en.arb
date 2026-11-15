@@ -333,5 +333,58 @@
   "privacyPolicy": "Privacy policy",
   "linkOpenFailed": "Couldn't open the page. Please try again.",
   "failureNoContent": "Lessons for this sign language are on their way. Check again soon.",
-  "packsComingSoon": "Sign language packs are on their way. You can continue now, and they will appear here once they are ready."
+  "packsComingSoon": "Sign language packs are on their way. You can continue now, and they will appear here once they are ready.",
+  "reviewPrompt": "Do you remember what this sign means?",
+  "showAnswer": "Show answer",
+  "gradeAgain": "Again",
+  "gradeHard": "Hard",
+  "gradeGood": "Good",
+  "gradeEasy": "Easy",
+  "reviewInterval": "{days, plural, =1{1 day} other{{days} days}}",
+  "@reviewInterval": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewDoneTitle": "Review done",
+  "reviewDoneMessage": "{reviewed, plural, =1{You reviewed 1 sign} other{You reviewed {reviewed} signs}} and remembered {remembered}.",
+  "@reviewDoneMessage": {
+    "placeholders": {
+      "reviewed": {
+        "type": "int"
+      },
+      "remembered": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewNothingDueTitle": "All caught up",
+  "reviewNothingDue": "Signs you learn come back here when it is time to review them.",
+  "tabToday": "Today",
+  "todayGoalTitle": "Daily goal",
+  "todayGoalProgress": "{minutes} / {goal} min",
+  "continueLearning": "Continue learning",
+  "allLessonsDone": "You finished every lesson in this course.",
+  "startLesson": "Start lesson",
+  "reviewCardTitle": "Review",
+  "startReview": "Start review",
+  "signOfTheDay": "Sign of the day",
+  "@todayGoalProgress": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "savedSigns": "Saved signs",
+  "saveSign": "Save sign",
+  "removeSavedSign": "Remove from saved",
+  "savedEmptyTitle": "No saved signs yet",
+  "savedEmptyMessage": "Tap the heart on a sign to keep it here.",
+  "shareSign": "Share sign"
 }

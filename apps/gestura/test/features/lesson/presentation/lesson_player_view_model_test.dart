@@ -15,8 +15,10 @@ import 'package:gestura/features/lesson/presentation/view_models/lesson_player_v
 import 'package:gestura_core/gestura_core.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../helpers/fake_activity_repository.dart';
 import '../../../helpers/fake_content_repository.dart';
 import '../../../helpers/fake_progress_repository.dart';
+import '../../../helpers/fake_review_repository.dart';
 import '../../../helpers/fake_telemetry.dart';
 import '../../../helpers/lesson_states.dart';
 
@@ -28,6 +30,8 @@ void main() {
   late _MockContentRepository content;
   late FakeProgressRepository progress;
   late FakeTelemetry telemetry;
+  late FakeReviewRepository reviews;
+  late FakeActivityRepository activity;
   late DateTime now;
   final lesson = firstLesson;
   final quiz = stepOf<ChooseWordStep>();
@@ -38,6 +42,8 @@ void main() {
 
   setUp(() {
     telemetry = FakeTelemetry();
+    reviews = FakeReviewRepository();
+    activity = FakeActivityRepository();
     now = _start;
     content = _MockContentRepository();
     progress = FakeProgressRepository();
@@ -52,7 +58,8 @@ void main() {
 
   LessonPlayerViewModel build() => withClock(
     Clock(() => now),
-    () => LessonPlayerViewModel(content, progress, telemetry),
+    () =>
+        LessonPlayerViewModel(content, progress, telemetry, reviews, activity),
   );
 
   Future<T> timed<T>(Future<T> Function() body) =>
@@ -98,6 +105,8 @@ void main() {
         content,
         progress,
         telemetry,
+        reviews,
+        activity,
         playback: const Playback(mirrored: true),
       ),
       act: (viewModel) => viewModel.load(lesson.id),
@@ -256,6 +265,12 @@ void main() {
         ),
       ]);
       expect(progress.stored[lesson.id]?.bestScore, 67);
+      expect(reviews.stored.keys.map((id) => id.value), [
+        'hello',
+        'thank-you',
+        'please',
+      ]);
+      expect(activity.calls, ['lesson:60']);
       expect(
         telemetry.events.single,
         isA<LessonCompleted>().having(

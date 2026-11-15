@@ -10,11 +10,11 @@ import 'package:gestura/features/auth/domain/auth_entry.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/auth/presentation/view_models/account_state.dart';
 import 'package:gestura/features/auth/presentation/view_models/account_view_model.dart';
+import 'package:gestura/features/learner/learner_cloud.dart';
+import 'package:gestura/features/learner/learner_data.dart';
 import 'package:gestura/features/profile/presentation/widgets/delete_account_dialog.dart';
 import 'package:gestura/features/profile/presentation/widgets/profile_view.dart';
 import 'package:gestura/features/profile/presentation/widgets/sign_out_dialog.dart';
-import 'package:gestura/features/progress/domain/progress_repository.dart';
-import 'package:gestura/features/progress/domain/remote_progress_store.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_core/gestura_core.dart';
 
@@ -58,8 +58,8 @@ class ProfilePage extends StatelessWidget {
     return BlocProvider(
       create: (_) => AccountViewModel(
         getIt<AuthRepository>(),
-        getIt<ProgressRepository>(),
-        getIt<RemoteProgressStore>(),
+        getIt<LearnerData>(),
+        getIt<LearnerCloud>(),
       ),
       child: Scaffold(
         appBar: AppBar(title: Text(l10n.tabProfile)),

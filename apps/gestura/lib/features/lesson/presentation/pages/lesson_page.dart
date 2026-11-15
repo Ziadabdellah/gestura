@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/activity/domain/activity_repository.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/lesson/domain/playback.dart';
@@ -14,6 +15,7 @@ import 'package:gestura/features/lesson/presentation/view_models/lesson_player_v
 import 'package:gestura/features/lesson/presentation/widgets/leave_lesson_dialog.dart';
 import 'package:gestura/features/lesson/presentation/widgets/lesson_view.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
+import 'package:gestura/features/review/domain/review_repository.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
 
 class LessonPage extends ConsumerWidget {
@@ -46,6 +48,8 @@ class LessonPage extends ConsumerWidget {
         getIt<ContentRepository>(),
         getIt<ProgressRepository>(),
         getIt<Telemetry>(),
+        getIt<ReviewRepository>(),
+        getIt<ActivityRepository>(),
         playback: Playback(mirrored: hand.mirrorsVideo),
       );
       unawaited(viewModel.load(lessonId));

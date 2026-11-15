@@ -1,4 +1,5 @@
 import html
+import json
 import pathlib
 import sys
 
@@ -9,6 +10,11 @@ from legal_text import CONTACT, CONTROLLER, DELETION, LANGUAGES, PRIVACY, UPDATE
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "firebase" / "hosting"
 SITE = "https://gestura-prod.web.app"
+PACKAGE = "app.gestura.com"
+APPLE_TEAM = "43Y35JK32H"
+SIGNING_SHA256 = [
+    "BD:62:24:69:87:04:91:15:C8:71:81:6B:9E:C2:93:D1:A1:75:32:DA:FA:35:D8:F9:11:31:57:5A:00:81:6E:D2",
+]
 
 STYLE = """
 :root{color-scheme:light dark;--bg:#F8F6F1;--text:#14222B;--muted:#4A5A63;--accent:#0B6E69;--card:#FFFFFF;--line:#E2DED5}
@@ -101,6 +107,47 @@ def not_found():
     return page("en", "Page not found", body)
 
 
+def asset_links():
+    return json.dumps(
+        [
+            {
+                "relation": ["delegate_permission/common.handle_all_urls"],
+                "target": {
+                    "namespace": "android_app",
+                    "package_name": PACKAGE,
+                    "sha256_cert_fingerprints": SIGNING_SHA256,
+                },
+            }
+        ],
+        indent=2,
+    ) + "\n"
+
+
+def apple_app_site_association():
+    return json.dumps(
+        {
+            "applinks": {
+                "details": [
+                    {
+                        "appIDs": [f"{APPLE_TEAM}.{PACKAGE}"],
+                        "components": [{"/": "/sign/*"}],
+                    }
+                ]
+            }
+        },
+        indent=2,
+    ) + "\n"
+
+
+def shared_sign():
+    body = (
+        "<h1>A sign on Gestura</h1>\n"
+        "<p>Open this link on a phone with Gestura installed to see the sign.</p>\n"
+        '<p><a href="/">Gestura</a></p>\n'
+    )
+    return page("en", "A sign on Gestura", body)
+
+
 def write(path, content):
     target = PUBLIC / path
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -114,6 +161,9 @@ def main():
     for lang in LANGUAGES:
         write(f"privacy/{lang}.html", privacy(lang))
     write("delete-account/index.html", deletion())
+    write("sign.html", shared_sign())
+    write(".well-known/assetlinks.json", asset_links())
+    write(".well-known/apple-app-site-association", apple_app_site_association())
 
 
 if __name__ == "__main__":

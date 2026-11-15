@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 
 void main() {
   test('every screen has a stable address for deep links', () {
+    expect(const TodayRoute().location, '/today');
     expect(const LearnRoute().location, '/learn');
+    expect(const ReviewRoute().location, '/review');
     expect(const DictionaryRoute().location, '/dictionary');
     expect(const SignRoute(signId: 'hello').location, '/dictionary/sign/hello');
     expect(const ProfileRoute().location, '/profile');
@@ -32,12 +34,13 @@ void main() {
 
   test('each tab is a branch of its own', () {
     final branches = <StatefulShellBranchData Function()>[
+      TodayBranch.new,
       LearnBranch.new,
       DictionaryBranch.new,
       ProfileBranch.new,
     ];
 
-    expect({for (final branch in branches) branch().runtimeType}, hasLength(3));
+    expect({for (final branch in branches) branch().runtimeType}, hasLength(4));
   });
 
   test('the router starts where it is told', () {
@@ -55,6 +58,13 @@ void main() {
       bool onboarded = true,
       bool signedIn = true,
     }) => gateRedirect(path, onboarded: onboarded, signedIn: signedIn);
+
+    test('opens a shared sign link on the sign page', () {
+      expect(redirect('/sign/hello'), '/dictionary/sign/hello');
+      expect(redirect('/sign/thank-you/'), '/dictionary/sign/thank-you');
+      expect(redirect('/sign/bad id'), isNull);
+      expect(redirect('/sign/hello', signedIn: false), '/welcome');
+    });
 
     test('sends a first-time learner to onboarding from anywhere', () {
       for (final path in ['/', '/learn', '/welcome', '/account/sign-in']) {
@@ -83,7 +93,7 @@ void main() {
 
     test('takes a signed-in learner past the first-run screens', () {
       for (final path in ['/', '/onboarding', '/welcome']) {
-        expect(redirect(path), '/learn', reason: path);
+        expect(redirect(path), '/today', reason: path);
       }
     });
 
