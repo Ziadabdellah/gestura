@@ -33,7 +33,7 @@ StoredDocument documentOf(LessonProgress progress) => (
   },
 );
 
-@LazySingleton(as: RemoteProgressStore)
+@LazySingleton(as: RemoteProgressStore, env: ['prod'])
 final class FirestoreRemoteProgress implements RemoteProgressStore {
   const new(this._documents);
 

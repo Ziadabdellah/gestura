@@ -6,6 +6,7 @@ import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/auth/presentation/view_models/account_view_model.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
+import 'package:gestura/features/progress/data/firestore_remote_progress.dart';
 import 'package:gestura/features/progress/data/progress_documents.dart';
 import 'package:gestura/features/progress/data/progress_sync.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
@@ -33,6 +34,13 @@ void main() {
   setUp(() async {
     await emulatedAuth();
     await configureDependencies(_dev);
+    getIt
+      ..unregister<RemoteProgressStore>()
+      ..registerSingleton<RemoteProgressStore>(
+        FirestoreRemoteProgress(getIt<ProgressDocuments>()),
+      )
+      ..unregister<ProgressSync>()
+      ..registerSingleton(ProgressSync(getIt(), getIt(), getIt()));
   });
 
   tearDown(() async {
