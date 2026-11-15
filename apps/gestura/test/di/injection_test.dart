@@ -1,17 +1,34 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core_platform_interface/test.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/config/app_info.dart';
 import 'package:gestura/core/database/app_database.dart';
+import 'package:gestura/core/errors/crashlytics_error_reporter.dart';
 import 'package:gestura/core/errors/error_reporter.dart';
 import 'package:gestura/core/errors/logging_error_reporter.dart';
+import 'package:gestura/core/media/media_cache.dart';
+import 'package:gestura/core/telemetry/firebase_telemetry.dart';
+import 'package:gestura/core/telemetry/local_telemetry.dart';
+import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/auth/data/firebase_auth_repository.dart';
+import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/data/bundled_content_repository.dart';
+import 'package:gestura/features/content/data/remote_content_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/progress/data/drift_progress_repository.dart';
+import 'package:gestura/features/progress/data/firestore_remote_progress.dart';
+import 'package:gestura/features/progress/data/progress_documents.dart';
+import 'package:gestura/features/progress/data/progress_sync.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
+import 'package:gestura/features/progress/domain/remote_progress_store.dart';
 import 'package:gestura/features/settings/data/shared_preferences_settings_repository.dart';
 import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:get_it/get_it.dart';
@@ -54,6 +71,12 @@ void main() {
 
   tearDown(() => directory.delete(recursive: true));
 
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    setupFirebaseCoreMocks();
+    await Firebase.initializeApp();
+  });
+
   for (final flavor in Flavor.values) {
     test('wires the ${flavor.name} environment', () async {
       final container = GetIt.asNewInstance();
@@ -70,9 +93,37 @@ void main() {
         container<SettingsRepository>(),
         isA<SharedPreferencesSettingsRepository>(),
       );
-      expect(container<ErrorReporter>(), isA<LoggingErrorReporter>());
+      expect(
+        container<ErrorReporter>(),
+        AppConfig(flavor: flavor).isProd
+            ? isA<CrashlyticsErrorReporter>()
+            : isA<LoggingErrorReporter>(),
+      );
+      expect(
+        container<Telemetry>(),
+        AppConfig(flavor: flavor).isProd
+            ? isA<FirebaseTelemetry>()
+            : isA<LocalTelemetry>(),
+      );
+      expect(
+        container.isRegistered<FirebaseCrashlytics>(),
+        AppConfig(flavor: flavor).isProd,
+      );
+      expect(container<RemoteProgressStore>(), isA<FirestoreRemoteProgress>());
+      expect(container<ProgressDocuments>(), isA<FirestoreProgressDocuments>());
+      expect(
+        container<FirebaseFirestore>().settings.persistenceEnabled,
+        isFalse,
+      );
+      expect(container<ProgressSync>(), isNotNull);
       expect(container<AssetBundle>(), same(rootBundle));
-      expect(container<ContentRepository>(), isA<BundledContentRepository>());
+      expect(
+        container<ContentRepository>(),
+        AppConfig(flavor: flavor).isProd
+            ? isA<RemoteContentRepository>()
+            : isA<BundledContentRepository>(),
+      );
+      expect(container<MediaCache>(), isA<DiskMediaCache>());
       expect(
         container<AppInfo>(),
         const AppInfo(version: '0.1.0', buildNumber: '1'),
@@ -101,6 +152,19 @@ void main() {
       expect(database.customSelect('SELECT 1').get(), throwsA(anything));
     },
   );
+
+  test('wires Firebase Auth once Firebase is ready', () async {
+    final container = GetIt.asNewInstance();
+    addTearDown(container.reset);
+
+    await configureDependencies(
+      const AppConfig(flavor: Flavor.dev),
+      container: container,
+    );
+
+    expect(container<FirebaseAuth>(), same(FirebaseAuth.instance));
+    expect(container<AuthRepository>(), isA<FirebaseAuthRepository>());
+  });
 
   test('uses the global container by default', () async {
     addTearDown(getIt.reset);

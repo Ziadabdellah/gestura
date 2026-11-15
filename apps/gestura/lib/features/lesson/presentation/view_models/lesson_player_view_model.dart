@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:clock/clock.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/content/domain/lesson.dart';
@@ -11,10 +14,17 @@ import 'package:gestura/features/progress/domain/progress_repository.dart';
 import 'package:gestura_core/gestura_core.dart';
 
 class LessonPlayerViewModel extends Cubit<LessonPlayerState> {
-  new(this._content, this._progress) : super(const LessonPlayerLoading());
+  new(
+    this._content,
+    this._progress,
+    this._telemetry, {
+    this.playback = const Playback(),
+  }) : super(const LessonPlayerLoading());
 
   final ContentRepository _content;
   final ProgressRepository _progress;
+  final Telemetry _telemetry;
+  final Playback playback;
   DateTime _startedAt = clock.now();
 
   Future<void> load(LessonId id) async {
@@ -37,6 +47,7 @@ class LessonPlayerViewModel extends Cubit<LessonPlayerState> {
           LessonInProgress(
             lesson: lesson,
             signs: {for (final sign in signs) sign.id: sign},
+            playback: playback,
           ),
         );
       case Err(:final failure):
@@ -76,19 +87,22 @@ class LessonPlayerViewModel extends Cubit<LessonPlayerState> {
         return;
       }
       final steps = active.lesson.steps;
-      await _save(
-        active.lesson,
-        LessonResult(
-          lessonId: active.lesson.id,
-          correctAnswers: active.correctAnswers,
-          questions: steps.where((step) => step is! LearnSignStep).length,
-          newSigns: {
-            for (final step in steps)
-              if (step is LearnSignStep) step.sign,
-          }.length,
-          duration: clock.now().difference(_startedAt),
+      final result = LessonResult(
+        lessonId: active.lesson.id,
+        correctAnswers: active.correctAnswers,
+        questions: steps.where((step) => step is! LearnSignStep).length,
+        newSigns: {
+          for (final step in steps)
+            if (step is LearnSignStep) step.sign,
+        }.length,
+        duration: clock.now().difference(_startedAt),
+      );
+      unawaited(
+        _telemetry.record(
+          LessonCompleted(lessonId: result.lessonId.value, score: result.score),
         ),
       );
+      await _save(active.lesson, result);
     }
   }
 

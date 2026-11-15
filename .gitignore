@@ -21,3 +21,11 @@ app.*.symbols
 app.*.map.json
 /doc/
 /apps/gestura/firebase.json
+**/test/**/failures/
+firebase-debug*.log*
+ui-debug.log
+.firebase/
+node_modules/
+firestore-debug.log
+firebase/content/
+firebase/published/

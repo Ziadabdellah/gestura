@@ -1,0 +1,166 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    function isShortString(value, max) {
+      return value is string && value.size() > 0 && value.size() <= max;
+    }
+
+    function isOptionalText(text, code) {
+      return !(code in text) || isShortString(text[code], 300);
+    }
+
+    function isLocalizedText(text) {
+      return text is map
+        && text.keys().hasOnly(['en', 'ar', 'ru', 'es', 'fr', 'de'])
+        && isShortString(text.en, 300)
+        && isOptionalText(text, 'ar')
+        && isOptionalText(text, 'ru')
+        && isOptionalText(text, 'es')
+        && isOptionalText(text, 'fr')
+        && isOptionalText(text, 'de');
+    }
+
+    function isOrder(value) {
+      return value is int && value >= 0 && value <= 10000;
+    }
+
+    function isMediaPath(value) {
+      return isShortString(value, 300) && value.matches('^(media|asset)/[A-Za-z0-9/._-]+$');
+    }
+
+    function isContent(data, fields) {
+      return data.keys().hasOnly(fields)
+        && data.keys().hasAll(fields)
+        && data.published is bool
+        && data.updatedAt is timestamp;
+    }
+
+    function validSignLanguage(data) {
+      return isContent(data, ['name', 'fingerspelling', 'placeholder', 'order', 'published', 'updatedAt'])
+        && isLocalizedText(data.name)
+        && data.fingerspelling in ['oneHanded', 'twoHanded']
+        && data.placeholder is bool
+        && isOrder(data.order);
+    }
+
+    function validCategory(data) {
+      return isContent(data, ['signLanguage', 'name', 'order', 'published', 'updatedAt'])
+        && isShortString(data.signLanguage, 16)
+        && isLocalizedText(data.name)
+        && isOrder(data.order);
+    }
+
+    function validSource(source) {
+      return source is map
+        && source.keys().hasOnly(['name', 'license', 'url'])
+        && isShortString(source.name, 120)
+        && isShortString(source.license, 60)
+        && (!('url' in source) || isShortString(source.url, 300));
+    }
+
+    function validSign(data) {
+      return isContent(data, ['signLanguage', 'gloss', 'meaning', 'category', 'video', 'thumbnail', 'durationMs', 'source', 'published', 'updatedAt'])
+        && isShortString(data.signLanguage, 16)
+        && isShortString(data.gloss, 80)
+        && isLocalizedText(data.meaning)
+        && isShortString(data.category, 64)
+        && isMediaPath(data.video)
+        && isMediaPath(data.thumbnail)
+        && data.durationMs is int && data.durationMs > 0 && data.durationMs <= 60000
+        && validSource(data.source);
+    }
+
+    function validCourse(data) {
+      return isContent(data, ['signLanguage', 'level', 'title', 'units', 'order', 'published', 'updatedAt'])
+        && isShortString(data.signLanguage, 16)
+        && data.level in ['a1', 'a2', 'b1', 'b2']
+        && isLocalizedText(data.title)
+        && data.units is list && data.units.size() > 0 && data.units.size() <= 50
+        && isOrder(data.order);
+    }
+
+    function validLesson(data) {
+      return isContent(data, ['courseId', 'unit', 'order', 'title', 'steps', 'published', 'updatedAt'])
+        && isShortString(data.courseId, 64)
+        && isOrder(data.unit)
+        && isOrder(data.order)
+        && isLocalizedText(data.title)
+        && data.steps is list && data.steps.size() > 0 && data.steps.size() <= 40;
+    }
+
+    function canRead() {
+      return signedIn() && (resource.data.published == true || isAdmin());
+    }
+
+    match /signLanguages/{code} {
+      allow read: if canRead();
+      allow create, update: if isAdmin() && code.size() <= 16 && validSignLanguage(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{id} {
+      allow read: if canRead();
+      allow create, update: if isAdmin() && id.size() <= 64 && validCategory(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /signs/{id} {
+      allow read: if canRead();
+      allow create, update: if isAdmin() && id.size() <= 64 && validSign(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /courses/{id} {
+      allow read: if canRead();
+      allow create, update: if isAdmin() && id.size() <= 64 && validCourse(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /lessons/{id} {
+      allow read: if canRead();
+      allow create, update: if isAdmin() && id.size() <= 64 && validLesson(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /admins/{email} {
+      allow get: if signedIn() && request.auth.token.email == email;
+      allow list, write: if false;
+    }
+
+    match /users/{uid} {
+      allow read, write: if false;
+
+      match /progress/{lessonId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && lessonId.size() <= 64
+          && validProgress(request.resource.data);
+      }
+    }
+
+    function validProgress(data) {
+      return data.keys().hasOnly(['bestScore', 'completedAt', 'updatedAt'])
+        && data.keys().hasAll(['bestScore', 'completedAt', 'updatedAt'])
+        && data.bestScore is int && data.bestScore >= 0 && data.bestScore <= 100
+        && data.completedAt is timestamp
+        && data.completedAt <= request.time + duration.value(1, 'd')
+        && data.updatedAt == request.time;
+    }
+  }
+}

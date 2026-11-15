@@ -7,5 +7,11 @@ typedef ProgressByLesson = Map<LessonId, LessonProgress>;
 abstract interface class ProgressRepository {
   Stream<Result<ProgressByLesson>> watchAll();
 
+  Future<Result<ProgressByLesson>> readAll();
+
   Future<Result<void>> recordCompletion(LessonId lesson, {required int score});
+
+  Future<Result<void>> merge(Iterable<LessonProgress> incoming);
+
+  Future<Result<void>> clear();
 }

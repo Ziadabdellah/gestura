@@ -19,6 +19,11 @@ final class AppConfig {
 
   bool get isProd => flavor == Flavor.prod;
 
+  Uri get contentBase => Uri.https(
+    isProd ? 'gestura-prod-content.web.app' : 'gestura-dev-content.web.app',
+    '/content/',
+  );
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is AppConfig && other.flavor == flavor;

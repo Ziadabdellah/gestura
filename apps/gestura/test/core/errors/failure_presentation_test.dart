@@ -10,6 +10,15 @@ const List<Failure> _failures = [
   PermissionDeniedFailure(),
   StorageFullFailure(),
   UnexpectedFailure('boom'),
+  NoContentFailure(),
+  AuthFailure(AuthProblem.invalidEmail),
+  AuthFailure(AuthProblem.wrongCredentials),
+  AuthFailure(AuthProblem.emailInUse),
+  AuthFailure(AuthProblem.weakPassword),
+  AuthFailure(AuthProblem.tooManyRequests),
+  AuthFailure(AuthProblem.accountDisabled),
+  AuthFailure(AuthProblem.unavailable),
+  AuthFailure(AuthProblem.signInAgain),
 ];
 
 void main() {
@@ -24,6 +33,15 @@ void main() {
         "You don't have access to this.",
         'Your device is out of space. Free some up and try again.',
         'Something unexpected happened. Please try again.',
+        'Lessons for this sign language are on their way. Check again soon.',
+        "That email address doesn't look right.",
+        'The email or password is incorrect.',
+        'An account with this email already exists. Sign in instead.',
+        'Choose a stronger password.',
+        'Too many attempts. Wait a moment and try again.',
+        'This account has been turned off.',
+        "Signing in isn't available right now. Please try again later.",
+        'For your security, enter your password again.',
       ],
     );
   });
@@ -38,9 +56,11 @@ void main() {
     });
   }
 
-  test('gives every failure its own icon', () {
-    expect({
-      for (final failure in _failures) failure.icon,
-    }, hasLength(_failures.length));
+  test('gives every kind of failure its own icon', () {
+    expect({for (final failure in _failures) failure.icon}, hasLength(7));
+    expect(
+      const AuthFailure(AuthProblem.weakPassword).icon,
+      const AuthFailure(AuthProblem.unavailable).icon,
+    );
   });
 }

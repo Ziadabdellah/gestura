@@ -79,8 +79,14 @@ void main() {
 
       expect(signs, hasLength(12));
       for (final sign in signs) {
-        expect(File(sign.media.videoAsset).existsSync(), isTrue);
-        expect(File(sign.media.thumbnailAsset).existsSync(), isTrue);
+        expect(
+          File((sign.media.video as AssetMedia).path).existsSync(),
+          isTrue,
+        );
+        expect(
+          File((sign.media.thumbnail as AssetMedia).path).existsSync(),
+          isTrue,
+        );
       }
     });
 

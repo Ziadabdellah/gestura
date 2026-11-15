@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/app/view/flavor_banner.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
@@ -8,6 +9,8 @@ import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
+import '../helpers/fake_remote_progress_store.dart';
+import '../helpers/fake_telemetry.dart';
 import '../helpers/pump_app.dart';
 
 Finder _navigationLabel(String label) =>
@@ -79,7 +82,9 @@ void main() {
       tester.platformDispatcher.localesTestValue = const [Locale('fr')];
       addTearDown(tester.platformDispatcher.clearLocalesTestValue);
 
-      await tester.pumpApp(settings: AppSettings.defaults);
+      await tester.pumpApp(
+        settings: const AppSettings(onboardingComplete: true),
+      );
 
       expect(_navigationLabel('Apprendre'), findsOneWidget);
     });
@@ -90,6 +95,51 @@ void main() {
       );
 
       expect(tester.widget<Title>(find.byType(Title)).title, 'Gestura');
+    });
+
+    testWidgets('applies the privacy choices to analytics and crash reports', (
+      tester,
+    ) async {
+      final telemetry = FakeTelemetry();
+      await tester.pumpApp(
+        telemetry: telemetry,
+        initialLocation: const SettingsRoute().location,
+      );
+
+      expect(telemetry.consents, [(analytics: false, crashReports: false)]);
+
+      final crashes = find.widgetWithText(SwitchListTile, 'Crash reports');
+      await tester.scrollUntilVisible(crashes, 100);
+      await tester.pumpAndSettle();
+      await tester.tap(crashes);
+      await tester.pumpAndSettle();
+
+      expect(telemetry.consents.last, (analytics: false, crashReports: true));
+    });
+
+    testWidgets('syncs progress when the learner comes back to the app', (
+      tester,
+    ) async {
+      final remote = FakeRemoteProgressStore();
+      await tester.pumpApp(remote: remote);
+
+      expect(remote.calls, ['fetch:guest-uid', 'save:guest-uid:0']);
+
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.paused)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      expect(remote.calls, [
+        'fetch:guest-uid',
+        'save:guest-uid:0',
+        'fetch:guest-uid',
+        'save:guest-uid:0',
+      ]);
     });
 
     testWidgets('uses the saved theme', (tester) async {

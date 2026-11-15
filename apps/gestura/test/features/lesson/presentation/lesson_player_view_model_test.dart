@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/content/domain/lesson.dart';
@@ -16,6 +17,7 @@ import 'package:mocktail/mocktail.dart';
 
 import '../../../helpers/fake_content_repository.dart';
 import '../../../helpers/fake_progress_repository.dart';
+import '../../../helpers/fake_telemetry.dart';
 import '../../../helpers/lesson_states.dart';
 
 class _MockContentRepository extends Mock implements ContentRepository;
@@ -25,6 +27,7 @@ final DateTime _start = DateTime.utc(2026, 11, 10, 9);
 void main() {
   late _MockContentRepository content;
   late FakeProgressRepository progress;
+  late FakeTelemetry telemetry;
   late DateTime now;
   final lesson = firstLesson;
   final quiz = stepOf<ChooseWordStep>();
@@ -34,6 +37,7 @@ void main() {
   setUpAll(() => registerFallbackValue(<SignId>{}));
 
   setUp(() {
+    telemetry = FakeTelemetry();
     now = _start;
     content = _MockContentRepository();
     progress = FakeProgressRepository();
@@ -48,7 +52,7 @@ void main() {
 
   LessonPlayerViewModel build() => withClock(
     Clock(() => now),
-    () => LessonPlayerViewModel(content, progress),
+    () => LessonPlayerViewModel(content, progress, telemetry),
   );
 
   Future<T> timed<T>(Future<T> Function() body) =>
@@ -86,6 +90,21 @@ void main() {
       act: (viewModel) => viewModel.load(lesson.id),
       expect: () => [inProgress()],
       verify: (_) => verify(() => content.signs(lesson.signs)).called(1),
+    );
+
+    blocTest<LessonPlayerViewModel, LessonPlayerState>(
+      'starts with the playback it was given',
+      build: () => LessonPlayerViewModel(
+        content,
+        progress,
+        telemetry,
+        playback: const Playback(mirrored: true),
+      ),
+      act: (viewModel) => viewModel.load(lesson.id),
+      verify: (viewModel) => expect(
+        (viewModel.state as LessonInProgress).playback,
+        const Playback(mirrored: true),
+      ),
     );
 
     blocTest<LessonPlayerViewModel, LessonPlayerState>(
@@ -237,6 +256,14 @@ void main() {
         ),
       ]);
       expect(progress.stored[lesson.id]?.bestScore, 67);
+      expect(
+        telemetry.events.single,
+        isA<LessonCompleted>().having(
+          (event) => event.parameters,
+          'parameters',
+          {'lesson_id': 'demo-a1-1', 'score': 67},
+        ),
+      );
     });
 
     blocTest<LessonPlayerViewModel, LessonPlayerState>(

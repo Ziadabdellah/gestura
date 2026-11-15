@@ -10,10 +10,26 @@ import 'fake_settings_repository.dart';
 import 'pump_app.dart';
 
 const List<AppSettings> goldenSettings = [
-  AppSettings(language: AppLanguage.english, theme: AppThemePreference.light),
-  AppSettings(language: AppLanguage.english, theme: AppThemePreference.dark),
-  AppSettings(language: AppLanguage.arabic, theme: AppThemePreference.light),
-  AppSettings(language: AppLanguage.arabic, theme: AppThemePreference.dark),
+  AppSettings(
+    language: AppLanguage.english,
+    theme: AppThemePreference.light,
+    onboardingComplete: true,
+  ),
+  AppSettings(
+    language: AppLanguage.english,
+    theme: AppThemePreference.dark,
+    onboardingComplete: true,
+  ),
+  AppSettings(
+    language: AppLanguage.arabic,
+    theme: AppThemePreference.light,
+    onboardingComplete: true,
+  ),
+  AppSettings(
+    language: AppLanguage.arabic,
+    theme: AppThemePreference.dark,
+    onboardingComplete: true,
+  ),
 ];
 
 GoldenTestScenario appScenario({

@@ -1,0 +1,1 @@
+enum AuthEntry { welcome, profile }

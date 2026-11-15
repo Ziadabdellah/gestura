@@ -3,16 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
+import 'package:gestura/features/lesson/domain/playback.dart';
 import 'package:gestura/features/lesson/presentation/view_models/lesson_player_state.dart';
 import 'package:gestura/features/lesson/presentation/view_models/lesson_player_view_model.dart';
 import 'package:gestura/features/lesson/presentation/widgets/leave_lesson_dialog.dart';
 import 'package:gestura/features/lesson/presentation/widgets/lesson_view.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
+import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
 
-class LessonPage extends StatelessWidget {
+class LessonPage extends ConsumerWidget {
   const new({required this.lessonId, super.key});
 
   final LessonId lessonId;
@@ -35,11 +39,14 @@ class LessonPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
+  Widget build(BuildContext context, WidgetRef ref) => BlocProvider(
     create: (_) {
+      final hand = ref.read(settingsViewModelProvider).settings.dominantHand;
       final viewModel = LessonPlayerViewModel(
         getIt<ContentRepository>(),
         getIt<ProgressRepository>(),
+        getIt<Telemetry>(),
+        playback: Playback(mirrored: hand.mirrorsVideo),
       );
       unawaited(viewModel.load(lessonId));
       return viewModel;

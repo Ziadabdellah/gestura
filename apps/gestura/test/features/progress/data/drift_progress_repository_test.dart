@@ -113,6 +113,106 @@ void main() {
     expect(result.failureOrNull, isA<UnexpectedFailure>());
   });
 
+  test('merges progress from the cloud, keeping the best of both', () async {
+    await recordAt(_tuesday, _first, 70);
+
+    final result = await repository.merge([
+      LessonProgress(
+        lessonId: _first,
+        bestScore: 90,
+        completedAt: _monday,
+        updatedAt: _monday,
+      ),
+      LessonProgress(
+        lessonId: _second,
+        bestScore: 40,
+        completedAt: _monday,
+        updatedAt: _tuesday,
+      ),
+    ]);
+    await repository.merge([
+      LessonProgress(
+        lessonId: _first,
+        bestScore: 10,
+        completedAt: _tuesday,
+        updatedAt: _tuesday.add(const Duration(days: 1)),
+      ),
+    ]);
+
+    expect(result, const Ok<void>(null));
+    expect(await current(), {
+      _first: LessonProgress(
+        lessonId: _first,
+        bestScore: 90,
+        completedAt: _monday,
+        updatedAt: _tuesday.add(const Duration(days: 1)),
+      ),
+      _second: LessonProgress(
+        lessonId: _second,
+        bestScore: 40,
+        completedAt: _monday,
+        updatedAt: _tuesday,
+      ),
+    });
+  });
+
+  test('writes nothing when the cloud has nothing new', () async {
+    await recordAt(_monday, _first, 70);
+    final events = <Result<ProgressByLesson>>[];
+    final subscription = repository.watchAll().listen(events.add);
+    await pumpEventQueue();
+
+    await repository.merge((await current()).values);
+    await pumpEventQueue();
+    await subscription.cancel();
+
+    expect(events, hasLength(1));
+  });
+
+  test('reports a merge that fails', () async {
+    await database.customStatement('DROP TABLE progress');
+
+    final result = await repository.merge([
+      LessonProgress(
+        lessonId: _first,
+        bestScore: 90,
+        completedAt: _monday,
+        updatedAt: _monday,
+      ),
+    ]);
+
+    expect(result.failureOrNull, isA<UnexpectedFailure>());
+  });
+
+  test('forgets every lesson when the account is deleted', () async {
+    await recordAt(_monday, _first, 70);
+    await recordAt(_tuesday, _second, 90);
+
+    expect(await repository.clear(), const Ok<void>(null));
+    expect(await current(), isEmpty);
+  });
+
+  test('reads every lesson at once', () async {
+    await recordAt(_monday, _first, 70);
+
+    expect((await repository.readAll()).valueOrNull, await current());
+  });
+
+  test('reports a read that fails', () async {
+    await database.customStatement('DROP TABLE progress');
+
+    expect(
+      (await repository.readAll()).failureOrNull,
+      isA<UnexpectedFailure>(),
+    );
+  });
+
+  test('reports a clear that fails', () async {
+    await database.customStatement('DROP TABLE progress');
+
+    expect((await repository.clear()).failureOrNull, isA<UnexpectedFailure>());
+  });
+
   test('reports a broken table to listeners instead of throwing', () async {
     final results = repository.watchAll().take(2).toList();
     await pumpEventQueue();

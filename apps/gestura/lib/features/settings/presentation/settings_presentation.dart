@@ -33,3 +33,20 @@ extension AppThemePreferencePresentation on AppThemePreference {
     AppThemePreference.dark => Icons.dark_mode_rounded,
   };
 }
+
+extension DailyGoalPresentation on DailyGoal {
+  String label(AppLocalizations l10n) => l10n.dailyGoalMinutes(minutes);
+
+  String description(AppLocalizations l10n) => switch (this) {
+    DailyGoal.five => l10n.goalCasual,
+    DailyGoal.ten => l10n.goalRegular,
+    DailyGoal.fifteen => l10n.goalSerious,
+  };
+}
+
+extension DominantHandPresentation on DominantHand {
+  String label(AppLocalizations l10n) => switch (this) {
+    DominantHand.right => l10n.handRight,
+    DominantHand.left => l10n.handLeft,
+  };
+}

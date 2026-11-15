@@ -11,13 +11,16 @@ import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:gestura_core/gestura_core.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'support/emulated_auth.dart';
+
 const AppConfig _dev = AppConfig(flavor: Flavor.dev);
 const LessonId _first = LessonId('demo-a1-1');
 
 Future<void> _start() async {
+  await signInAsGuest();
   await configureDependencies(_dev);
   await getIt<SettingsRepository>().save(
-    const AppSettings(language: AppLanguage.english),
+    const AppSettings(language: AppLanguage.english, onboardingComplete: true),
   );
 }
 
@@ -29,6 +32,7 @@ void main() {
     await database.delete(database.progress).go();
     await getIt<SettingsRepository>().save(AppSettings.defaults);
     await getIt.reset();
+    await signOutEverywhere();
   });
 
   testWidgets('a finished lesson survives a restart of the database', (

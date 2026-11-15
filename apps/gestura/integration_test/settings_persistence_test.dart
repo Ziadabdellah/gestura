@@ -11,6 +11,8 @@ import 'package:gestura_core/gestura_core.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'support/emulated_auth.dart';
+
 Future<SharedPreferencesSettingsRepository> _freshRepository() async =>
     SharedPreferencesSettingsRepository(
       await SharedPreferencesWithCache.create(
@@ -26,6 +28,7 @@ void main() {
   tearDown(() async {
     await (await _freshRepository()).save(AppSettings.defaults);
     await getIt.reset();
+    await signOutEverywhere();
   });
 
   testWidgets('settings survive a fresh read from the device storage', (
@@ -49,8 +52,10 @@ void main() {
       const AppSettings(
         language: AppLanguage.arabic,
         theme: AppThemePreference.dark,
+        onboardingComplete: true,
       ),
     );
+    await signInAsGuest();
     await configureDependencies(const AppConfig(flavor: Flavor.dev));
 
     await tester.pumpWidget(
@@ -74,8 +79,12 @@ void main() {
     tester,
   ) async {
     await (await _freshRepository()).save(
-      const AppSettings(language: AppLanguage.english),
+      const AppSettings(
+        language: AppLanguage.english,
+        onboardingComplete: true,
+      ),
     );
+    await signInAsGuest();
     await configureDependencies(const AppConfig(flavor: Flavor.dev));
 
     await tester.pumpWidget(

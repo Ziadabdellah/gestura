@@ -28,6 +28,38 @@ final class StorageFullFailure extends Failure {
   const new();
 }
 
+final class NoContentFailure extends Failure {
+  const new();
+}
+
+enum AuthProblem {
+  invalidEmail,
+  wrongCredentials,
+  emailInUse,
+  weakPassword,
+  tooManyRequests,
+  accountDisabled,
+  unavailable,
+  signInAgain,
+}
+
+final class AuthFailure extends Failure {
+  const new(this.problem);
+
+  final AuthProblem problem;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AuthFailure && other.problem == problem;
+
+  @override
+  int get hashCode => Object.hash(AuthFailure, problem);
+
+  @override
+  String toString() => 'AuthFailure(${problem.name})';
+}
+
 final class UnexpectedFailure extends Failure {
   const new(this.error);
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/dictionary/presentation/view_models/dictionary_state.dart';
@@ -22,10 +23,19 @@ class DictionaryPage extends StatelessWidget {
     child: Scaffold(
       appBar: AppBar(title: Text(context.l10n.tabDictionary)),
       body: BlocBuilder<DictionaryViewModel, DictionaryState>(
-        builder: (context, state) => DictionaryView(
-          state: state,
-          onRetry: () => unawaited(context.read<DictionaryViewModel>().load()),
-        ),
+        builder: (context, state) {
+          final viewModel = context.read<DictionaryViewModel>();
+          return DictionaryView(
+            state: state,
+            onRetry: () => unawaited(viewModel.load()),
+            onSearch: viewModel.search,
+            onClearSearch: () => unawaited(viewModel.clearSearch()),
+            onCategorySelected: (category) =>
+                unawaited(viewModel.selectCategory(category)),
+            onOpenSign: (sign) =>
+                unawaited(SignRoute(signId: sign.id.value).push<void>(context)),
+          );
+        },
       ),
     ),
   );

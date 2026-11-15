@@ -39,6 +39,38 @@ class FakeProgressRepository implements ProgressRepository {
   });
 
   @override
+  Future<Result<ProgressByLesson>> readAll() async => _snapshot();
+
+  @override
+  Future<Result<void>> merge(Iterable<LessonProgress> incoming) async {
+    if (saveFailure case final Failure failure) return Err(failure);
+    var changed = false;
+    for (final item in incoming) {
+      final existing = stored[item.lessonId];
+      final merged = LessonProgress(
+        lessonId: item.lessonId,
+        bestScore: math.max(item.bestScore, existing?.bestScore ?? 0),
+        completedAt: existing?.completedAt ?? item.completedAt,
+        updatedAt: existing?.updatedAt ?? item.updatedAt,
+      );
+      if (merged != existing) {
+        stored[item.lessonId] = merged;
+        changed = true;
+      }
+    }
+    if (changed) _changes.add(null);
+    return const Ok(null);
+  }
+
+  @override
+  Future<Result<void>> clear() async {
+    if (saveFailure case final Failure failure) return Err(failure);
+    stored.clear();
+    _changes.add(null);
+    return const Ok(null);
+  }
+
+  @override
   Future<Result<void>> recordCompletion(
     LessonId lesson, {
     required int score,

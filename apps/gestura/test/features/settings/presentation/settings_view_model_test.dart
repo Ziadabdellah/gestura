@@ -57,6 +57,30 @@ void main() {
       expect(repository.saved.single.language, AppLanguage.arabic);
     });
 
+    test('saves every onboarding choice', () async {
+      await viewModel().setSignLanguage('demo');
+      await viewModel().setDailyGoal(DailyGoal.five);
+      await viewModel().setDominantHand(DominantHand.left);
+      await viewModel().setAnalyticsConsent(granted: true);
+      await viewModel().setCrashReportsConsent(granted: true);
+      await viewModel().completeOnboarding();
+
+      expect(
+        state().settings,
+        const AppSettings(
+          language: AppLanguage.english,
+          signLanguage: 'demo',
+          dailyGoal: DailyGoal.five,
+          dominantHand: DominantHand.left,
+          analyticsConsent: true,
+          crashReportsConsent: true,
+          onboardingComplete: true,
+        ),
+      );
+      expect(repository.saved, hasLength(6));
+      expect(repository.stored, state().settings);
+    });
+
     test('changes and saves the theme', () async {
       await viewModel().setTheme(AppThemePreference.dark);
 

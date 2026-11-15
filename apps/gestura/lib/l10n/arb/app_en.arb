@@ -168,5 +168,170 @@
   "videoReplay": "Replay",
   "videoPlay": "Play",
   "videoPause": "Pause",
-  "signVideo": "Sign video"
+  "signVideo": "Sign video",
+  "searchSignsHint": "Search signs",
+  "clearSearch": "Clear search",
+  "categoryAll": "All",
+  "noSignsFound": "No signs for “{query}”",
+  "@noSignsFound": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "noSignsInCategory": "No signs in this category yet",
+  "signResultCount": "{count, plural, =0{No signs} =1{1 sign} other{{count} signs}}",
+  "@signResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "howToSign": "How to sign",
+  "relatedSigns": "Related signs",
+  "signSource": "Source: {name} · License: {license}",
+  "@signSource": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "license": {
+        "type": "String"
+      }
+    }
+  },
+  "getStarted": "Get started",
+  "skip": "Skip",
+  "onboardingProgress": "Step {current} of {total}",
+  "@onboardingProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "signLanguageTitle": "Which sign language do you want to learn?",
+  "signLanguageSubtitle": "Each sign language has its own pack. More packs are on their way.",
+  "dailyGoalTitle": "Set a daily goal",
+  "dailyGoalSubtitle": "A few minutes every day helps signs stick. You can change this any time.",
+  "dailyGoalMinutes": "{minutes, plural, =1{1 minute a day} other{{minutes} minutes a day}}",
+  "@dailyGoalMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "goalCasual": "Casual",
+  "goalRegular": "Regular",
+  "goalSerious": "Serious",
+  "handTitle": "Which hand do you sign with?",
+  "handSubtitle": "If you sign with your left hand, videos start mirrored so they match your hands.",
+  "handRight": "Right hand",
+  "handLeft": "Left hand",
+  "privacyTitle": "Your privacy",
+  "privacySubtitle": "Both are off unless you turn them on. You can change them any time in Settings.",
+  "analyticsTitle": "Usage analytics",
+  "analyticsSubtitle": "Share anonymous usage numbers, such as which lessons get finished, to help improve Gestura.",
+  "crashReportsTitle": "Crash reports",
+  "crashReportsSubtitle": "Send technical details when the app crashes, so the problem can be fixed.",
+  "settingsLearning": "Learning",
+  "settingsPrivacy": "Privacy",
+  "leftHandedTitle": "I sign with my left hand",
+  "leftHandedSubtitle": "Sign videos start mirrored",
+  "welcomeTitle": "Ready to start?",
+  "welcomeSubtitle": "Start right away as a guest, or create an account with your email address.",
+  "continueAsGuest": "Continue as guest",
+  "createAccount": "Create account",
+  "haveAccount": "I already have an account",
+  "signInTitle": "Welcome back",
+  "signInAction": "Sign in",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "forgotPassword": "Forgot password?",
+  "noAccountYet": "New here? Create an account",
+  "createAccountTitle": "Create your account",
+  "createAccountSubtitle": "Create a free account with your email address.",
+  "linkAccountSubtitle": "Your guest account becomes your new account, so nothing is lost.",
+  "passwordHint": "{count, plural, =1{At least 1 character} other{At least {count} characters}}",
+  "@passwordHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "emailRequired": "Enter your email address",
+  "emailInvalid": "Enter a valid email address",
+  "passwordRequired": "Enter your password",
+  "passwordTooShort": "{count, plural, =1{Use at least 1 character} other{Use at least {count} characters}}",
+  "@passwordTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resetPasswordTitle": "Reset your password",
+  "resetPasswordSubtitle": "Enter your email address and we'll send you a link to choose a new password.",
+  "sendResetLink": "Send link",
+  "resetLinkSent": "If an account exists for {email}, a link to reset the password is on its way.",
+  "@resetLinkSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "backToSignIn": "Back to sign in",
+  "verifyEmailTitle": "Check your inbox",
+  "verifyEmailMessage": "We sent a link to {email}. Open it to confirm your email address.",
+  "@verifyEmailMessage": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "verifiedAction": "I've confirmed it",
+  "resendEmail": "Send the email again",
+  "verificationSent": "We sent you a new link.",
+  "notVerifiedYet": "Your email address isn't confirmed yet. Open the link in the email, then try again.",
+  "verifyLater": "Later",
+  "emailConfirmedTitle": "All set",
+  "emailConfirmedMessage": "Your email address is confirmed.",
+  "emailConfirmed": "Email confirmed",
+  "emailNotVerified": "Email not confirmed yet",
+  "verifyEmailAction": "Confirm email",
+  "guestTitle": "You're learning as a guest",
+  "guestMessage": "Create a free account with your email address.",
+  "signOut": "Sign out",
+  "signOutTitle": "Sign out?",
+  "signOutMessage": "Your progress stays on this device.",
+  "cancel": "Cancel",
+  "authInvalidEmail": "That email address doesn't look right.",
+  "authWrongCredentials": "The email or password is incorrect.",
+  "authEmailInUse": "An account with this email already exists. Sign in instead.",
+  "authWeakPassword": "Choose a stronger password.",
+  "authTooManyRequests": "Too many attempts. Wait a moment and try again.",
+  "authAccountDisabled": "This account has been turned off.",
+  "authUnavailable": "Signing in isn't available right now. Please try again later.",
+  "deleteAccount": "Delete account",
+  "deleteAccountTitle": "Delete your account?",
+  "deleteAccountMessage": "This permanently deletes your account and the learning progress saved with it. It can't be undone.",
+  "deleteAccountPasswordPrompt": "Enter your password to confirm.",
+  "deleteAction": "Delete",
+  "deletingAccount": "Deleting your account",
+  "authSignInAgain": "For your security, enter your password again.",
+  "privacyPolicy": "Privacy policy",
+  "linkOpenFailed": "Couldn't open the page. Please try again.",
+  "failureNoContent": "Lessons for this sign language are on their way. Check again soon.",
+  "packsComingSoon": "Sign language packs are on their way. You can continue now, and they will appear here once they are ready."
 }

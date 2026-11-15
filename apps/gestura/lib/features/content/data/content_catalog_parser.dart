@@ -10,7 +10,14 @@ import 'package:gestura/features/content/domain/sign.dart';
 const int supportedCatalogVersion = 1;
 const int quizOptionCount = 4;
 
-ContentCatalog parseContentCatalog(String source) {
+typedef MediaResolver = MediaRef Function(String path);
+
+MediaRef bundledMedia(String path) => AssetMedia(path);
+
+ContentCatalog parseContentCatalog(
+  String source, {
+  MediaResolver media = bundledMedia,
+}) {
   final catalog = switch (jsonDecode(source)) {
     {
       'version': supportedCatalogVersion,
@@ -23,7 +30,7 @@ ContentCatalog parseContentCatalog(String source) {
         pack: _pack(pack),
         categories: categories.map(_category).toList(),
         courses: courses.map(_course).toList(),
-        signs: signs.map(_sign).toList(),
+        signs: [for (final sign in signs) _sign(sign, media)],
       ),
     final Object? other => throw FormatException(
       'Unsupported content catalog',
@@ -120,7 +127,7 @@ LessonStep _step(Object? json) => switch (json) {
   _ => throw FormatException('Invalid lesson step', json),
 };
 
-Sign _sign(Object? json) => switch (json) {
+Sign _sign(Object? json, MediaResolver media) => switch (json) {
   {
     'id': final String id,
     'gloss': final String gloss,
@@ -140,8 +147,8 @@ Sign _sign(Object? json) => switch (json) {
       meaning: _text(meaning),
       category: CategoryId(category),
       media: SignMedia(
-        videoAsset: video,
-        thumbnailAsset: thumbnail,
+        video: media(video),
+        thumbnail: media(thumbnail),
         duration: Duration(milliseconds: durationMs),
       ),
       source: ContentSource(

@@ -16,6 +16,8 @@ import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:video_player/video_player.dart';
 
+import 'support/emulated_auth.dart';
+
 const AppConfig _dev = AppConfig(flavor: Flavor.dev);
 
 LessonPlayerState _state(WidgetTester tester) =>
@@ -36,15 +38,20 @@ void main() {
     await database.delete(database.progress).go();
     await getIt<SettingsRepository>().save(AppSettings.defaults);
     await getIt.reset();
+    await signOutEverywhere();
   });
 
   testWidgets('a learner finishes the first lesson and Learn shows it', (
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
+    await signInAsGuest();
     await configureDependencies(_dev);
     await getIt<SettingsRepository>().save(
-      const AppSettings(language: AppLanguage.english),
+      const AppSettings(
+        language: AppLanguage.english,
+        onboardingComplete: true,
+      ),
     );
     await tester.pumpWidget(
       const ProviderScope(child: GesturaApp(config: _dev)),

@@ -43,7 +43,7 @@ melos:
     test:flutter:
       description: Run Flutter tests with coverage.
       exec:
-        command: flutter test --coverage
+        command: flutter test --coverage --flavor dev
         concurrency: 1
       packageFilters:
         flutter: true

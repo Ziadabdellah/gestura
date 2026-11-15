@@ -5,6 +5,7 @@ import 'package:gestura/features/profile/presentation/pages/profile_page.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/presentation/pages/settings_page.dart';
 import 'package:gestura_core/gestura_core.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 import '../../../helpers/pump_app.dart';
 
@@ -84,16 +85,109 @@ void main() {
     testWidgets('turns reduce motion on for the whole app', (tester) async {
       final repository = await tester.pumpApp(initialLocation: _settings);
 
-      await tester.scrollUntilVisible(find.byType(SwitchListTile), 100);
-      await tester.ensureVisible(find.byType(SwitchListTile));
+      final reduceMotion = find.widgetWithText(SwitchListTile, 'Reduce motion');
+      await tester.scrollUntilVisible(reduceMotion, 100);
+      await tester.ensureVisible(reduceMotion);
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(SwitchListTile));
+      await tester.tap(reduceMotion);
       await tester.pumpAndSettle();
 
       final context = tester.element(find.byType(SettingsPage));
 
       expect(MediaQuery.disableAnimationsOf(context), isTrue);
       expect(repository.stored.reduceMotion, isTrue);
+    });
+
+    testWidgets('changes the daily goal', (tester) async {
+      final repository = await tester.pumpApp(initialLocation: _settings);
+
+      await tester.tap(find.text('15 minutes a day'));
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.dailyGoal, DailyGoal.fifteen);
+    });
+
+    testWidgets('mirrors videos for a left-handed signer', (tester) async {
+      final repository = await tester.pumpApp(initialLocation: _settings);
+      final leftHanded = find.widgetWithText(
+        SwitchListTile,
+        'I sign with my left hand',
+      );
+
+      await tester.scrollUntilVisible(leftHanded, 100);
+      await tester.pumpAndSettle();
+      await tester.tap(leftHanded);
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.dominantHand, DominantHand.left);
+
+      await tester.tap(leftHanded);
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.dominantHand, DominantHand.right);
+    });
+
+    testWidgets('records each privacy choice on its own', (tester) async {
+      final repository = await tester.pumpApp(initialLocation: _settings);
+      final analytics = find.widgetWithText(SwitchListTile, 'Usage analytics');
+      final crashes = find.widgetWithText(SwitchListTile, 'Crash reports');
+
+      await tester.scrollUntilVisible(crashes, 100);
+      await tester.pumpAndSettle();
+      await tester.tap(analytics);
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.analyticsConsent, isTrue);
+      expect(repository.stored.crashReportsConsent, isFalse);
+
+      await tester.tap(crashes);
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.crashReportsConsent, isTrue);
+    });
+
+    testWidgets('opens the privacy policy in the app language', (tester) async {
+      await tester.pumpApp(
+        initialLocation: _settings,
+        settings: englishLight.copyWith(language: AppLanguage.german),
+      );
+      final policy = find.text('Datenschutzerklärung');
+
+      await tester.scrollUntilVisible(policy, 100);
+      await tester.pumpAndSettle();
+      await tester.tap(policy);
+      await tester.pumpAndSettle();
+
+      expect(
+        fakeLinks.launched.single.url,
+        'https://gestura-prod.web.app/privacy/de',
+      );
+      expect(
+        fakeLinks.launched.single.mode,
+        PreferredLaunchMode.inAppBrowserView,
+      );
+    });
+
+    testWidgets('says when a link cannot be opened', (tester) async {
+      await tester.pumpApp(initialLocation: _settings);
+      final policy = find.text('Privacy policy');
+      await tester.scrollUntilVisible(policy, 100);
+      await tester.pumpAndSettle();
+
+      fakeLinks.opens = false;
+      await tester.tap(policy);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text("Couldn't open the page. Please try again."),
+        findsOneWidget,
+      );
+
+      fakeLinks.error = StateError('no browser');
+      await tester.tap(policy);
+      await tester.pumpAndSettle();
+
+      expect(fakeLinks.launched, hasLength(1));
     });
 
     testWidgets('tells the user and keeps the old choice when saving fails', (
@@ -119,6 +213,7 @@ void main() {
       const AppSettings(
         language: AppLanguage.arabic,
         theme: AppThemePreference.dark,
+        onboardingComplete: true,
       ),
     ]) {
       testWidgets('meets the accessibility guidelines in '

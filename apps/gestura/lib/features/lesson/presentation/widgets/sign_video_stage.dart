@@ -1,7 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gestura/core/media/media_cache.dart';
+import 'package:gestura/core/media/media_image.dart';
+import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/content/domain/sign.dart';
+import 'package:gestura/features/content/presentation/sign_hero.dart';
 import 'package:gestura/features/lesson/domain/playback.dart';
 import 'package:gestura/features/lesson/presentation/widgets/video_controls.dart';
 import 'package:gestura/l10n/l10n.dart';
@@ -17,6 +21,7 @@ class SignVideoStage extends StatefulWidget {
     required this.onMirroredChanged,
     super.key,
     this.emptyMessage,
+    this.hero = false,
   });
 
   static const double aspectRatio = 4 / 5;
@@ -29,6 +34,7 @@ class SignVideoStage extends StatefulWidget {
   final ValueChanged<bool> onLoopingChanged;
   final ValueChanged<bool> onMirroredChanged;
   final String? emptyMessage;
+  final bool hero;
 
   @override
   State<SignVideoStage> createState() => _SignVideoStageState();
@@ -40,6 +46,7 @@ class _SignVideoStageState extends State<SignVideoStage> {
   bool _isPlaying = false;
   bool _autoplay = true;
   bool _started = false;
+  int _request = 0;
 
   @override
   void didChangeDependencies() {
@@ -54,7 +61,7 @@ class _SignVideoStageState extends State<SignVideoStage> {
   @override
   void didUpdateWidget(SignVideoStage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.sign?.media.videoAsset != widget.sign?.media.videoAsset) {
+    if (oldWidget.sign?.media.video != widget.sign?.media.video) {
       _close();
       unawaited(_open(widget.sign));
       return;
@@ -77,10 +84,20 @@ class _SignVideoStageState extends State<SignVideoStage> {
 
   Future<void> _open(Sign? sign) async {
     if (sign == null) return;
-    final controller = VideoPlayerController.asset(sign.media.videoAsset);
-    _controller = controller;
-    controller.addListener(_onControllerChanged);
+    final request = ++_request;
     try {
+      final controller = switch (sign.media.video) {
+        AssetMedia(:final path) => VideoPlayerController.asset(path),
+        RemoteMedia(:final uri) => VideoPlayerController.file(
+          await getIt<MediaCache>().file(uri),
+        ),
+      };
+      if (request != _request || !mounted) {
+        unawaited(controller.dispose());
+        return;
+      }
+      _controller = controller;
+      controller.addListener(_onControllerChanged);
       await controller.initialize();
       await controller.setLooping(widget.playback.looping);
       await controller.setPlaybackSpeed(widget.playback.speed.rate);
@@ -88,11 +105,12 @@ class _SignVideoStageState extends State<SignVideoStage> {
         await controller.play();
       }
     } on Object {
-      if (identical(_controller, controller)) _close();
+      if (request == _request) _close();
     }
   }
 
   void _close() {
+    _request++;
     final controller = _controller;
     _controller = null;
     _isReady = false;
@@ -138,11 +156,13 @@ class _SignVideoStageState extends State<SignVideoStage> {
             constraints: BoxConstraints(maxHeight: maxHeight),
             child: AspectRatio(
               aspectRatio: SignVideoStage.aspectRatio,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(sizes.radiusLg),
-                child: ColoredBox(
-                  color: context.gColors.stage,
-                  child: _stage(context),
+              child: _withHero(
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(sizes.radiusLg),
+                  child: ColoredBox(
+                    color: context.gColors.stage,
+                    child: _stage(context),
+                  ),
                 ),
               ),
             ),
@@ -160,6 +180,15 @@ class _SignVideoStageState extends State<SignVideoStage> {
       ],
     );
   }
+
+  Widget _withHero(Widget child) => switch (widget.sign) {
+    final Sign sign when widget.hero => SignHero(
+      signId: sign.id,
+      thumbnail: sign.media.thumbnail,
+      child: child,
+    ),
+    _ => child,
+  };
 
   Widget _stage(BuildContext context) {
     final colors = context.gColors;
@@ -195,11 +224,7 @@ class _SignVideoStageState extends State<SignVideoStage> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.asset(
-                sign.media.thumbnailAsset,
-                fit: BoxFit.cover,
-                excludeFromSemantics: true,
-              ),
+              MediaImage(media: sign.media.thumbnail),
               if (_isReady && controller != null)
                 FittedBox(
                   fit: BoxFit.cover,

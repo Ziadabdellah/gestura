@@ -24,7 +24,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform
 
   @override
   Future<int?> createWithOptions(VideoCreationOptions options) async {
-    final asset = options.dataSource.asset ?? '';
+    final asset = options.dataSource.asset ?? options.dataSource.uri ?? '';
     final id = _nextId++;
     opened.add(asset);
     final events = StreamController<VideoEvent>(

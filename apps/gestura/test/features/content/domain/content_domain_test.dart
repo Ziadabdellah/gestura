@@ -22,8 +22,8 @@ Sign _sign(String id) => Sign(
   meaning: _title,
   category: const CategoryId('basics'),
   media: const SignMedia(
-    videoAsset: 'v.mp4',
-    thumbnailAsset: 't.webp',
+    video: AssetMedia('v.mp4'),
+    thumbnail: AssetMedia('t.webp'),
     duration: Duration(seconds: 2),
   ),
   source: const ContentSource(name: 'Test', license: 'CC BY 4.0'),

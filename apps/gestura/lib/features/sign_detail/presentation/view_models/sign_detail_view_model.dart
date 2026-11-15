@@ -1,0 +1,64 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gestura/features/content/domain/content_ids.dart';
+import 'package:gestura/features/content/domain/content_repository.dart';
+import 'package:gestura/features/lesson/domain/playback.dart';
+import 'package:gestura/features/sign_detail/presentation/view_models/sign_detail_state.dart';
+import 'package:gestura_core/gestura_core.dart';
+
+class SignDetailViewModel extends Cubit<SignDetailState> {
+  new(this._content, {this._playback = const Playback()})
+    : super(const SignDetailLoading());
+
+  final ContentRepository _content;
+  Playback _playback;
+
+  Future<void> load(SignId id) async {
+    if (state is! SignDetailLoading) emit(const SignDetailLoading());
+    final (sign, categories, signs) = await (
+      _content.sign(id),
+      _content.categories(),
+      _content.searchSigns(''),
+    ).wait;
+    if (isClosed) return;
+    switch ((sign, categories, signs)) {
+      case (
+        Ok(value: final sign),
+        Ok(value: final categories),
+        Ok(value: final signs),
+      ):
+        emit(
+          SignDetailLoaded(
+            sign: sign,
+            category: categories
+                .where((category) => category.id == sign.category)
+                .firstOrNull,
+            related: [
+              for (final other in signs)
+                if (other.category == sign.category && other != sign) other,
+            ],
+            playback: _playback,
+          ),
+        );
+      case (Err(:final failure), _, _) ||
+          (_, Err(:final failure), _) ||
+          (_, _, Err(:final failure)):
+        emit(SignDetailFailed(failure));
+    }
+  }
+
+  void setSpeed(PlaybackSpeed speed) =>
+      _change(_playback.copyWith(speed: speed));
+
+  void setLooping({required bool looping}) =>
+      _change(_playback.copyWith(looping: looping));
+
+  void setMirrored({required bool mirrored}) =>
+      _change(_playback.copyWith(mirrored: mirrored));
+
+  void _change(Playback playback) {
+    _playback = playback;
+    if (state case final SignDetailLoaded loaded) {
+      emit(loaded.withPlayback(playback));
+    }
+  }
+}

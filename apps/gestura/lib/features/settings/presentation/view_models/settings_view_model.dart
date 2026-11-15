@@ -25,6 +25,24 @@ class SettingsViewModel extends _$SettingsViewModel {
   Future<void> setReduceMotion({required bool enabled}) =>
       _update(state.settings.copyWith(reduceMotion: enabled));
 
+  Future<void> setSignLanguage(String code) =>
+      _update(state.settings.copyWith(signLanguage: code));
+
+  Future<void> setDailyGoal(DailyGoal goal) =>
+      _update(state.settings.copyWith(dailyGoal: goal));
+
+  Future<void> setDominantHand(DominantHand hand) =>
+      _update(state.settings.copyWith(dominantHand: hand));
+
+  Future<void> setAnalyticsConsent({required bool granted}) =>
+      _update(state.settings.copyWith(analyticsConsent: granted));
+
+  Future<void> setCrashReportsConsent({required bool granted}) =>
+      _update(state.settings.copyWith(crashReportsConsent: granted));
+
+  Future<void> completeOnboarding() =>
+      _update(state.settings.copyWith(onboardingComplete: true));
+
   Future<void> _update(AppSettings next) async {
     final previous = state.settings;
     if (next == previous) return;

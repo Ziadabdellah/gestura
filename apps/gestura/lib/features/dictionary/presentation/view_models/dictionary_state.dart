@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/sign.dart';
+import 'package:gestura/features/dictionary/domain/sign_sections.dart';
 import 'package:gestura_core/gestura_core.dart';
 
 sealed class DictionaryState extends Equatable {
@@ -14,14 +16,28 @@ final class DictionaryLoading extends DictionaryState {
 }
 
 final class DictionaryLoaded extends DictionaryState {
-  const new(this.signs);
+  const new({
+    required this.categories,
+    required this.results,
+    this.query = '',
+    this.category,
+  });
 
-  final List<Sign> signs;
+  final List<SignCategory> categories;
+  final List<Sign> results;
+  final String query;
+  final CategoryId? category;
 
-  bool get hasPlaceholders => signs.any((sign) => sign.isPlaceholder);
+  bool get isSearching => query.trim().isNotEmpty;
+
+  bool get hasPlaceholders => results.any((sign) => sign.isPlaceholder);
+
+  List<SignSection> get sections => isSearching
+      ? [SignSection(initial: '', signs: results)]
+      : sectionsByInitial(results);
 
   @override
-  List<Object?> get props => [signs];
+  List<Object?> get props => [categories, results, query, category];
 }
 
 final class DictionaryFailed extends DictionaryState {

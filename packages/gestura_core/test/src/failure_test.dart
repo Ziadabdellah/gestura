@@ -13,6 +13,7 @@ void main() {
         const PermissionDeniedFailure(),
       );
       expect(fresh(StorageFullFailure.new), const StorageFullFailure());
+      expect(fresh(NoContentFailure.new), const NoContentFailure());
       expect(
         fresh(NetworkFailure.new).hashCode,
         const NetworkFailure().hashCode,
@@ -35,12 +36,39 @@ void main() {
       expect(const UnexpectedFailure('a'), isNot(const NetworkFailure()));
     });
 
+    test('auth failures compare their problem', () {
+      AuthFailure of(AuthProblem problem) => AuthFailure(problem);
+
+      expect(
+        of(AuthProblem.emailInUse),
+        const AuthFailure(AuthProblem.emailInUse),
+      );
+      expect(
+        of(AuthProblem.emailInUse).hashCode,
+        const AuthFailure(AuthProblem.emailInUse).hashCode,
+      );
+      expect(
+        const AuthFailure(AuthProblem.emailInUse),
+        isNot(const AuthFailure(AuthProblem.weakPassword)),
+      );
+      expect(
+        const AuthFailure(AuthProblem.weakPassword),
+        isNot(const NetworkFailure()),
+      );
+      expect(
+        const AuthFailure(AuthProblem.tooManyRequests).toString(),
+        'AuthFailure(tooManyRequests)',
+      );
+    });
+
     test('every failure can be handled by an exhaustive switch', () {
       String code(Failure failure) => switch (failure) {
         NetworkFailure() => 'network',
         NotFoundFailure() => 'not-found',
         PermissionDeniedFailure() => 'permission',
         StorageFullFailure() => 'storage',
+        NoContentFailure() => 'no-content',
+        AuthFailure() => 'auth',
         UnexpectedFailure() => 'unexpected',
       };
 
@@ -50,9 +78,21 @@ void main() {
           const NotFoundFailure(),
           const PermissionDeniedFailure(),
           const StorageFullFailure(),
+          const NoContentFailure(),
+          const AuthFailure(AuthProblem.unavailable),
+          const AuthFailure(AuthProblem.signInAgain),
           const UnexpectedFailure(0),
         ].map(code),
-        ['network', 'not-found', 'permission', 'storage', 'unexpected'],
+        [
+          'network',
+          'not-found',
+          'permission',
+          'storage',
+          'no-content',
+          'auth',
+          'auth',
+          'unexpected',
+        ],
       );
     });
   });

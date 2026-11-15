@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gestura/core/media/media_image.dart';
 import 'package:gestura/features/content/domain/lesson.dart';
 import 'package:gestura/features/content/presentation/content_presentation.dart';
 import 'package:gestura/features/lesson/presentation/view_models/lesson_player_state.dart';
@@ -55,10 +56,8 @@ class ChooseVideoQuiz extends StatelessWidget {
                           borderRadius: BorderRadius.circular(sizes.radiusSm),
                           child: AspectRatio(
                             aspectRatio: thumbnailAspectRatio,
-                            child: Image.asset(
-                              state.signOf(id).media.thumbnailAsset,
-                              fit: BoxFit.cover,
-                              excludeFromSemantics: true,
+                            child: MediaImage(
+                              media: state.signOf(id).media.thumbnail,
                             ),
                           ),
                         ),

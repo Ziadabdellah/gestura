@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gestura/core/media/media_cache.dart';
+import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/sign.dart';
 import 'package:gestura/features/lesson/domain/playback.dart';
@@ -9,6 +13,7 @@ import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import '../../../helpers/fake_content_repository.dart';
+import '../../../helpers/fake_media_cache.dart';
 import '../../../helpers/fake_video_player_platform.dart';
 import '../../../helpers/golden_scenario.dart';
 
@@ -66,7 +71,7 @@ void main() {
   testWidgets('opens the sign video and plays it on a loop', (tester) async {
     await pumpStage(tester, sign: _hello);
 
-    expect(video.opened, [_hello.media.videoAsset]);
+    expect(video.opened, [(_hello.media.video as AssetMedia).path]);
     expect(
       video.calls,
       containsAllInOrder(['looping true', 'play', 'speed 1.0']),
@@ -164,13 +169,83 @@ void main() {
 
     await pumpStage(tester, sign: _thanks);
 
-    expect(video.opened, [_hello.media.videoAsset, _thanks.media.videoAsset]);
+    expect(video.opened, [
+      (_hello.media.video as AssetMedia).path,
+      (_thanks.media.video as AssetMedia).path,
+    ]);
     expect(video.calls, contains('release'));
     expect(video.openPlayers, 1);
   });
 
+  group('published signs', () {
+    late FakeMediaCache cache;
+    Sign remote(Sign sign) => Sign(
+      id: sign.id,
+      gloss: sign.gloss,
+      meaning: sign.meaning,
+      category: sign.category,
+      media: SignMedia(
+        video: RemoteMedia(
+          Uri.parse(
+            'https://c.web.app/content/demo/media/${sign.id.value}.mp4',
+          ),
+        ),
+        thumbnail: RemoteMedia(
+          Uri.parse(
+            'https://c.web.app/content/demo/media/${sign.id.value}.webp',
+          ),
+        ),
+        duration: sign.media.duration,
+      ),
+      source: sign.source,
+    );
+
+    setUp(() async {
+      await getIt.reset();
+      cache = FakeMediaCache('assets/content/demo/media');
+      getIt.registerSingleton<MediaCache>(cache);
+    });
+
+    tearDown(getIt.reset);
+
+    testWidgets('plays a downloaded video from the device', (tester) async {
+      await pumpStage(tester, sign: remote(_hello));
+      await tester.pumpAndSettle();
+
+      expect(
+        video.opened.single,
+        endsWith('assets/content/demo/media/hello.mp4'),
+      );
+    });
+
+    testWidgets('keeps the poster when a video cannot be downloaded', (
+      tester,
+    ) async {
+      cache.missing.add('hello.mp4');
+
+      await pumpStage(tester, sign: remote(_hello));
+      await tester.pumpAndSettle();
+
+      expect(video.opened, isEmpty);
+      expect(find.byType(VideoPlayer), findsNothing);
+    });
+
+    testWidgets('drops a download for a sign that is no longer shown', (
+      tester,
+    ) async {
+      final hold = cache.hold = Completer<void>();
+      await pumpStage(tester, sign: remote(_hello));
+      await pumpStage(tester, sign: remote(_thanks));
+      hold.complete();
+      await tester.pumpAndSettle();
+
+      expect(video.opened.single, endsWith('thank-you.mp4'));
+      expect(video.openPlayers, 1);
+    });
+  });
+
   testWidgets('keeps the poster when a video cannot be opened', (tester) async {
-    video.broken.add(_hello.media.videoAsset);
+    video.broken.add((_hello.media.video as AssetMedia).path);
 
     await pumpStage(tester, sign: _hello);
 

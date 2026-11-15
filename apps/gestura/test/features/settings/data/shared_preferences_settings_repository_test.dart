@@ -54,6 +54,25 @@ void main() {
     expect(afterRestart.load(), settings);
   });
 
+  test('keeps the onboarding choices and consents', () async {
+    const settings = AppSettings(
+      signLanguage: 'demo',
+      dailyGoal: DailyGoal.fifteen,
+      dominantHand: DominantHand.left,
+      analyticsConsent: true,
+      crashReportsConsent: true,
+      onboardingComplete: true,
+    );
+
+    await (await _repository()).save(settings);
+
+    expect((await _repository()).load(), settings);
+    expect(
+      (await _preferences()).getInt(PreferenceKeys.dailyGoal),
+      DailyGoal.fifteen.minutes,
+    );
+  });
+
   test('forgets the language when it goes back to the system one', () async {
     final repository = await _repository();
     await repository.save(const AppSettings(language: AppLanguage.german));
@@ -72,6 +91,8 @@ void main() {
         InMemorySharedPreferencesAsync.withData({
           PreferenceKeys.language: 'xx',
           PreferenceKeys.theme: 'neon',
+          PreferenceKeys.dailyGoal: 12,
+          PreferenceKeys.dominantHand: 'both',
         });
 
     expect((await _repository()).load(), AppSettings.defaults);
@@ -83,6 +104,12 @@ void main() {
           PreferenceKeys.language: 42,
           PreferenceKeys.theme: true,
           PreferenceKeys.reduceMotion: 'yes',
+          PreferenceKeys.signLanguage: 7,
+          PreferenceKeys.dailyGoal: '10',
+          PreferenceKeys.dominantHand: false,
+          PreferenceKeys.analyticsConsent: 'true',
+          PreferenceKeys.crashReportsConsent: 1,
+          PreferenceKeys.onboardingComplete: 'done',
         });
 
     expect((await _repository()).load(), AppSettings.defaults);

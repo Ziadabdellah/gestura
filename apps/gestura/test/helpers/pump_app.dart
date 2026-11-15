@@ -5,21 +5,33 @@ import 'package:gestura/app/gestura_app.dart';
 import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/config/app_info.dart';
+import 'package:gestura/core/media/media_cache.dart';
+import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
+import 'package:gestura/features/progress/data/progress_sync.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
+import 'package:gestura/features/progress/domain/remote_progress_store.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+import 'fake_auth_repository.dart';
 import 'fake_content_repository.dart';
+import 'fake_media_cache.dart';
 import 'fake_progress_repository.dart';
+import 'fake_remote_progress_store.dart';
 import 'fake_settings_repository.dart';
+import 'fake_telemetry.dart';
+import 'fake_url_launcher.dart';
 import 'fake_video_player_platform.dart';
 
 const AppSettings englishLight = AppSettings(
   language: AppLanguage.english,
   theme: AppThemePreference.light,
+  onboardingComplete: true,
 );
 
 const AppInfo testAppInfo = AppInfo(version: '1.0.0', buildNumber: '7');
@@ -27,20 +39,37 @@ const AppInfo testAppInfo = AppInfo(version: '1.0.0', buildNumber: '7');
 const Size phoneSize = Size(360, 780);
 const Size tabletSize = Size(800, 1280);
 
+FakeUrlLauncher get fakeLinks =>
+    UrlLauncherPlatform.instance as FakeUrlLauncher;
+
 FakeVideoPlayerPlatform get fakeVideo =>
     VideoPlayerPlatform.instance as FakeVideoPlayerPlatform;
 
 Future<void> registerFakes({
   ContentRepository? content,
   ProgressRepository? progress,
+  AuthRepository? auth,
+  Telemetry? telemetry,
+  RemoteProgressStore? remote,
 }) async {
   VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
+  UrlLauncherPlatform.instance = FakeUrlLauncher();
   await getIt.reset();
   getIt
     ..registerSingleton<ContentRepository>(content ?? FakeContentRepository())
     ..registerSingleton<ProgressRepository>(
       progress ?? FakeProgressRepository(),
     )
+    ..registerSingleton<AuthRepository>(auth ?? FakeAuthRepository())
+    ..registerSingleton<Telemetry>(telemetry ?? FakeTelemetry())
+    ..registerSingleton<RemoteProgressStore>(
+      remote ?? FakeRemoteProgressStore(),
+    )
+    ..registerLazySingleton(
+      () => ProgressSync(getIt(), getIt(), getIt()),
+      dispose: (sync) => sync.stop(),
+    )
+    ..registerSingleton<MediaCache>(FakeMediaCache('assets/content/demo/media'))
     ..registerSingleton<AppInfo>(testAppInfo);
 }
 
@@ -65,6 +94,9 @@ extension PumpApp on WidgetTester {
     double textScale = 1,
     ContentRepository? content,
     ProgressRepository? progress,
+    AuthRepository? auth,
+    Telemetry? telemetry,
+    RemoteProgressStore? remote,
   }) async {
     view
       ..physicalSize = surfaceSize * 3
@@ -72,7 +104,13 @@ extension PumpApp on WidgetTester {
     platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(view.reset);
     addTearDown(platformDispatcher.clearTextScaleFactorTestValue);
-    await registerFakes(content: content, progress: progress);
+    await registerFakes(
+      content: content,
+      progress: progress,
+      auth: auth,
+      telemetry: telemetry,
+      remote: remote,
+    );
     addTearDown(getIt.reset);
 
     final repository = FakeSettingsRepository(settings);

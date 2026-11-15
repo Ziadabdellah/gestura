@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/content/domain/lesson.dart';
+import 'package:gestura/features/content/domain/sign.dart';
 import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
 import 'package:gestura/features/lesson/domain/playback.dart';
 import 'package:gestura/features/lesson/presentation/pages/lesson_page.dart';
@@ -26,6 +27,7 @@ final String _firstLesson = const LessonRoute(lessonId: 'demo-a1-1').location;
 const AppSettings _arabicDark = AppSettings(
   language: AppLanguage.arabic,
   theme: AppThemePreference.dark,
+  onboardingComplete: true,
 );
 
 LessonPlayerViewModel _viewModel(WidgetTester tester) =>
@@ -161,7 +163,7 @@ void main() {
 
       await tester.tap(find.text('Hello and thank you'));
       await tester.pump();
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
 
       expect(find.bySemanticsLabel('Loading'), findsOneWidget);
 
@@ -184,6 +186,20 @@ void main() {
           'video.',
         ),
         findsOneWidget,
+      );
+    });
+
+    testWidgets('starts the videos mirrored for a left-handed signer', (
+      tester,
+    ) async {
+      await tester.pumpApp(
+        initialLocation: _firstLesson,
+        settings: englishLight.copyWith(dominantHand: DominantHand.left),
+      );
+
+      expect(
+        (_state(tester) as LessonInProgress).playback,
+        const Playback(mirrored: true),
       );
     });
 
@@ -294,7 +310,7 @@ void main() {
 
       expect(
         fakeVideo.opened.last,
-        state.signOf(step.options[wrong]).media.videoAsset,
+        (state.signOf(step.options[wrong]).media.video as AssetMedia).path,
       );
 
       await _tapText(tester, 'Check');

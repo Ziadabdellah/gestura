@@ -59,10 +59,12 @@ void main() {
               AppSettings(
                 language: AppLanguage.english,
                 theme: AppThemePreference.light,
+                onboardingComplete: true,
               ),
               AppSettings(
                 language: AppLanguage.arabic,
                 theme: AppThemePreference.dark,
+                onboardingComplete: true,
               ),
             ])
               appScenario(

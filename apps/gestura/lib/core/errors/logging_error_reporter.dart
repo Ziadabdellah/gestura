@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:gestura/core/errors/error_reporter.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: ErrorReporter)
+@LazySingleton(as: ErrorReporter, env: ['dev', 'staging'])
 final class LoggingErrorReporter implements ErrorReporter {
   const new();
 

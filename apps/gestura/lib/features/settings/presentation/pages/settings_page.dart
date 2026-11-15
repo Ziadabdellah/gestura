@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gestura/core/links/legal_links.dart';
+import 'package:gestura/core/links/open_link.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_state.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
 import 'package:gestura/features/settings/presentation/widgets/settings_view.dart';
@@ -38,6 +40,21 @@ class SettingsPage extends ConsumerWidget {
               unawaited(viewModel.setLanguage(language)),
           onReduceMotionChanged: (enabled) =>
               unawaited(viewModel.setReduceMotion(enabled: enabled)),
+          onDailyGoalChanged: (goal) => unawaited(viewModel.setDailyGoal(goal)),
+          onDominantHandChanged: (hand) =>
+              unawaited(viewModel.setDominantHand(hand)),
+          onAnalyticsChanged: (granted) =>
+              unawaited(viewModel.setAnalyticsConsent(granted: granted)),
+          onCrashReportsChanged: (granted) =>
+              unawaited(viewModel.setCrashReportsConsent(granted: granted)),
+          onOpenPrivacyPolicy: () => unawaited(
+            openLink(
+              context,
+              LegalLinks.privacyPolicy(
+                Localizations.localeOf(context).languageCode,
+              ),
+            ),
+          ),
         ),
       ),
     );

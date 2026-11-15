@@ -19,6 +19,7 @@ import '../../../helpers/pump_app.dart';
 const AppSettings _arabicDark = AppSettings(
   language: AppLanguage.arabic,
   theme: AppThemePreference.dark,
+  onboardingComplete: true,
 );
 
 FakeProgressRepository _firstDone() =>
