@@ -41,6 +41,13 @@ class SignDetailPage extends ConsumerWidget {
               SignDetailLoaded(:final sign, :final saved) => Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  IconButton(
+                    tooltip: context.l10n.practiceTitle,
+                    icon: const Icon(Icons.camera_front_outlined),
+                    onPressed: () => unawaited(
+                      PracticeRoute(signId: sign.id.value).push<void>(context),
+                    ),
+                  ),
                   Builder(
                     builder: (button) => IconButton(
                       tooltip: context.l10n.shareSign,

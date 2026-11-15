@@ -25,7 +25,7 @@ final class OnboardingCompleted extends TelemetryEvent {
   };
 }
 
-enum AccountMethod { guest, email }
+enum AccountMethod { guest, email, google }
 
 final class SignedUp extends TelemetryEvent {
   const new(this.method);

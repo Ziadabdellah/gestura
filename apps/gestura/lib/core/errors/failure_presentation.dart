@@ -18,6 +18,7 @@ extension FailurePresentation on Failure {
       AuthProblem.accountDisabled => l10n.authAccountDisabled,
       AuthProblem.unavailable => l10n.authUnavailable,
       AuthProblem.signInAgain => l10n.authSignInAgain,
+      AuthProblem.cancelled => l10n.authCancelled,
     },
     UnexpectedFailure() => l10n.failureUnexpected,
   };

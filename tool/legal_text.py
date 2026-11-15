@@ -1,6 +1,6 @@
 CONTACT = "ziadabdellah64@gmail.com"
 CONTROLLER = "Ziad Abdellah"
-UPDATED = "2026-11-10"
+UPDATED = "2026-11-15"
 
 LANGUAGES = {
     "en": ("English", "ltr"),
@@ -322,3 +322,59 @@ DELETION = {
         ],
     },
 }
+
+PRIVACY_ADDITIONS = {
+    "en": (
+        [
+            "Your review cards (when each learned sign is due again) and your daily practice totals are kept and synced the same way as your progress.",
+            "If you continue with Google, Google shares your name, email address and profile picture with Firebase Authentication so you can sign in. We only use the email address to show which account you are signed in with.",
+            "The camera is used only on the practice screen, so you can see yourself next to a sign. The picture stays on your phone: it is never recorded, stored or sent. Daily reminders are scheduled on your phone and nothing about them leaves it.",
+        ],
+        "You can download a copy of your data at any time from Profile → Export my data.",
+    ),
+    "ar": (
+        [
+            "بطاقات المراجعة (موعد عودة كل إشارة تعلّمتها) ومجموع تدريبك اليومي تُحفظ وتُزامَن بنفس طريقة تقدّمك.",
+            "إذا تابعت باستخدام Google، يشارك Google اسمك وبريدك الإلكتروني وصورة ملفك مع Firebase Authentication لتتمكن من تسجيل الدخول. نستخدم البريد الإلكتروني فقط لنعرض الحساب الذي سجّلت الدخول به.",
+            "تُستخدم الكاميرا فقط في شاشة التدريب لترى نفسك بجانب الإشارة. الصورة تبقى على هاتفك: لا تُسجَّل ولا تُحفظ ولا تُرسل أبدًا. التذكيرات اليومية تُجدول على هاتفك ولا يخرج منها شيء.",
+        ],
+        "يمكنك تنزيل نسخة من بياناتك في أي وقت من الملف الشخصي ← تصدير بياناتي.",
+    ),
+    "ru": (
+        [
+            "Ваши карточки повторения (когда каждый выученный жест снова пора повторить) и ежедневные итоги практики хранятся и синхронизируются так же, как прогресс.",
+            "Если вы входите через Google, Google передаёт ваше имя, адрес электронной почты и фото профиля в Firebase Authentication для входа. Адрес почты мы используем только чтобы показать, под каким аккаунтом вы вошли.",
+            "Камера используется только на экране практики, чтобы вы видели себя рядом с жестом. Изображение остаётся на телефоне: оно никогда не записывается, не сохраняется и не передаётся. Ежедневные напоминания планируются на телефоне, и никакие данные о них его не покидают.",
+        ],
+        "Вы можете в любой момент скачать копию своих данных: Профиль → Экспорт моих данных.",
+    ),
+    "es": (
+        [
+            "Tus tarjetas de repaso (cuándo toca repasar cada signo aprendido) y tus totales de práctica diaria se guardan y sincronizan igual que tu progreso.",
+            "Si continúas con Google, Google comparte tu nombre, tu correo y tu foto de perfil con Firebase Authentication para que puedas iniciar sesión. Solo usamos el correo para mostrar con qué cuenta has iniciado sesión.",
+            "La cámara solo se usa en la pantalla de práctica, para que te veas junto a un signo. La imagen se queda en tu teléfono: nunca se graba, se guarda ni se envía. Los recordatorios diarios se programan en tu teléfono y nada de ellos sale de él.",
+        ],
+        "Puedes descargar una copia de tus datos cuando quieras desde Perfil → Exportar mis datos.",
+    ),
+    "fr": (
+        [
+            "Vos cartes de révision (quand chaque signe appris revient) et vos totaux de pratique quotidienne sont conservés et synchronisés comme votre progression.",
+            "Si vous continuez avec Google, Google partage votre nom, votre adresse e-mail et votre photo de profil avec Firebase Authentication pour vous connecter. Nous utilisons seulement l’adresse e-mail pour afficher le compte connecté.",
+            "La caméra sert uniquement sur l’écran d’entraînement, pour vous voir à côté d’un signe. L’image reste sur votre téléphone : elle n’est jamais enregistrée, conservée ni envoyée. Les rappels quotidiens sont programmés sur votre téléphone et rien n’en sort.",
+        ],
+        "Vous pouvez télécharger une copie de vos données à tout moment depuis Profil → Exporter mes données.",
+    ),
+    "de": (
+        [
+            "Deine Wiederholungskarten (wann jede gelernte Gebärde wieder fällig ist) und deine täglichen Übungssummen werden wie dein Fortschritt gespeichert und synchronisiert.",
+            "Wenn du mit Google fortfährst, teilt Google deinen Namen, deine E-Mail-Adresse und dein Profilbild mit Firebase Authentication, damit du dich anmelden kannst. Wir nutzen nur die E-Mail-Adresse, um zu zeigen, mit welchem Konto du angemeldet bist.",
+            "Die Kamera wird nur im Übungsbildschirm genutzt, damit du dich neben einer Gebärde siehst. Das Bild bleibt auf deinem Handy: Es wird nie aufgenommen, gespeichert oder gesendet. Tägliche Erinnerungen werden auf deinem Handy geplant, und nichts davon verlässt es.",
+        ],
+        "Du kannst jederzeit eine Kopie deiner Daten herunterladen: Profil → Meine Daten exportieren.",
+    ),
+}
+
+for _code, (_processing, _rights) in PRIVACY_ADDITIONS.items():
+    _sections = PRIVACY[_code]["sections"]
+    _sections[2] = (_sections[2][0], _sections[2][1] + _processing)
+    _sections[5] = (_sections[5][0], _sections[5][1] + [_rights])

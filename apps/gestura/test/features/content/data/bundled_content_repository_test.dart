@@ -35,6 +35,16 @@ void main() {
       (await result).valueOrNull as T;
 
   group('the shipped demo pack', () {
+    test('has a placeholder letter for every letter of the alphabet', () async {
+      final letters = (await repository.alphabet()).valueOrNull!;
+
+      expect(
+        letters.map((letter) => letter.gloss).join(),
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      );
+      expect(letters.every((letter) => letter.source.isPlaceholder), isTrue);
+    });
+
     test('is marked as placeholder content', () async {
       final pack = await value(repository.pack());
       final signs = await value(repository.searchSigns(''));

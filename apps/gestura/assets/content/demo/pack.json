@@ -546,5 +546,267 @@
         "license": "placeholder"
       }
     }
+  ],
+  "alphabet": [
+    {
+      "letter": "A",
+      "video": "assets/content/demo/media/letter-a.mp4",
+      "thumbnail": "assets/content/demo/media/letter-a.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "B",
+      "video": "assets/content/demo/media/letter-b.mp4",
+      "thumbnail": "assets/content/demo/media/letter-b.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "C",
+      "video": "assets/content/demo/media/letter-c.mp4",
+      "thumbnail": "assets/content/demo/media/letter-c.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "D",
+      "video": "assets/content/demo/media/letter-d.mp4",
+      "thumbnail": "assets/content/demo/media/letter-d.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "E",
+      "video": "assets/content/demo/media/letter-e.mp4",
+      "thumbnail": "assets/content/demo/media/letter-e.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "F",
+      "video": "assets/content/demo/media/letter-f.mp4",
+      "thumbnail": "assets/content/demo/media/letter-f.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "G",
+      "video": "assets/content/demo/media/letter-g.mp4",
+      "thumbnail": "assets/content/demo/media/letter-g.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "H",
+      "video": "assets/content/demo/media/letter-h.mp4",
+      "thumbnail": "assets/content/demo/media/letter-h.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "I",
+      "video": "assets/content/demo/media/letter-i.mp4",
+      "thumbnail": "assets/content/demo/media/letter-i.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "J",
+      "video": "assets/content/demo/media/letter-j.mp4",
+      "thumbnail": "assets/content/demo/media/letter-j.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "K",
+      "video": "assets/content/demo/media/letter-k.mp4",
+      "thumbnail": "assets/content/demo/media/letter-k.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "L",
+      "video": "assets/content/demo/media/letter-l.mp4",
+      "thumbnail": "assets/content/demo/media/letter-l.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "M",
+      "video": "assets/content/demo/media/letter-m.mp4",
+      "thumbnail": "assets/content/demo/media/letter-m.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "N",
+      "video": "assets/content/demo/media/letter-n.mp4",
+      "thumbnail": "assets/content/demo/media/letter-n.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "O",
+      "video": "assets/content/demo/media/letter-o.mp4",
+      "thumbnail": "assets/content/demo/media/letter-o.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "P",
+      "video": "assets/content/demo/media/letter-p.mp4",
+      "thumbnail": "assets/content/demo/media/letter-p.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "Q",
+      "video": "assets/content/demo/media/letter-q.mp4",
+      "thumbnail": "assets/content/demo/media/letter-q.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "R",
+      "video": "assets/content/demo/media/letter-r.mp4",
+      "thumbnail": "assets/content/demo/media/letter-r.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "S",
+      "video": "assets/content/demo/media/letter-s.mp4",
+      "thumbnail": "assets/content/demo/media/letter-s.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "T",
+      "video": "assets/content/demo/media/letter-t.mp4",
+      "thumbnail": "assets/content/demo/media/letter-t.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "U",
+      "video": "assets/content/demo/media/letter-u.mp4",
+      "thumbnail": "assets/content/demo/media/letter-u.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "V",
+      "video": "assets/content/demo/media/letter-v.mp4",
+      "thumbnail": "assets/content/demo/media/letter-v.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "W",
+      "video": "assets/content/demo/media/letter-w.mp4",
+      "thumbnail": "assets/content/demo/media/letter-w.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "X",
+      "video": "assets/content/demo/media/letter-x.mp4",
+      "thumbnail": "assets/content/demo/media/letter-x.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "Y",
+      "video": "assets/content/demo/media/letter-y.mp4",
+      "thumbnail": "assets/content/demo/media/letter-y.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    },
+    {
+      "letter": "Z",
+      "video": "assets/content/demo/media/letter-z.mp4",
+      "thumbnail": "assets/content/demo/media/letter-z.webp",
+      "durationMs": 1500,
+      "source": {
+        "name": "Gestura placeholder",
+        "license": "placeholder"
+      }
+    }
   ]
 }

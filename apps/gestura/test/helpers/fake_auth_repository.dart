@@ -50,6 +50,17 @@ class FakeAuthRepository implements AuthRepository {
       _answer('guest', () => user = testGuest);
 
   @override
+  Future<Result<void>> continueWithGoogle() => _answer(
+    'google',
+    () => user = const MemberUser(
+      'member-uid',
+      email: 'learner@gmail.com',
+      emailVerified: true,
+      usesPassword: false,
+    ),
+  );
+
+  @override
   Future<Result<void>> signIn({
     required String email,
     required String password,
@@ -93,8 +104,8 @@ class FakeAuthRepository implements AuthRepository {
   Future<Result<void>> signOut() => _answer('signOut', () => user = null);
 
   @override
-  Future<Result<void>> reauthenticate({required String password}) =>
-      _answer('reauth:$password', () {});
+  Future<Result<void>> reauthenticate({String? password}) =>
+      _answer('reauth:${password ?? 'google'}', () {});
 
   @override
   Future<Result<void>> deleteAccount() => _answer('delete', () => user = null);

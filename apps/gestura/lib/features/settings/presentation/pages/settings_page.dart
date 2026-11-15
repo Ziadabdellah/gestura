@@ -55,6 +55,12 @@ class SettingsPage extends ConsumerWidget {
               unawaited(viewModel.setAnalyticsConsent(granted: granted)),
           onCrashReportsChanged: (granted) =>
               unawaited(viewModel.setCrashReportsConsent(granted: granted)),
+          onOpenTerms: () => unawaited(
+            openLink(
+              context,
+              LegalLinks.terms(Localizations.localeOf(context).languageCode),
+            ),
+          ),
           onOpenPrivacyPolicy: () => unawaited(
             openLink(
               context,

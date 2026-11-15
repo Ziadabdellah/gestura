@@ -8,7 +8,9 @@ import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 
 typedef ProfileActions = ({
+  VoidCallback onOpenStats,
   VoidCallback onOpenSettings,
+  ValueChanged<Rect?> onExportData,
   VoidCallback onOpenAbout,
   VoidCallback onCreateAccount,
   VoidCallback onSignIn,
@@ -67,6 +69,15 @@ class ProfileView extends StatelessWidget {
           ListTile(
             contentPadding: padding,
             leading: const ExcludeSemantics(
+              child: Icon(Icons.insights_rounded),
+            ),
+            title: Text(l10n.statsTitle),
+            trailing: const ExcludeSemantics(child: Icon(Icons.chevron_right)),
+            onTap: actions.onOpenStats,
+          ),
+          ListTile(
+            contentPadding: padding,
+            leading: const ExcludeSemantics(
               child: Icon(Icons.settings_outlined),
             ),
             title: Text(l10n.settingsTitle),
@@ -74,6 +85,20 @@ class ProfileView extends StatelessWidget {
             onTap: actions.onOpenSettings,
           ),
           OfflinePackTile(padding: padding),
+          Builder(
+            builder: (tile) => ListTile(
+              contentPadding: padding,
+              leading: const ExcludeSemantics(
+                child: Icon(Icons.file_download_outlined),
+              ),
+              title: Text(l10n.exportData),
+              subtitle: Text(l10n.exportDataHint),
+              onTap: () {
+                final box = tile.findRenderObject()! as RenderBox;
+                actions.onExportData(box.localToGlobal(Offset.zero) & box.size);
+              },
+            ),
+          ),
           ListTile(
             contentPadding: padding,
             leading: const ExcludeSemantics(

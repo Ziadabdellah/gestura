@@ -17,6 +17,10 @@ class _FakeSharePlatform extends SharePlatform with MockPlatformInterfaceMixin {
 }
 
 void main() {
+  final platform = _FakeSharePlatform();
+  setUpAll(() => SharePlatform.instance = platform);
+  setUp(platform.shared.clear);
+
   test('builds the public link of a sign', () {
     expect(
       signLink(const SignId('thank-you')).toString(),
@@ -25,8 +29,6 @@ void main() {
   });
 
   test('hands the link to the system share sheet', () async {
-    final platform = _FakeSharePlatform();
-    SharePlatform.instance = platform;
     const origin = Rect.fromLTWH(1, 2, 3, 4);
 
     await const SystemLinkSharer().share(
@@ -39,5 +41,13 @@ void main() {
     expect(params.uri.toString(), 'https://gestura-prod.web.app/sign/hello');
     expect(params.subject, 'HELLO');
     expect(params.sharePositionOrigin, origin);
+  });
+
+  test('hands a file to the system share sheet', () async {
+    await const SystemLinkSharer().shareFile('/tmp/data.json', subject: 'Data');
+
+    final params = platform.shared.single;
+    expect(params.files?.single.path, '/tmp/data.json');
+    expect(params.subject, 'Data');
   });
 }

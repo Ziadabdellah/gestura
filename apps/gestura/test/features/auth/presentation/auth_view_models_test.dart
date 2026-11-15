@@ -61,6 +61,25 @@ void main() {
     );
 
     blocTest<AuthFormViewModel, AuthFormState>(
+      'continues with Google',
+      build: () => AuthFormViewModel(auth, telemetry),
+      act: (viewModel) => viewModel.continueWithGoogle(),
+      expect: () => [const AuthFormBusy(), const AuthFormDone()],
+      verify: (_) {
+        expect(auth.calls, ['google']);
+        expect(telemetry.events.single.parameters, {'method': 'google'});
+      },
+    );
+
+    blocTest<AuthFormViewModel, AuthFormState>(
+      'goes back to idle when Google is closed',
+      setUp: () => auth.failure = const AuthFailure(AuthProblem.cancelled),
+      build: () => AuthFormViewModel(auth, telemetry),
+      act: (viewModel) => viewModel.continueWithGoogle(),
+      expect: () => [const AuthFormBusy(), const AuthFormIdle()],
+    );
+
+    blocTest<AuthFormViewModel, AuthFormState>(
       'signs in with a trimmed email address',
       build: () => AuthFormViewModel(auth, telemetry),
       act: (viewModel) =>
@@ -388,6 +407,33 @@ void main() {
         viewModel.state,
         const AccountMember(email: 'learner@example.com', emailVerified: true),
       );
+    });
+
+    test('confirms a Google member with Google before deleting', () async {
+      auth = FakeAuthRepository(
+        const MemberUser(
+          'member-uid',
+          email: 'learner@gmail.com',
+          emailVerified: true,
+          usesPassword: false,
+        ),
+      );
+      final viewModel = AccountViewModel(
+        auth,
+        _local(),
+        FakeLearnerCloud().cloud,
+      );
+      expect(
+        viewModel.state,
+        const AccountMember(
+          email: 'learner@gmail.com',
+          emailVerified: true,
+          usesPassword: false,
+        ),
+      );
+
+      expect(await viewModel.deleteAccount(), const Ok<void>(null));
+      expect(auth.calls, ['reauth:google', 'delete']);
     });
 
     test('keeps the account when its cloud data cannot be deleted', () async {

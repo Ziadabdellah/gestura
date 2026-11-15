@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gestura/app/router/app_routes.dart';
 import 'package:gestura/config/app_info.dart';
 import 'package:gestura/core/errors/failure_presentation.dart';
+import 'package:gestura/core/share/link_sharer.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/auth/domain/auth_entry.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
@@ -12,6 +13,7 @@ import 'package:gestura/features/auth/presentation/view_models/account_state.dar
 import 'package:gestura/features/auth/presentation/view_models/account_view_model.dart';
 import 'package:gestura/features/learner/learner_cloud.dart';
 import 'package:gestura/features/learner/learner_data.dart';
+import 'package:gestura/features/learner/learner_export.dart';
 import 'package:gestura/features/profile/presentation/widgets/delete_account_dialog.dart';
 import 'package:gestura/features/profile/presentation/widgets/profile_view.dart';
 import 'package:gestura/features/profile/presentation/widgets/sign_out_dialog.dart';
@@ -39,7 +41,10 @@ class ProfilePage extends StatelessWidget {
     final l10n = context.l10n;
     final confirmation = await confirmDeleteAccount(
       context,
-      needsPassword: viewModel.state is AccountMember,
+      needsPassword: switch (viewModel.state) {
+        AccountMember(:final usesPassword) => usesPassword,
+        _ => false,
+      },
     );
     if (confirmation == null) return;
     final result = await viewModel.deleteAccount(
@@ -47,6 +52,21 @@ class ProfilePage extends StatelessWidget {
     );
     if (result case Err(:final failure)) {
       messenger.showSnackBar(SnackBar(content: Text(failure.message(l10n))));
+    }
+  }
+
+  static Future<void> exportData(BuildContext context, Rect? origin) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
+    switch (await getIt<LearnerExport>().toFile()) {
+      case Ok(:final value):
+        await getIt<LinkSharer>().shareFile(
+          value.path,
+          subject: l10n.exportSubject,
+          origin: origin,
+        );
+      case Err(:final failure):
+        messenger.showSnackBar(SnackBar(content: Text(failure.message(l10n))));
     }
   }
 
@@ -68,7 +88,9 @@ class ProfilePage extends StatelessWidget {
             appInfo: appInfo,
             account: account,
             actions: (
+              onOpenStats: () => const StatsRoute().go(context),
               onOpenSettings: () => const SettingsRoute().go(context),
+              onExportData: (origin) => unawaited(exportData(context, origin)),
               onOpenAbout: () => showLicensePage(
                 context: context,
                 applicationName: applicationName,

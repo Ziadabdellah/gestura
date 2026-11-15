@@ -47,6 +47,10 @@ abstract base class CatalogContentRepository implements ContentRepository {
   Future<Result<List<Sign>>> searchSigns(String query) =>
       _query((catalog) => sign_search.searchSigns(catalog.signs, query));
 
+  @override
+  Future<Result<List<Sign>>> alphabet() =>
+      _query((catalog) => catalog.alphabet);
+
   Future<Result<T>> _query<T>(T Function(ContentCatalog catalog) select) =>
       Result.guard(
         () async => select(await _cachedCatalog()),

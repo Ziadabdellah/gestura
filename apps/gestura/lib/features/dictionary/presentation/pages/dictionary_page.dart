@@ -25,6 +25,12 @@ class DictionaryPage extends StatelessWidget {
         title: Text(context.l10n.tabDictionary),
         actions: [
           IconButton(
+            tooltip: context.l10n.fingerspellingTitle,
+            icon: const Icon(Icons.abc_rounded),
+            onPressed: () =>
+                unawaited(const FingerspellingRoute().push<void>(context)),
+          ),
+          IconButton(
             tooltip: context.l10n.savedSigns,
             icon: const Icon(Icons.favorite_border_rounded),
             onPressed: () =>

@@ -20,11 +20,16 @@ final class AccountGuest extends AccountState {
 }
 
 final class AccountMember extends AccountState {
-  const new({required this.email, required this.emailVerified});
+  const new({
+    required this.email,
+    required this.emailVerified,
+    this.usesPassword = true,
+  });
 
   final String email;
   final bool emailVerified;
+  final bool usesPassword;
 
   @override
-  List<Object?> get props => [email, emailVerified];
+  List<Object?> get props => [email, emailVerified, usesPassword];
 }

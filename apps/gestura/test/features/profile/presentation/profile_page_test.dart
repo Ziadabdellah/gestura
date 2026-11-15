@@ -181,6 +181,30 @@ void main() {
       expect(find.byType(WelcomePage), findsOneWidget);
     });
 
+    testWidgets('asks a Google member to confirm with Google, not a password', (
+      tester,
+    ) async {
+      final auth = FakeAuthRepository(
+        const MemberUser(
+          'member-uid',
+          email: 'learner@gmail.com',
+          emailVerified: true,
+          usesPassword: false,
+        ),
+      );
+      await tester.pumpApp(initialLocation: _profile, auth: auth);
+
+      await tester.scrollUntilVisible(find.text('Delete account'), 100);
+      await tester.tap(find.text('Delete account'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TextField), findsNothing);
+      await tester.tap(find.widgetWithText(TextButton, 'Delete'));
+      await tester.pumpAndSettle();
+
+      expect(auth.calls, ['reauth:google', 'delete']);
+    });
+
     testWidgets('shows a spinner while deleting and explains a failure', (
       tester,
     ) async {

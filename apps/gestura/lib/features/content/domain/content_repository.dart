@@ -19,4 +19,6 @@ abstract interface class ContentRepository {
   Future<Result<List<SignCategory>>> categories();
 
   Future<Result<List<Sign>>> searchSigns(String query);
+
+  Future<Result<List<Sign>>> alphabet();
 }

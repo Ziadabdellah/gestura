@@ -28,12 +28,15 @@ final class SignLanguagePack {
   final bool isPlaceholder;
 }
 
+const CategoryId alphabetCategory = CategoryId('alphabet');
+
 final class ContentCatalog {
   new({
     required this.pack,
     required this.categories,
     required this.courses,
     required this.signs,
+    this.alphabet = const [],
   }) : _signsById = {for (final sign in signs) sign.id: sign},
        _lessonsById = {
          for (final course in courses)
@@ -44,6 +47,7 @@ final class ContentCatalog {
   final List<SignCategory> categories;
   final List<Course> courses;
   final List<Sign> signs;
+  final List<Sign> alphabet;
   final Map<SignId, Sign> _signsById;
   final Map<LessonId, Lesson> _lessonsById;
 

@@ -41,6 +41,7 @@ enum AuthProblem {
   accountDisabled,
   unavailable,
   signInAgain,
+  cancelled,
 }
 
 final class AuthFailure extends Failure {

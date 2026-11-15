@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from legal_text import CONTACT, CONTROLLER, DELETION, LANGUAGES, PRIVACY, UPDATED
+from terms_text import TERMS
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "firebase" / "hosting"
@@ -71,14 +72,22 @@ def language_nav(current, path):
     return "<nav>" + "".join(links) + "</nav>\n"
 
 
-def privacy(lang):
-    text = PRIVACY[lang]
-    body = [language_nav(lang, "privacy"), f"<h1>{html.escape(text['title'])}</h1>\n"]
+def document(texts, path, lang):
+    text = texts[lang]
+    body = [language_nav(lang, path), f"<h1>{html.escape(text['title'])}</h1>\n"]
     body.append(f'<p class="muted">{fill(text["updated"])}</p>\n')
     for heading, paragraphs in text["sections"]:
         body.append(f"<h2>{html.escape(heading)}</h2>\n")
         body.extend(f"<p>{fill(paragraph)}</p>\n" for paragraph in paragraphs)
     return page(lang, text["title"], "".join(body))
+
+
+def privacy(lang):
+    return document(PRIVACY, "privacy", lang)
+
+
+def terms(lang):
+    return document(TERMS, "terms", lang)
 
 
 def deletion():
@@ -97,7 +106,7 @@ def home():
     body = (
         "<h1>Gestura</h1>\n"
         "<p>Sign language, in your hands.</p>\n"
-        '<p><a href="/privacy">Privacy policy</a> · <a href="/delete-account">Delete your account</a></p>\n'
+        '<p><a href="/privacy">Privacy policy</a> · <a href="/terms">Terms of use</a> · <a href="/delete-account">Delete your account</a></p>\n'
     )
     return page("en", "Gestura", body)
 
@@ -160,6 +169,9 @@ def main():
     write("privacy/index.html", privacy("en"))
     for lang in LANGUAGES:
         write(f"privacy/{lang}.html", privacy(lang))
+    write("terms/index.html", terms("en"))
+    for lang in LANGUAGES:
+        write(f"terms/{lang}.html", terms(lang))
     write("delete-account/index.html", deletion())
     write("sign.html", shared_sign())
     write(".well-known/assetlinks.json", asset_links())

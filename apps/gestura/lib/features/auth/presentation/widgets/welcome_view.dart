@@ -9,6 +9,7 @@ class WelcomeView extends StatelessWidget {
   const new({
     required this.state,
     required this.onContinueAsGuest,
+    required this.onContinueWithGoogle,
     required this.onCreateAccount,
     required this.onSignIn,
     super.key,
@@ -19,6 +20,7 @@ class WelcomeView extends StatelessWidget {
 
   final AuthFormState state;
   final VoidCallback onContinueAsGuest;
+  final VoidCallback onContinueWithGoogle;
   final VoidCallback onCreateAccount;
   final VoidCallback onSignIn;
 
@@ -91,6 +93,13 @@ class WelcomeView extends StatelessWidget {
                       expand: true,
                       isLoading: busy,
                       onPressed: onContinueAsGuest,
+                    ),
+                    SizedBox(height: sizes.sm),
+                    GButton.secondary(
+                      label: l10n.continueWithGoogle,
+                      expand: true,
+                      icon: Icons.account_circle_outlined,
+                      onPressed: busy ? null : onContinueWithGoogle,
                     ),
                     SizedBox(height: sizes.sm),
                     GButton.secondary(

@@ -62,4 +62,7 @@ class FakeContentRepository implements ContentRepository {
   @override
   Future<Result<List<Sign>>> searchSigns(String query) =>
       _answer(() => sign_search.searchSigns(catalog.signs, query));
+
+  @override
+  Future<Result<List<Sign>>> alphabet() => _answer(() => catalog.alphabet);
 }

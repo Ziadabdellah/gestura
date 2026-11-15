@@ -19,6 +19,7 @@ const List<Failure> _failures = [
   AuthFailure(AuthProblem.accountDisabled),
   AuthFailure(AuthProblem.unavailable),
   AuthFailure(AuthProblem.signInAgain),
+  AuthFailure(AuthProblem.cancelled),
 ];
 
 void main() {
@@ -42,6 +43,7 @@ void main() {
         'This account has been turned off.',
         "Signing in isn't available right now. Please try again later.",
         'For your security, enter your password again.',
+        'Sign-in was cancelled.',
       ],
     );
   });

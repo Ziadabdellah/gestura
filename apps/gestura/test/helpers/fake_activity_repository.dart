@@ -9,6 +9,7 @@ class FakeActivityRepository implements ActivityRepository {
 
   final List<DailyActivity> days;
   final List<String> calls = [];
+  Failure? failure;
   final StreamController<void> _changes = StreamController.broadcast();
 
   @override
@@ -21,7 +22,10 @@ class FakeActivityRepository implements ActivityRepository {
   });
 
   @override
-  Future<Result<List<DailyActivity>>> readAll() async => Ok(List.of(days));
+  Future<Result<List<DailyActivity>>> readAll() async => switch (failure) {
+    final Failure failure => Err(failure),
+    null => Ok(List.of(days)),
+  };
 
   @override
   Future<Result<void>> merge(Iterable<DailyActivity> incoming) async {

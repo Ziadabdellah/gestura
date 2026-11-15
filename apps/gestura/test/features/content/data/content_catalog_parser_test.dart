@@ -108,6 +108,29 @@ void main() {
     expect(catalog.lesson(const LessonId('lesson')), lesson);
   });
 
+  test('reads an optional fingerspelling alphabet', () {
+    expect(_parse(_catalog()).alphabet, isEmpty);
+
+    final catalog = _parse({
+      ..._catalog(),
+      'alphabet': [
+        {
+          'letter': 'B',
+          'video': 'assets/letter-b.mp4',
+          'thumbnail': 'assets/letter-b.webp',
+          'durationMs': 1500,
+          'source': {'name': 'Test', 'license': 'placeholder'},
+        },
+      ],
+    });
+
+    final letter = catalog.alphabet.single;
+    expect(letter.id, const SignId('letter-b'));
+    expect(letter.gloss, 'B');
+    expect(letter.category, alphabetCategory);
+    expect(catalog.sign(letter.id), isNull);
+  });
+
   test('reads an optional source link', () {
     final signs = [
       {
@@ -169,6 +192,16 @@ void main() {
           ],
         }),
       );
+    });
+
+    test('a broken alphabet or letter', () {
+      expectRejected({..._catalog(), 'alphabet': 'ABC'});
+      expectRejected({
+        ..._catalog(),
+        'alphabet': [
+          {'letter': ''},
+        ],
+      });
     });
 
     test('an unsupported version', () {

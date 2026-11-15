@@ -245,7 +245,7 @@
   "leftHandedTitle": "I sign with my left hand",
   "leftHandedSubtitle": "Sign videos start mirrored",
   "welcomeTitle": "Ready to start?",
-  "welcomeSubtitle": "Start right away as a guest, or create an account with your email address.",
+  "welcomeSubtitle": "Start right away as a guest, or use your Google account or email address.",
   "continueAsGuest": "Continue as guest",
   "createAccount": "Create account",
   "haveAccount": "I already have an account",
@@ -421,5 +421,75 @@
         "type": "int"
       }
     }
-  }
+  },
+  "statsTitle": "Your progress",
+  "statStreak": "Day streak",
+  "statBestStreak": "Best streak",
+  "statLessons": "Lessons done",
+  "statSigns": "Signs learned",
+  "statMastered": "Signs mastered",
+  "statMinutes": "Minutes practised",
+  "achievementsTitle": "Achievements",
+  "achievementFirstLesson": "Finish your first lesson",
+  "achievementSigns": "Learn {count} signs",
+  "achievementFirstMastered": "Master your first sign",
+  "achievementStreak": "Practise {count} days in a row",
+  "achievementReviews": "Review {count} times",
+  "achievementHour": "Practise for an hour",
+  "achievementEarned": "Earned",
+  "achievementProgress": "{done} of {total}",
+  "@achievementSigns": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@achievementStreak": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@achievementReviews": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@achievementProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "exportData": "Export my data",
+  "exportDataHint": "A file with your progress, reviews and settings",
+  "exportSubject": "My Gestura data",
+  "termsOfUse": "Terms of use",
+  "continueWithGoogle": "Continue with Google",
+  "authCancelled": "Sign-in was cancelled.",
+  "fingerspellingTitle": "Fingerspelling",
+  "fingerspellingSpell": "Spell a word",
+  "fingerspellingAlphabet": "Alphabet",
+  "fingerspellingLetter": "Letter {letter}",
+  "fingerspellingEmpty": "Letters for this sign language are on their way.",
+  "@fingerspellingLetter": {
+    "placeholders": {
+      "letter": {
+        "type": "String"
+      }
+    }
+  },
+  "practiceTitle": "Practise with the camera",
+  "practiceHint": "Watch the sign, then copy it while you see yourself. Nothing is recorded.",
+  "practiceCameraLabel": "Your camera",
+  "practiceCameraDenied": "Gestura can't use the camera. Allow it in your phone settings, then try again.",
+  "practiceCameraMissing": "No camera is available on this device."
 }

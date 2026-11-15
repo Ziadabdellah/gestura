@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,12 +17,15 @@ import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/learner/learner_cloud.dart';
 import 'package:gestura/features/learner/learner_data.dart';
+import 'package:gestura/features/learner/learner_export.dart';
 import 'package:gestura/features/learner/learner_sync.dart';
+import 'package:gestura/features/practice/domain/self_camera.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
 import 'package:gestura/features/reminders/domain/reminders.dart';
 import 'package:gestura/features/review/domain/review_repository.dart';
 import 'package:gestura/features/saved/domain/saved_signs_repository.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
+import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
@@ -36,6 +41,7 @@ import 'fake_progress_repository.dart';
 import 'fake_reminders.dart';
 import 'fake_review_repository.dart';
 import 'fake_saved_signs_repository.dart';
+import 'fake_self_camera.dart';
 import 'fake_settings_repository.dart';
 import 'fake_telemetry.dart';
 import 'fake_url_launcher.dart';
@@ -71,6 +77,7 @@ Future<void> registerFakes({
   SavedSignsRepository? saved,
   Reminders? reminders,
   AppPolicySource? policy,
+  SelfCamera? camera,
 }) async {
   VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
   UrlLauncherPlatform.instance = FakeUrlLauncher();
@@ -99,8 +106,19 @@ Future<void> registerFakes({
       () => LearnerData(getIt(), getIt(), getIt(), getIt()),
     )
     ..registerSingleton<LinkSharer>(FakeLinkSharer())
+    ..registerSingleton<SelfCamera>(camera ?? FakeSelfCamera())
     ..registerSingleton<AppPolicySource>(policy ?? FakePolicySource())
     ..registerSingleton<Reminders>(reminders ?? FakeReminders())
+    ..registerLazySingleton(
+      () => LearnerExport(
+        getIt(),
+        getIt(),
+        getIt(),
+        getIt(),
+        getIt(),
+        directory: () async => Directory.systemTemp,
+      ),
+    )
     ..registerSingleton<AppInfo>(testAppInfo);
 }
 
@@ -133,6 +151,7 @@ extension PumpApp on WidgetTester {
     SavedSignsRepository? saved,
     Reminders? reminders,
     AppPolicySource? policy,
+    SelfCamera? camera,
   }) async {
     view
       ..physicalSize = surfaceSize * 3
@@ -151,10 +170,12 @@ extension PumpApp on WidgetTester {
       saved: saved,
       reminders: reminders,
       policy: policy,
+      camera: camera,
     );
     addTearDown(getIt.reset);
 
     final repository = FakeSettingsRepository(settings);
+    getIt.registerSingleton<SettingsRepository>(repository);
     await pumpWidget(
       appUnderTest(
         repository: repository,

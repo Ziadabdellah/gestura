@@ -1,2 +1,4 @@
 tags:
   golden: {}
+  store:
+    skip: "Store screenshots run on demand with --run-skipped -t store --update-goldens"

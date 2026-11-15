@@ -23,6 +23,8 @@ class WelcomePage extends StatelessWidget {
           state: state,
           onContinueAsGuest: () =>
               unawaited(context.read<AuthFormViewModel>().continueAsGuest()),
+          onContinueWithGoogle: () =>
+              unawaited(context.read<AuthFormViewModel>().continueWithGoogle()),
           onCreateAccount: () =>
               unawaited(const CreateAccountRoute().push<void>(context)),
           onSignIn: () => unawaited(const SignInRoute().push<void>(context)),

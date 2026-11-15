@@ -85,6 +85,15 @@ void main() {
       expect(find.byType(TodayPage), findsOneWidget);
     });
 
+    testWidgets('continues with Google straight into Today', (tester) async {
+      final auth = await _signedOut(tester);
+
+      await _tapButton(tester, 'Continue with Google');
+
+      expect(auth.calls, ['google']);
+      expect(find.byType(TodayPage), findsOneWidget);
+    });
+
     testWidgets('explains why guest mode failed', (tester) async {
       final auth = await _signedOut(tester);
       auth.failure = const AuthFailure(AuthProblem.unavailable);

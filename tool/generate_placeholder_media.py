@@ -37,8 +37,12 @@ def frame(gloss, progress):
     image = Image.new("RGB", (WIDTH, HEIGHT), STAGE)
     draw = ImageDraw.Draw(image)
     centered(draw, "PLACEHOLDER", 40, font(26), LABEL)
-    centered(draw, gloss, 250, font(48 if len(gloss) < 10 else 38), ON_STAGE)
-    centered(draw, "Sign video coming soon", 320, font(20), LABEL)
+    if len(gloss) == 1:
+        centered(draw, gloss, 110, font(140), ON_STAGE)
+        centered(draw, "Letter video coming soon", 340, font(20), LABEL)
+    else:
+        centered(draw, gloss, 250, font(48 if len(gloss) < 10 else 38), ON_STAGE)
+        centered(draw, "Sign video coming soon", 320, font(20), LABEL)
 
     angle = math.pi * (1 - progress)
     x = WIDTH / 2 + 150 * math.cos(angle)
@@ -72,7 +76,8 @@ def main():
     if shutil.which("ffmpeg") is None:
         sys.exit("ffmpeg is required")
     catalog = json.loads(PACK.read_text(encoding="utf-8"))
-    for sign in catalog["signs"]:
+    letters = [dict(letter, gloss=letter["letter"], id=f"letter-{letter['letter'].lower()}") for letter in catalog.get("alphabet", [])]
+    for sign in catalog["signs"] + letters:
         video = APP / sign["video"]
         thumbnail = APP / sign["thumbnail"]
         video.parent.mkdir(parents=True, exist_ok=True)

@@ -18,7 +18,8 @@ ContentCatalog parseContentCatalog(
   String source, {
   MediaResolver media = bundledMedia,
 }) {
-  final catalog = switch (jsonDecode(source)) {
+  final decoded = jsonDecode(source);
+  final catalog = switch (decoded) {
     {
       'version': supportedCatalogVersion,
       'pack': final Object? pack,
@@ -31,6 +32,16 @@ ContentCatalog parseContentCatalog(
         categories: categories.map(_category).toList(),
         courses: courses.map(_course).toList(),
         signs: [for (final sign in signs) _sign(sign, media)],
+        alphabet: switch ((decoded as Map<String, Object?>)['alphabet']) {
+          final List<Object?> letters => [
+            for (final letter in letters) _letter(letter, media),
+          ],
+          null => const [],
+          final Object other => throw FormatException(
+            'Invalid alphabet',
+            other,
+          ),
+        },
       ),
     final Object? other => throw FormatException(
       'Unsupported content catalog',
@@ -161,6 +172,17 @@ Sign _sign(Object? json, MediaResolver media) => switch (json) {
       ),
     ),
   _ => throw FormatException('Invalid sign', json),
+};
+
+Sign _letter(Object? json, MediaResolver media) => switch (json) {
+  {'letter': final String letter} when letter.isNotEmpty => _sign({
+    ...json as Map<String, Object?>,
+    'id': 'letter-${letter.toLowerCase()}',
+    'gloss': letter,
+    'category': alphabetCategory.value,
+    'meaning': {'en': letter},
+  }, media),
+  _ => throw FormatException('Invalid letter', json),
 };
 
 LocalizedText _text(Object? json) => switch (json) {

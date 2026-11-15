@@ -10,6 +10,8 @@ Uri signLink(SignId sign) => Uri.parse('$linkSite/sign/${sign.value}');
 
 abstract interface class LinkSharer {
   Future<void> share(Uri link, {required String subject, Rect? origin});
+
+  Future<void> shareFile(String path, {required String subject, Rect? origin});
 }
 
 @LazySingleton(as: LinkSharer)
@@ -20,6 +22,21 @@ final class SystemLinkSharer implements LinkSharer {
   Future<void> share(Uri link, {required String subject, Rect? origin}) async {
     await SharePlus.instance.share(
       ShareParams(uri: link, subject: subject, sharePositionOrigin: origin),
+    );
+  }
+
+  @override
+  Future<void> shareFile(
+    String path, {
+    required String subject,
+    Rect? origin,
+  }) async {
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(path, mimeType: 'application/json')],
+        subject: subject,
+        sharePositionOrigin: origin,
+      ),
     );
   }
 }

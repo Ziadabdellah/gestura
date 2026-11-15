@@ -14,6 +14,9 @@ class AuthFormViewModel extends Cubit<AuthFormState> {
   Future<void> continueAsGuest() =>
       _run(_auth.continueAsGuest, const SignedUp(AccountMethod.guest));
 
+  Future<void> continueWithGoogle() =>
+      _run(_auth.continueWithGoogle, const SignedUp(AccountMethod.google));
+
   Future<void> signIn({required String email, required String password}) =>
       _run(
         () => _auth.signIn(
@@ -63,6 +66,8 @@ class AuthFormViewModel extends Cubit<AuthFormState> {
     if (isClosed) return;
     emit(switch (result) {
       Ok() => const AuthFormDone(),
+      Err(failure: AuthFailure(problem: AuthProblem.cancelled)) =>
+        const AuthFormIdle(),
       Err(:final failure) => AuthFormFailed(failure),
     });
   }

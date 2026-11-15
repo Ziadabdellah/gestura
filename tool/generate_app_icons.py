@@ -189,10 +189,27 @@ def ios_launch_image():
         save(mark, folder / f"LaunchImage{suffix}.png", 112 * scale)
 
 
+def feature_graphic():
+    width, height = 1024, 500
+    side = max(width, height)
+    canvas = gradient(side).resize((side, side), Image.LANCZOS).crop((0, (side - height) // 2, width, (side + height) // 2)).convert("RGBA")
+    icon = rounded(full_icon(None)).resize((300, 300), Image.LANCZOS)
+    shadow = Image.new("RGBA", (340, 340), (0, 0, 0, 0))
+    ImageDraw.Draw(shadow).rounded_rectangle((20, 28, 320, 328), radius=66, fill=(0, 0, 0, 90))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(14))
+    canvas.alpha_composite(shadow, (60, 80))
+    canvas.alpha_composite(icon, (80, 100))
+    draw = ImageDraw.Draw(canvas)
+    draw.text((440, 150), "Gestura", font=ImageFont.truetype(str(LABEL_FONT), 104), fill=PAPER)
+    draw.text((446, 290), "Sign language, in your hands.", font=ImageFont.truetype(str(LABEL_FONT), 32), fill=(214, 240, 236))
+    return canvas.convert("RGB")
+
+
 def store():
     folder = APP / "store"
     folder.mkdir(parents=True, exist_ok=True)
     save(full_icon(None), folder / "play_icon_512.png", 512, "RGB")
+    feature_graphic().save(folder / "feature_graphic.png", optimize=True)
 
 
 def main():

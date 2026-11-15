@@ -10,6 +10,7 @@ environment:
 resolution: workspace
 
 dependencies:
+  camera: ^0.12.2
   clock: ^1.1.3
   cloud_firestore: ^7.1.0
   drift: ^2.35.4
@@ -34,6 +35,7 @@ dependencies:
     path: ../../packages/gestura_ui
   get_it: ^9.3.0
   go_router: ^18.1.3
+  google_sign_in: ^7.2.0
   injectable: ^3.0.0
   intl: ^0.20.3
   meta: ^1.19.0
@@ -50,6 +52,7 @@ dev_dependencies:
   alchemist: ^0.14.1
   bloc_test: ^10.0.0
   build_runner: ^2.16.1
+  camera_platform_interface: ^2.15.0
   drift_dev: ^2.35.3
   firebase_core_platform_interface: ^8.1.1
   flutter_test:

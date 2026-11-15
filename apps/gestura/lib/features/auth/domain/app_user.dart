@@ -22,10 +22,16 @@ final class GuestUser extends AppUser {
 }
 
 final class MemberUser extends AppUser {
-  const new(super.id, {required this.email, required this.emailVerified});
+  const new(
+    super.id, {
+    required this.email,
+    required this.emailVerified,
+    this.usesPassword = true,
+  });
 
   final String email;
   final bool emailVerified;
+  final bool usesPassword;
 
   @override
   bool operator ==(Object other) =>
@@ -33,10 +39,12 @@ final class MemberUser extends AppUser {
       other is MemberUser &&
           other.id == id &&
           other.email == email &&
-          other.emailVerified == emailVerified;
+          other.emailVerified == emailVerified &&
+          other.usesPassword == usesPassword;
 
   @override
-  int get hashCode => Object.hash(MemberUser, id, email, emailVerified);
+  int get hashCode =>
+      Object.hash(MemberUser, id, email, emailVerified, usesPassword);
 
   @override
   String toString() =>

@@ -4,13 +4,18 @@ abstract final class LegalLinks {
   static const String host = 'gestura-prod.web.app';
   static const String fallbackLanguage = 'en';
 
-  static Uri privacyPolicy(String languageCode) {
+  static Uri privacyPolicy(String languageCode) =>
+      _localized('privacy', languageCode);
+
+  static Uri terms(String languageCode) => _localized('terms', languageCode);
+
+  static Uri _localized(String page, String languageCode) {
     final supported = AppLocalizations.supportedLocales.any(
       (locale) => locale.languageCode == languageCode,
     );
     return Uri.https(
       host,
-      '/privacy/${supported ? languageCode : fallbackLanguage}',
+      '/$page/${supported ? languageCode : fallbackLanguage}',
     );
   }
 

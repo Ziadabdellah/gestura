@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/features/auth/data/firebase_auth_repository.dart';
 import 'package:gestura/features/auth/domain/app_user.dart';
+import 'package:gestura/features/auth/domain/google_accounts.dart';
 import 'package:gestura_core/gestura_core.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -13,6 +14,25 @@ class _MockUser extends Mock implements User;
 
 class _MockCredential extends Mock implements UserCredential;
 
+class _MockInfo extends Mock implements UserInfo;
+
+class _FakeGoogle implements GoogleAccounts {
+  String? token = 'google-token';
+  int signOuts = 0;
+
+  @override
+  Future<String?> idToken() async => token;
+
+  @override
+  Future<void> signOut() async => signOuts++;
+}
+
+_MockInfo _provider(String id) {
+  final info = _MockInfo();
+  when(() => info.providerId).thenReturn(id);
+  return info;
+}
+
 class _AuthError extends FirebaseAuthException {
   new(String code) : super(code: code);
 }
@@ -21,8 +41,11 @@ _MockUser _user({
   bool anonymous = false,
   String? email = 'learner@example.com',
   bool verified = false,
+  String provider = 'password',
 }) {
+  final info = _provider(provider);
   final user = _MockUser();
+  when(() => user.providerData).thenReturn([info]);
   when(() => user.uid).thenReturn('uid');
   when(() => user.isAnonymous).thenReturn(anonymous);
   when(() => user.email).thenReturn(email);
@@ -33,6 +56,7 @@ _MockUser _user({
 void main() {
   late _MockAuth auth;
   late FirebaseAuthRepository repository;
+  late _FakeGoogle google;
 
   setUpAll(
     () => registerFallbackValue(
@@ -42,7 +66,8 @@ void main() {
 
   setUp(() {
     auth = _MockAuth();
-    repository = FirebaseAuthRepository(auth);
+    google = _FakeGoogle();
+    repository = FirebaseAuthRepository(auth, google);
     when(() => auth.setLanguageCode(any())).thenAnswer((_) async {});
   });
 
@@ -61,6 +86,15 @@ void main() {
       expect(
         appUserOf(_user(email: null)),
         const MemberUser('uid', email: '', emailVerified: false),
+      );
+      expect(
+        appUserOf(_user(provider: 'google.com')),
+        const MemberUser(
+          'uid',
+          email: 'learner@example.com',
+          emailVerified: false,
+          usesPassword: false,
+        ),
       );
     });
   });
@@ -344,9 +378,94 @@ void main() {
   });
 
   test('signs out', () async {
+    when(() => auth.currentUser).thenReturn(null);
     when(auth.signOut).thenAnswer((_) async {});
 
     expect(await repository.signOut(), const Ok<void>(null));
     verify(auth.signOut).called(1);
+    expect(google.signOuts, 0);
+  });
+
+  test('signs out of Google too for a Google member', () async {
+    final member = _user(provider: 'google.com');
+    when(() => auth.currentUser).thenReturn(member);
+    when(auth.signOut).thenAnswer((_) async {});
+
+    expect(await repository.signOut(), const Ok<void>(null));
+    expect(google.signOuts, 1);
+  });
+
+  group('Google', () {
+    test('does nothing when the learner closes the Google sheet', () async {
+      google.token = null;
+
+      expect(
+        await repository.continueWithGoogle(),
+        const Err<void>(AuthFailure(AuthProblem.cancelled)),
+      );
+    });
+
+    test('keeps the guest progress by linking Google to the guest', () async {
+      final guest = _user(anonymous: true);
+      when(() => auth.currentUser).thenReturn(guest);
+      when(() => guest.linkWithCredential(any()))
+          .thenAnswer((_) async => _MockCredential());
+
+      expect(await repository.continueWithGoogle(), const Ok<void>(null));
+      final credential =
+          verify(() => guest.linkWithCredential(captureAny())).captured.single
+              as OAuthCredential;
+      expect(credential.idToken, 'google-token');
+    });
+
+    test(
+      'signs in to the existing account when Google is already used',
+      () async {
+        final guest = _user(anonymous: true);
+        when(() => auth.currentUser).thenReturn(guest);
+        when(() => guest.linkWithCredential(any()))
+            .thenThrow(_AuthError('credential-already-in-use'));
+        when(() => auth.signInWithCredential(any()))
+            .thenAnswer((_) async => _MockCredential());
+
+        expect(await repository.continueWithGoogle(), const Ok<void>(null));
+        verify(() => auth.signInWithCredential(any())).called(1);
+      },
+    );
+
+    test('reports other linking problems', () async {
+      final guest = _user(anonymous: true);
+      when(() => auth.currentUser).thenReturn(guest);
+      when(() => guest.linkWithCredential(any()))
+          .thenThrow(_AuthError('user-disabled'));
+
+      expect(
+        await repository.continueWithGoogle(),
+        const Err<void>(AuthFailure(AuthProblem.accountDisabled)),
+      );
+    });
+
+    test('signs in directly when nobody is signed in', () async {
+      when(() => auth.currentUser).thenReturn(null);
+      when(() => auth.signInWithCredential(any()))
+          .thenAnswer((_) async => _MockCredential());
+
+      expect(await repository.continueWithGoogle(), const Ok<void>(null));
+    });
+
+    test('confirms a Google member with Google before deleting', () async {
+      final member = _user(provider: 'google.com');
+      when(() => auth.currentUser).thenReturn(member);
+      when(() => member.reauthenticateWithCredential(any()))
+          .thenAnswer((_) async => _MockCredential());
+
+      expect(await repository.reauthenticate(), const Ok<void>(null));
+
+      google.token = null;
+      expect(
+        await repository.reauthenticate(),
+        const Err<void>(AuthFailure(AuthProblem.cancelled)),
+      );
+    });
   });
 }

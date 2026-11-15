@@ -22,10 +22,12 @@ class AccountViewModel extends Cubit<AccountState> {
   static AccountState stateOf(AppUser? user) => switch (user) {
     null => const AccountSignedOut(),
     GuestUser() => const AccountGuest(),
-    MemberUser(:final email, :final emailVerified) => AccountMember(
-      email: email,
-      emailVerified: emailVerified,
-    ),
+    MemberUser(:final email, :final emailVerified, :final usesPassword) =>
+      AccountMember(
+        email: email,
+        emailVerified: emailVerified,
+        usesPassword: usesPassword,
+      ),
   };
 
   Future<Result<void>> signOut() => _auth.signOut();
@@ -35,7 +37,7 @@ class AccountViewModel extends Cubit<AccountState> {
     if (user == null) return const Ok(null);
     emit(const AccountDeleting());
     final steps = <Future<Result<void>> Function()>[
-      if (password != null) () => _auth.reauthenticate(password: password),
+      if (user is MemberUser) () => _auth.reauthenticate(password: password),
       () => _cloud.deleteAll(user.id),
       _auth.deleteAccount,
     ];

@@ -18,6 +18,7 @@ class SettingsView extends StatelessWidget {
     required this.onAnalyticsChanged,
     required this.onCrashReportsChanged,
     required this.onOpenPrivacyPolicy,
+    required this.onOpenTerms,
     super.key,
   });
 
@@ -32,6 +33,7 @@ class SettingsView extends StatelessWidget {
   final ValueChanged<bool> onAnalyticsChanged;
   final ValueChanged<bool> onCrashReportsChanged;
   final VoidCallback onOpenPrivacyPolicy;
+  final VoidCallback onOpenTerms;
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +163,14 @@ class SettingsView extends StatelessWidget {
             child: Icon(Icons.open_in_new_rounded),
           ),
           onTap: onOpenPrivacyPolicy,
+        ),
+        ListTile(
+          contentPadding: tilePadding,
+          title: Text(l10n.termsOfUse),
+          trailing: const ExcludeSemantics(
+            child: Icon(Icons.open_in_new_rounded),
+          ),
+          onTap: onOpenTerms,
         ),
       ],
     );

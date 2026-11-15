@@ -234,6 +234,23 @@ void main() {
       );
     });
 
+    testWidgets('opens the terms of use in the app language', (tester) async {
+      await tester.pumpApp(
+        initialLocation: _settings,
+        settings: englishLight.copyWith(language: AppLanguage.german),
+      );
+
+      final terms = find.text('Nutzungsbedingungen');
+      await tester.scrollUntilVisible(terms, 100);
+      await tester.tap(terms);
+      await tester.pumpAndSettle();
+
+      expect(
+        fakeLinks.launched.single.url,
+        'https://gestura-prod.web.app/terms/de',
+      );
+    });
+
     testWidgets('says when a link cannot be opened', (tester) async {
       await tester.pumpApp(initialLocation: _settings);
       final policy = find.text('Privacy policy');

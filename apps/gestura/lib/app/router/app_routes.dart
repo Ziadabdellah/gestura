@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gestura/app/router/app_gate.dart';
 import 'package:gestura/app/view/app_shell.dart';
+import 'package:gestura/features/achievements/presentation/pages/stats_page.dart';
 import 'package:gestura/features/auth/domain/auth_entry.dart';
 import 'package:gestura/features/auth/presentation/pages/create_account_page.dart';
 import 'package:gestura/features/auth/presentation/pages/reset_password_page.dart';
@@ -9,9 +10,11 @@ import 'package:gestura/features/auth/presentation/pages/verify_email_page.dart'
 import 'package:gestura/features/auth/presentation/pages/welcome_page.dart';
 import 'package:gestura/features/content/domain/content_ids.dart';
 import 'package:gestura/features/dictionary/presentation/pages/dictionary_page.dart';
+import 'package:gestura/features/fingerspelling/presentation/pages/fingerspelling_page.dart';
 import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
 import 'package:gestura/features/lesson/presentation/pages/lesson_page.dart';
 import 'package:gestura/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:gestura/features/practice/presentation/pages/practice_page.dart';
 import 'package:gestura/features/profile/presentation/pages/profile_page.dart';
 import 'package:gestura/features/review/presentation/pages/review_page.dart';
 import 'package:gestura/features/saved/presentation/pages/saved_signs_page.dart';
@@ -35,8 +38,12 @@ part 'app_routes.g.dart';
         TypedGoRoute<DictionaryRoute>(
           path: '/dictionary',
           routes: [
-            TypedGoRoute<SignRoute>(path: 'sign/:signId'),
+            TypedGoRoute<SignRoute>(
+              path: 'sign/:signId',
+              routes: [TypedGoRoute<PracticeRoute>(path: 'practice')],
+            ),
             TypedGoRoute<SavedSignsRoute>(path: 'saved'),
+            TypedGoRoute<FingerspellingRoute>(path: 'alphabet'),
           ],
         ),
       ],
@@ -45,7 +52,10 @@ part 'app_routes.g.dart';
       routes: [
         TypedGoRoute<ProfileRoute>(
           path: '/profile',
-          routes: [TypedGoRoute<SettingsRoute>(path: 'settings')],
+          routes: [
+            TypedGoRoute<SettingsRoute>(path: 'settings'),
+            TypedGoRoute<StatsRoute>(path: 'progress'),
+          ],
         ),
       ],
     ),
@@ -110,6 +120,28 @@ class DictionaryRoute extends GoRouteData
 }
 
 @immutable
+class FingerspellingRoute extends GoRouteData
+    with $FingerspellingRoute, MaterialTransitions {
+  const new();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const FingerspellingPage();
+}
+
+@immutable
+class PracticeRoute extends GoRouteData
+    with $PracticeRoute, MaterialTransitions {
+  const new({required this.signId});
+
+  final String signId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      PracticePage(signId: SignId(signId));
+}
+
+@immutable
 class SavedSignsRoute extends GoRouteData
     with $SavedSignsRoute, MaterialTransitions {
   const new();
@@ -147,6 +179,14 @@ class SettingsRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SettingsPage();
+}
+
+@immutable
+class StatsRoute extends GoRouteData with $StatsRoute, MaterialTransitions {
+  const new();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const StatsPage();
 }
 
 @TypedGoRoute<LessonRoute>(path: '/lesson/:lessonId')

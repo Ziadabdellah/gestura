@@ -57,6 +57,20 @@ def validate(catalog, folder):
         signs[sign_id] = sign
     if not signs:
         fail("the catalog has no signs")
+    letters = set()
+    for letter in catalog.get("alphabet", []):
+        value = letter.get("letter")
+        if not isinstance(value, str) or not value or value in letters:
+            fail(f"alphabet has a missing or repeated letter: {value}")
+        letters.add(value)
+        if not isinstance(letter.get("durationMs"), int) or letter["durationMs"] <= 0:
+            fail(f"letter {value} needs a positive durationMs")
+        source = letter.get("source") or {}
+        if not source.get("name") or not source.get("license"):
+            fail(f"letter {value} needs a source name and license")
+        for field in ("video", "thumbnail"):
+            if not (folder / letter.get(field, "")).is_file():
+                fail(f"letter {value} {field} file is missing: {letter.get(field)}")
     for course in catalog.get("courses", []):
         check_text(course.get("title"), f"course {course.get('id')}")
         units = {unit.get("index") for unit in course.get("units", [])}
@@ -111,7 +125,7 @@ def publish(catalog_path, target):
     destination = output / code
     if destination.exists():
         shutil.rmtree(destination)
-    for sign in catalog["signs"]:
+    for sign in catalog["signs"] + catalog.get("alphabet", []):
         for field in ("video", "thumbnail"):
             sign[field] = hashed_copy(folder / sign[field], destination / "media")
     (destination / "catalog.json").write_text(

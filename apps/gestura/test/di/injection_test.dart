@@ -24,12 +24,16 @@ import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/app_policy/data/remote_config_policy.dart';
 import 'package:gestura/features/app_policy/domain/app_policy.dart';
 import 'package:gestura/features/auth/data/firebase_auth_repository.dart';
+import 'package:gestura/features/auth/data/google_sign_in_accounts.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
+import 'package:gestura/features/auth/domain/google_accounts.dart';
 import 'package:gestura/features/content/data/bundled_content_repository.dart';
 import 'package:gestura/features/content/data/remote_content_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/learner/learner_cloud.dart';
 import 'package:gestura/features/learner/learner_sync.dart';
+import 'package:gestura/features/practice/data/device_self_camera.dart';
+import 'package:gestura/features/practice/domain/self_camera.dart';
 import 'package:gestura/features/progress/data/drift_progress_repository.dart';
 import 'package:gestura/features/progress/domain/lesson_progress.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
@@ -123,6 +127,8 @@ void main() {
       );
       expect(container<UserDocuments>(), isA<FirestoreUserDocuments>());
       expect(container<Reminders>(), isA<LocalReminders>());
+      expect(container<SelfCamera>(), isA<DeviceSelfCamera>());
+      expect(container<GoogleAccounts>(), isA<GoogleSignInAccounts>());
       expect(
         container<AppPolicySource>(),
         AppConfig(flavor: flavor).isProd
