@@ -8,8 +8,12 @@ class FakeMediaCache implements MediaCache {
 
   final String root;
   final List<Uri> requested = [];
+  final Set<Uri> stored = {};
   final Set<String> missing = {};
   Completer<void>? hold;
+
+  @override
+  Future<bool> has(Uri uri) async => stored.contains(uri);
 
   @override
   Future<File> file(Uri uri) async {
@@ -17,6 +21,7 @@ class FakeMediaCache implements MediaCache {
     if (hold case final Completer<void> hold) await hold.future;
     final name = uri.pathSegments.last;
     if (missing.contains(name)) throw const HttpException('offline');
+    stored.add(uri);
     return File('$root/$name');
   }
 }

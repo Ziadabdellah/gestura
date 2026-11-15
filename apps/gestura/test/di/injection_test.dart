@@ -16,10 +16,13 @@ import 'package:gestura/core/errors/crashlytics_error_reporter.dart';
 import 'package:gestura/core/errors/error_reporter.dart';
 import 'package:gestura/core/errors/logging_error_reporter.dart';
 import 'package:gestura/core/media/media_cache.dart';
+import 'package:gestura/core/share/link_sharer.dart';
 import 'package:gestura/core/telemetry/firebase_telemetry.dart';
 import 'package:gestura/core/telemetry/local_telemetry.dart';
 import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/app_policy/data/remote_config_policy.dart';
+import 'package:gestura/features/app_policy/domain/app_policy.dart';
 import 'package:gestura/features/auth/data/firebase_auth_repository.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/data/bundled_content_repository.dart';
@@ -30,6 +33,8 @@ import 'package:gestura/features/learner/learner_sync.dart';
 import 'package:gestura/features/progress/data/drift_progress_repository.dart';
 import 'package:gestura/features/progress/domain/lesson_progress.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
+import 'package:gestura/features/reminders/data/local_reminders.dart';
+import 'package:gestura/features/reminders/domain/reminders.dart';
 import 'package:gestura/features/settings/data/shared_preferences_settings_repository.dart';
 import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:get_it/get_it.dart';
@@ -117,6 +122,14 @@ void main() {
             : isA<DeviceOnlySet<LessonProgress>>(),
       );
       expect(container<UserDocuments>(), isA<FirestoreUserDocuments>());
+      expect(container<Reminders>(), isA<LocalReminders>());
+      expect(
+        container<AppPolicySource>(),
+        AppConfig(flavor: flavor).isProd
+            ? isA<RemoteConfigPolicy>()
+            : isA<OpenPolicy>(),
+      );
+      expect(container<LinkSharer>(), isA<SystemLinkSharer>());
       expect(
         container<FirebaseFirestore>().settings.persistenceEnabled,
         isFalse,

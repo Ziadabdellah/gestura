@@ -69,7 +69,11 @@ final class AppSettings {
     this.analyticsConsent = false,
     this.crashReportsConsent = false,
     this.onboardingComplete = false,
+    this.reminderMinutes,
   });
+
+  static const int defaultReminderMinutes = 19 * 60;
+  static const int minutesPerDay = 24 * 60;
 
   static const AppSettings defaults = AppSettings();
 
@@ -82,6 +86,9 @@ final class AppSettings {
   final bool analyticsConsent;
   final bool crashReportsConsent;
   final bool onboardingComplete;
+  final int? reminderMinutes;
+
+  bool get remindsDaily => reminderMinutes != null;
 
   AppSettings copyWith({
     AppLanguage? language,
@@ -93,6 +100,7 @@ final class AppSettings {
     bool? analyticsConsent,
     bool? crashReportsConsent,
     bool? onboardingComplete,
+    int? Function()? reminderMinutes,
   }) => AppSettings(
     language: language ?? this.language,
     theme: theme ?? this.theme,
@@ -103,6 +111,9 @@ final class AppSettings {
     analyticsConsent: analyticsConsent ?? this.analyticsConsent,
     crashReportsConsent: crashReportsConsent ?? this.crashReportsConsent,
     onboardingComplete: onboardingComplete ?? this.onboardingComplete,
+    reminderMinutes: reminderMinutes == null
+        ? this.reminderMinutes
+        : reminderMinutes(),
   );
 
   @override
@@ -117,7 +128,8 @@ final class AppSettings {
           other.dominantHand == dominantHand &&
           other.analyticsConsent == analyticsConsent &&
           other.crashReportsConsent == crashReportsConsent &&
-          other.onboardingComplete == onboardingComplete;
+          other.onboardingComplete == onboardingComplete &&
+          other.reminderMinutes == reminderMinutes;
 
   @override
   int get hashCode => Object.hash(
@@ -130,6 +142,7 @@ final class AppSettings {
     analyticsConsent,
     crashReportsConsent,
     onboardingComplete,
+    reminderMinutes,
   );
 
   @override
@@ -138,5 +151,5 @@ final class AppSettings {
       'reduceMotion: $reduceMotion, signLanguage: $signLanguage, '
       'dailyGoal: ${dailyGoal.minutes}, hand: ${dominantHand.name}, '
       'analytics: $analyticsConsent, crashReports: $crashReportsConsent, '
-      'onboardingComplete: $onboardingComplete)';
+      'onboardingComplete: $onboardingComplete, reminder: $reminderMinutes)';
 }

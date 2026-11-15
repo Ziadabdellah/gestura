@@ -12,6 +12,8 @@ class SettingsView extends StatelessWidget {
     required this.onLanguageChanged,
     required this.onReduceMotionChanged,
     required this.onDailyGoalChanged,
+    required this.onReminderChanged,
+    required this.onPickReminderTime,
     required this.onDominantHandChanged,
     required this.onAnalyticsChanged,
     required this.onCrashReportsChanged,
@@ -24,6 +26,8 @@ class SettingsView extends StatelessWidget {
   final ValueChanged<AppLanguage> onLanguageChanged;
   final ValueChanged<bool> onReduceMotionChanged;
   final ValueChanged<DailyGoal> onDailyGoalChanged;
+  final ValueChanged<bool> onReminderChanged;
+  final VoidCallback onPickReminderTime;
   final ValueChanged<DominantHand> onDominantHandChanged;
   final ValueChanged<bool> onAnalyticsChanged;
   final ValueChanged<bool> onCrashReportsChanged;
@@ -59,6 +63,28 @@ class SettingsView extends StatelessWidget {
             ],
           ),
         ),
+        SwitchListTile(
+          contentPadding: tilePadding,
+          title: Text(l10n.settingsReminder),
+          subtitle: Text(switch (settings.reminderMinutes) {
+            final int minutes => MaterialLocalizations.of(
+              context,
+            ).formatTimeOfDay(reminderTimeOf(minutes)),
+            null => l10n.settingsReminderOff,
+          }),
+          value: settings.remindsDaily,
+          onChanged: onReminderChanged,
+        ),
+        if (settings.remindsDaily)
+          ListTile(
+            contentPadding: tilePadding,
+            title: Text(l10n.settingsReminderTime),
+            trailing: Text(
+              MaterialLocalizations.of(context)
+                  .formatTimeOfDay(reminderTimeOf(settings.reminderMinutes!)),
+            ),
+            onTap: onPickReminderTime,
+          ),
         SettingsSectionHeader(title: l10n.settingsTheme),
         RadioGroup<AppThemePreference>(
           groupValue: settings.theme,
@@ -140,3 +166,8 @@ class SettingsView extends StatelessWidget {
     );
   }
 }
+
+TimeOfDay reminderTimeOf(int minutes) => TimeOfDay(
+  hour: minutes ~/ TimeOfDay.minutesPerHour,
+  minute: minutes % TimeOfDay.minutesPerHour,
+);

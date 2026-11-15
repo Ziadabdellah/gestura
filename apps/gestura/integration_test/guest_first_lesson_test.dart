@@ -16,6 +16,7 @@ import 'package:gestura/features/progress/domain/progress_repository.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/domain/settings_repository.dart';
 import 'package:gestura/features/sign_detail/presentation/pages/sign_detail_page.dart';
+import 'package:gestura/features/today/presentation/pages/today_page.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:video_player/video_player.dart';
@@ -70,9 +71,10 @@ void main() {
     await _button(tester, 'Continue as guest');
 
     expect(FirebaseAuth.instance.currentUser?.isAnonymous, isTrue);
-    expect(find.text('First signs'), findsOneWidget);
+    expect(find.byType(TodayPage), findsOneWidget);
+    expect(find.text('Lesson 1 · Hello and thank you'), findsOneWidget);
 
-    await _tap(tester, find.text('Hello and thank you'));
+    await _tap(tester, find.text('Start lesson'));
     await tester.pumpAndSettle(const Duration(seconds: 1));
     expect(find.byType(VideoPlayer), findsOneWidget);
 
@@ -99,6 +101,16 @@ void main() {
 
     expect(find.text('Lesson complete!'), findsOneWidget);
     await _tap(tester, find.text('Continue'));
+
+    expect(find.byType(TodayPage), findsOneWidget);
+    expect(find.textContaining('signs to review'), findsOneWidget);
+    await _tap(
+      tester,
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text('Learn'),
+      ),
+    );
 
     expect(find.text('Completed · Best score 100%'), findsOneWidget);
     expect(find.text('1 of 4 done'), findsOneWidget);

@@ -9,7 +9,6 @@ import 'package:gestura/features/auth/presentation/pages/reset_password_page.dar
 import 'package:gestura/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:gestura/features/auth/presentation/pages/verify_email_page.dart';
 import 'package:gestura/features/auth/presentation/pages/welcome_page.dart';
-import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/today/presentation/pages/today_page.dart';
 import 'package:gestura_core/gestura_core.dart';
@@ -151,7 +150,7 @@ void main() {
       expect(auth.calls, isEmpty);
     });
 
-    testWidgets('signs in and opens Learn', (tester) async {
+    testWidgets('signs in and opens Today', (tester) async {
       final auth = await _signedOut(tester, initialLocation: signIn);
 
       await _fill(tester, email: ' learner@example.com ');
@@ -159,7 +158,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(auth.calls, ['signIn:learner@example.com']);
-      expect(find.byType(LearnPage), findsOneWidget);
+      expect(find.byType(TodayPage), findsOneWidget);
     });
 
     testWidgets('explains wrong details and keeps the form', (tester) async {
@@ -272,7 +271,7 @@ void main() {
 
       await _tapButton(tester, 'Later');
 
-      expect(find.byType(LearnPage), findsOneWidget);
+      expect(find.byType(TodayPage), findsOneWidget);
     });
 
     testWidgets('explains an email that is already used', (tester) async {
@@ -366,13 +365,13 @@ void main() {
       );
     });
 
-    testWidgets('goes to Learn once the email is confirmed', (tester) async {
+    testWidgets('goes to Today once the email is confirmed', (tester) async {
       final auth = await open(tester);
       auth.verifyOnRefresh = true;
 
       await _tapButton(tester, "I've confirmed it");
 
-      expect(find.byType(LearnPage), findsOneWidget);
+      expect(find.byType(TodayPage), findsOneWidget);
     });
 
     testWidgets('lets a confirmed member continue', (tester) async {
@@ -382,7 +381,7 @@ void main() {
 
       await _tapButton(tester, 'Continue');
 
-      expect(find.byType(LearnPage), findsOneWidget);
+      expect(find.byType(TodayPage), findsOneWidget);
     });
 
     testWidgets('is only for signed-in learners', (tester) async {

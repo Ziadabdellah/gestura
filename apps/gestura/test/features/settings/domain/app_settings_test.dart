@@ -106,6 +106,15 @@ void main() {
         base.copyWith(onboardingComplete: true).onboardingComplete,
         isTrue,
       );
+      final reminding = base.copyWith(reminderMinutes: () => 480);
+      expect(reminding.reminderMinutes, 480);
+      expect(reminding.remindsDaily, isTrue);
+      expect(reminding.copyWith().reminderMinutes, 480);
+      expect(
+        reminding.copyWith(reminderMinutes: () => null).remindsDaily,
+        false,
+      );
+      expect(reminding, isNot(base));
       expect(
         base.copyWith(signLanguage: 'demo').copyWith(),
         const AppSettings(signLanguage: 'demo'),
@@ -165,7 +174,7 @@ void main() {
         AppSettings.defaults.toString(),
         'AppSettings(language: system, theme: system, reduceMotion: false, '
         'signLanguage: null, dailyGoal: 10, hand: right, analytics: false, '
-        'crashReports: false, onboardingComplete: false)',
+        'crashReports: false, onboardingComplete: false, reminder: null)',
       );
     });
   });

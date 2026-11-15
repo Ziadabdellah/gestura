@@ -8,6 +8,7 @@ abstract final class PreferenceKeys {
   static const String analyticsConsent = 'privacy.analytics';
   static const String crashReportsConsent = 'privacy.crashReports';
   static const String onboardingComplete = 'onboarding.complete';
+  static const String reminderMinutes = 'reminders.dailyMinutes';
 
   static const Set<String> all = {
     language,
@@ -19,5 +20,6 @@ abstract final class PreferenceKeys {
     analyticsConsent,
     crashReportsConsent,
     onboardingComplete,
+    reminderMinutes,
   };
 }

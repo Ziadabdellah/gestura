@@ -25,6 +25,12 @@ final class SharedPreferencesSettingsRepository implements SettingsRepository {
     crashReportsConsent:
         _read<bool>(PreferenceKeys.crashReportsConsent) ?? false,
     onboardingComplete: _read<bool>(PreferenceKeys.onboardingComplete) ?? false,
+    reminderMinutes: switch (_read<int>(PreferenceKeys.reminderMinutes)) {
+      final int minutes
+          when minutes >= 0 && minutes < AppSettings.minutesPerDay =>
+        minutes,
+      _ => null,
+    },
   );
 
   @override
@@ -56,6 +62,10 @@ final class SharedPreferencesSettingsRepository implements SettingsRepository {
       PreferenceKeys.onboardingComplete,
       settings.onboardingComplete,
     );
+    final reminder = settings.reminderMinutes;
+    await (reminder == null
+        ? _preferences.remove(PreferenceKeys.reminderMinutes)
+        : _preferences.setInt(PreferenceKeys.reminderMinutes, reminder));
   }, onError: (error, stackTrace) => UnexpectedFailure(error));
 
   Future<void> _writeString(String key, String? value) => value == null

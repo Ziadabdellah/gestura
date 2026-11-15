@@ -193,5 +193,20 @@
   "removeSavedSign": "Retirer des signes enregistrés",
   "savedEmptyTitle": "Aucun signe enregistré",
   "savedEmptyMessage": "Touchez le cœur d’un signe pour le retrouver ici.",
-  "shareSign": "Partager le signe"
+  "shareSign": "Partager le signe",
+  "settingsReminder": "Rappel quotidien",
+  "settingsReminderOff": "Désactivé",
+  "reminderTitle": "C’est l’heure de signer",
+  "reminderBody": "Quelques minutes aujourd’hui gardent votre série en vie.",
+  "reminderPermissionDenied": "Les notifications de Gestura sont désactivées. Activez-les dans les réglages du téléphone pour recevoir des rappels.",
+  "settingsReminderTime": "Heure du rappel",
+  "updateRequiredTitle": "Mise à jour nécessaire",
+  "updateRequiredMessage": "Cette version de Gestura n’est plus prise en charge. Mettez l’application à jour pour continuer à apprendre.",
+  "updateAction": "Mettre à jour",
+  "maintenanceTitle": "De retour bientôt",
+  "maintenanceMessage": "Nous améliorons Gestura en ce moment. Réessayez dans un petit moment.",
+  "offlineTitle": "Télécharger les signes hors ligne",
+  "offlineReady": "Enregistrés sur le téléphone, utilisables sans internet",
+  "offlineProgress": "{done} fichiers sur {total} enregistrés",
+  "offlineFailed": "{done} fichiers sur {total} enregistrés. Touchez pour réessayer le reste."
 }

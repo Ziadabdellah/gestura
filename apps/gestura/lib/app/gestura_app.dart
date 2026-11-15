@@ -8,9 +8,12 @@ import 'package:gestura/app/view/app_frame.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/app_policy/domain/app_policy.dart';
+import 'package:gestura/features/app_policy/presentation/policy_gate.dart';
 import 'package:gestura/features/auth/domain/app_user.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/learner/learner_sync.dart';
+import 'package:gestura/features/reminders/presentation/reminder_keeper.dart';
 import 'package:gestura/features/settings/presentation/settings_presentation.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_state.dart';
 import 'package:gestura/features/settings/presentation/view_models/settings_view_model.dart';
@@ -63,7 +66,10 @@ class _GesturaAppState extends ConsumerState<GesturaApp> {
     _user = _auth.watchUser().listen((user) => _gate.signedIn = user != null);
     _sync.start();
     _lifecycle = AppLifecycleListener(
-      onResume: () => unawaited(_sync.refresh()),
+      onResume: () {
+        unawaited(_sync.refresh());
+        unawaited(getIt<AppPolicySource>().refresh());
+      },
     );
     _router = createAppRouter(
       gate: _gate,
@@ -108,10 +114,12 @@ class _GesturaAppState extends ConsumerState<GesturaApp> {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         debugShowCheckedModeBanner: false,
-        builder: (context, child) => AppFrame(
-          flavor: widget.config.flavor,
-          reduceMotion: settings.reduceMotion,
-          child: child!,
+        builder: (context, child) => ReminderKeeper(
+          child: AppFrame(
+            flavor: widget.config.flavor,
+            reduceMotion: settings.reduceMotion,
+            child: PolicyGate(child: child!),
+          ),
         ),
       ),
     );

@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 
 abstract interface class MediaCache {
   Future<File> file(Uri uri);
+
+  Future<bool> has(Uri uri);
 }
 
 Future<Directory> mediaDirectory() async =>
@@ -26,6 +28,10 @@ final class DiskMediaCache implements MediaCache {
 
   static String nameOf(Uri uri) =>
       '${uri.host}${uri.path}'.replaceAll(RegExp('[^A-Za-z0-9._-]'), '_');
+
+  @override
+  Future<bool> has(Uri uri) async =>
+      File('${(await directory()).path}/${nameOf(uri)}').existsSync();
 
   @override
   Future<File> file(Uri uri) async {

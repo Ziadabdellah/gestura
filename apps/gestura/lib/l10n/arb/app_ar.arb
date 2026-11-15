@@ -193,5 +193,20 @@
   "removeSavedSign": "أزِل من المحفوظات",
   "savedEmptyTitle": "لا توجد إشارات محفوظة بعد",
   "savedEmptyMessage": "اضغط على القلب في صفحة أي إشارة لتحفظها هنا.",
-  "shareSign": "شارك الإشارة"
+  "shareSign": "شارك الإشارة",
+  "settingsReminder": "تذكير يومي",
+  "settingsReminderOff": "متوقف",
+  "reminderTitle": "حان وقت الإشارة",
+  "reminderBody": "بضع دقائق اليوم تحافظ على سلسلة أيامك.",
+  "reminderPermissionDenied": "الإشعارات متوقفة لتطبيق Gestura. فعّلها من إعدادات الهاتف لتصلك التذكيرات.",
+  "settingsReminderTime": "وقت التذكير",
+  "updateRequiredTitle": "حان وقت التحديث",
+  "updateRequiredMessage": "هذا الإصدار من Gestura لم يعد مدعومًا. حدّث التطبيق لتواصل التعلّم.",
+  "updateAction": "تحديث",
+  "maintenanceTitle": "سنعود قريبًا",
+  "maintenanceMessage": "نعمل الآن على تحسين Gestura. حاول مرة أخرى بعد قليل.",
+  "offlineTitle": "تنزيل الإشارات للاستخدام بلا إنترنت",
+  "offlineReady": "محفوظة على الهاتف وتعمل بلا إنترنت",
+  "offlineProgress": "تم حفظ {done} من {total} ملفًا",
+  "offlineFailed": "تم حفظ {done} من {total} ملفًا. اضغط لإعادة محاولة الباقي."
 }

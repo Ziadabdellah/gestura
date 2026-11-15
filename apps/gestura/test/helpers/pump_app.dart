@@ -10,12 +10,14 @@ import 'package:gestura/core/share/link_sharer.dart';
 import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/activity/domain/activity_repository.dart';
+import 'package:gestura/features/app_policy/domain/app_policy.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
 import 'package:gestura/features/learner/learner_cloud.dart';
 import 'package:gestura/features/learner/learner_data.dart';
 import 'package:gestura/features/learner/learner_sync.dart';
 import 'package:gestura/features/progress/domain/progress_repository.dart';
+import 'package:gestura/features/reminders/domain/reminders.dart';
 import 'package:gestura/features/review/domain/review_repository.dart';
 import 'package:gestura/features/saved/domain/saved_signs_repository.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
@@ -29,7 +31,9 @@ import 'fake_content_repository.dart';
 import 'fake_learner_cloud.dart';
 import 'fake_link_sharer.dart';
 import 'fake_media_cache.dart';
+import 'fake_policy_source.dart';
 import 'fake_progress_repository.dart';
+import 'fake_reminders.dart';
 import 'fake_review_repository.dart';
 import 'fake_saved_signs_repository.dart';
 import 'fake_settings_repository.dart';
@@ -65,6 +69,8 @@ Future<void> registerFakes({
   ReviewRepository? reviews,
   ActivityRepository? activity,
   SavedSignsRepository? saved,
+  Reminders? reminders,
+  AppPolicySource? policy,
 }) async {
   VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
   UrlLauncherPlatform.instance = FakeUrlLauncher();
@@ -93,6 +99,8 @@ Future<void> registerFakes({
       () => LearnerData(getIt(), getIt(), getIt(), getIt()),
     )
     ..registerSingleton<LinkSharer>(FakeLinkSharer())
+    ..registerSingleton<AppPolicySource>(policy ?? FakePolicySource())
+    ..registerSingleton<Reminders>(reminders ?? FakeReminders())
     ..registerSingleton<AppInfo>(testAppInfo);
 }
 
@@ -123,6 +131,8 @@ extension PumpApp on WidgetTester {
     ReviewRepository? reviews,
     ActivityRepository? activity,
     SavedSignsRepository? saved,
+    Reminders? reminders,
+    AppPolicySource? policy,
   }) async {
     view
       ..physicalSize = surfaceSize * 3
@@ -139,6 +149,8 @@ extension PumpApp on WidgetTester {
       reviews: reviews,
       activity: activity,
       saved: saved,
+      reminders: reminders,
+      policy: policy,
     );
     addTearDown(getIt.reset);
 

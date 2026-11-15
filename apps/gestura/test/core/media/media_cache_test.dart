@@ -43,6 +43,8 @@ void main() {
     expect(first.lengthSync(), 100);
     expect(again.path, first.path);
     expect(requests, 1);
+    expect(await media.has(uri('a.mp4')), isTrue);
+    expect(await media.has(uri('b.mp4')), isFalse);
   });
 
   test('shares one download between callers asking at once', () async {

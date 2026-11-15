@@ -7,6 +7,7 @@ import 'package:gestura/features/settings/presentation/pages/settings_page.dart'
 import 'package:gestura_core/gestura_core.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
+import '../../../helpers/fake_reminders.dart';
 import '../../../helpers/pump_app.dart';
 
 final String _settings = const SettingsRoute().location;
@@ -105,6 +106,71 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repository.stored.dailyGoal, DailyGoal.fifteen);
+    });
+
+    testWidgets('turns the daily reminder on after asking, and off', (
+      tester,
+    ) async {
+      final reminders = FakeReminders();
+      final repository = await tester.pumpApp(
+        initialLocation: _settings,
+        reminders: reminders,
+      );
+
+      await tester.tap(find.text('Daily reminder'));
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.reminderMinutes, 19 * 60);
+      expect(reminders.calls, ['permission', 'daily:1140:Time to sign']);
+      expect(find.text('7:00 PM'), findsNWidgets(2));
+
+      await tester.tap(find.text('Daily reminder'));
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.reminderMinutes, isNull);
+      expect(reminders.calls.last, 'cancel');
+    });
+
+    testWidgets('explains blocked notifications and stays off', (tester) async {
+      final repository = await tester.pumpApp(
+        initialLocation: _settings,
+        reminders: FakeReminders(granted: false),
+      );
+
+      await tester.tap(find.text('Daily reminder'));
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.reminderMinutes, isNull);
+      expect(find.textContaining('Notifications are off'), findsOneWidget);
+    });
+
+    testWidgets('changes the reminder time', (tester) async {
+      final reminders = FakeReminders();
+      final repository = await tester.pumpApp(
+        initialLocation: _settings,
+        settings: englishLight.copyWith(reminderMinutes: () => 19 * 60),
+        reminders: reminders,
+      );
+
+      await tester.tap(find.text('Reminder time'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(repository.stored.reminderMinutes, 19 * 60);
+
+      await tester.tap(find.text('Reminder time'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Switch to text input mode'));
+      await tester.pumpAndSettle();
+      final fields = find.byType(TextFormField);
+      await tester.enterText(fields.first, '8');
+      await tester.enterText(fields.last, '15');
+      await tester.tap(find.text('AM'));
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(repository.stored.reminderMinutes, 8 * 60 + 15);
+      expect(reminders.calls.last, 'daily:495:Time to sign');
     });
 
     testWidgets('mirrors videos for a left-handed signer', (tester) async {

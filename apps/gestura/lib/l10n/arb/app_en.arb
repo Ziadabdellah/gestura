@@ -386,5 +386,40 @@
   "removeSavedSign": "Remove from saved",
   "savedEmptyTitle": "No saved signs yet",
   "savedEmptyMessage": "Tap the heart on a sign to keep it here.",
-  "shareSign": "Share sign"
+  "shareSign": "Share sign",
+  "settingsReminder": "Daily reminder",
+  "settingsReminderOff": "Off",
+  "reminderTitle": "Time to sign",
+  "reminderBody": "A few minutes today keep your streak going.",
+  "reminderPermissionDenied": "Notifications are off for Gestura. Turn them on in your phone settings to get a reminder.",
+  "settingsReminderTime": "Reminder time",
+  "updateRequiredTitle": "Time to update",
+  "updateRequiredMessage": "This version of Gestura is no longer supported. Update the app to keep learning.",
+  "updateAction": "Update",
+  "maintenanceTitle": "Back soon",
+  "maintenanceMessage": "Gestura is being improved right now. Please try again in a little while.",
+  "offlineTitle": "Download signs for offline use",
+  "offlineReady": "Saved on this phone, works without internet",
+  "offlineProgress": "{done} of {total} files saved",
+  "offlineFailed": "{done} of {total} files saved. Tap to try the rest again.",
+  "@offlineProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@offlineFailed": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

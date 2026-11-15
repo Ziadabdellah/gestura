@@ -40,6 +40,9 @@ class SettingsViewModel extends _$SettingsViewModel {
   Future<void> setCrashReportsConsent({required bool granted}) =>
       _update(state.settings.copyWith(crashReportsConsent: granted));
 
+  Future<void> setReminder(int? minutes) =>
+      _update(state.settings.copyWith(reminderMinutes: () => minutes));
+
   Future<void> completeOnboarding() =>
       _update(state.settings.copyWith(onboardingComplete: true));
 

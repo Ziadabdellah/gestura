@@ -60,7 +60,10 @@ void main() {
 
     await tester.pumpWidget(
       const ProviderScope(
-        child: GesturaApp(config: AppConfig(flavor: Flavor.dev)),
+        child: GesturaApp(
+          config: AppConfig(flavor: Flavor.dev),
+          initialLocation: '/learn',
+        ),
       ),
     );
     await tester.pumpAndSettle();

@@ -1,0 +1,18 @@
+{
+  "parameters": {
+    "min_build": {
+      "defaultValue": {
+        "value": "0"
+      },
+      "description": "Builds below this number must update before they can be used.",
+      "valueType": "NUMBER"
+    },
+    "maintenance": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "description": "Shows the maintenance screen to every learner while true.",
+      "valueType": "BOOLEAN"
+    }
+  }
+}

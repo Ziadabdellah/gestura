@@ -25,6 +25,7 @@ void main() {
   test('lists saved signs in order and follows changes', () async {
     final viewModel = SavedSignsViewModel(content, saved);
     expect(viewModel.state, const SavedSignsLoading());
+    expect(const SavedSignsLoading().props, isEmpty);
     viewModel.start();
     await pumpEventQueue();
 

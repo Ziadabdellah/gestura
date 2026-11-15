@@ -108,5 +108,8 @@
     "firestore": {
       "port": 8080
     }
+  },
+  "remoteconfig": {
+    "template": "firebase/remoteconfig.template.json"
   }
 }

@@ -73,6 +73,25 @@ void main() {
     );
   });
 
+  test('keeps the reminder time and forgets it when turned off', () async {
+    await (await _repository()).save(
+      const AppSettings(reminderMinutes: 8 * 60 + 30),
+    );
+    expect((await _repository()).load().reminderMinutes, 510);
+
+    await (await _repository()).save(AppSettings.defaults);
+    expect((await _repository()).load().reminderMinutes, isNull);
+    expect(
+      (await _preferences()).containsKey(PreferenceKeys.reminderMinutes),
+      isFalse,
+    );
+  });
+
+  test('ignores a reminder time outside the day', () async {
+    await (await _preferences()).setInt(PreferenceKeys.reminderMinutes, 1440);
+    expect((await _repository()).load().reminderMinutes, isNull);
+  });
+
   test('forgets the language when it goes back to the system one', () async {
     final repository = await _repository();
     await repository.save(const AppSettings(language: AppLanguage.german));

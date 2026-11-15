@@ -193,5 +193,20 @@
   "removeSavedSign": "Aus Gespeicherten entfernen",
   "savedEmptyTitle": "Noch keine gespeicherten Gebärden",
   "savedEmptyMessage": "Tippe auf das Herz bei einer Gebärde, um sie hier zu behalten.",
-  "shareSign": "Gebärde teilen"
+  "shareSign": "Gebärde teilen",
+  "settingsReminder": "Tägliche Erinnerung",
+  "settingsReminderOff": "Aus",
+  "reminderTitle": "Zeit zum Gebärden",
+  "reminderBody": "Ein paar Minuten heute halten deine Serie am Leben.",
+  "reminderPermissionDenied": "Benachrichtigungen für Gestura sind aus. Schalte sie in den Telefoneinstellungen ein, um Erinnerungen zu bekommen.",
+  "settingsReminderTime": "Uhrzeit der Erinnerung",
+  "updateRequiredTitle": "Zeit für ein Update",
+  "updateRequiredMessage": "Diese Version von Gestura wird nicht mehr unterstützt. Aktualisiere die App, um weiterzulernen.",
+  "updateAction": "Aktualisieren",
+  "maintenanceTitle": "Bald wieder da",
+  "maintenanceMessage": "Wir verbessern Gestura gerade. Bitte versuche es gleich noch einmal.",
+  "offlineTitle": "Gebärden für offline herunterladen",
+  "offlineReady": "Auf dem Handy gespeichert, funktioniert ohne Internet",
+  "offlineProgress": "{done} von {total} Dateien gespeichert",
+  "offlineFailed": "{done} von {total} Dateien gespeichert. Tippe, um den Rest erneut zu laden."
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gestura/config/app_info.dart';
 import 'package:gestura/core/widgets/readable_inset.dart';
 import 'package:gestura/features/auth/presentation/view_models/account_state.dart';
+import 'package:gestura/features/offline/offline_pack_tile.dart';
 import 'package:gestura/features/profile/presentation/widgets/account_card.dart';
 import 'package:gestura/l10n/l10n.dart';
 import 'package:gestura_ui/gestura_ui.dart';
@@ -72,6 +73,7 @@ class ProfileView extends StatelessWidget {
             trailing: const ExcludeSemantics(child: Icon(Icons.chevron_right)),
             onTap: actions.onOpenSettings,
           ),
+          OfflinePackTile(padding: padding),
           ListTile(
             contentPadding: padding,
             leading: const ExcludeSemantics(

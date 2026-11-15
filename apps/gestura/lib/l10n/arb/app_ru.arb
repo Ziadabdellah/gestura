@@ -193,5 +193,20 @@
   "removeSavedSign": "Убрать из сохранённых",
   "savedEmptyTitle": "Пока нет сохранённых жестов",
   "savedEmptyMessage": "Нажмите на сердечко на странице жеста, чтобы сохранить его здесь.",
-  "shareSign": "Поделиться жестом"
+  "shareSign": "Поделиться жестом",
+  "settingsReminder": "Ежедневное напоминание",
+  "settingsReminderOff": "Выкл.",
+  "reminderTitle": "Время жестов",
+  "reminderBody": "Несколько минут сегодня сохранят вашу серию.",
+  "reminderPermissionDenied": "Уведомления для Gestura выключены. Включите их в настройках телефона, чтобы получать напоминания.",
+  "settingsReminderTime": "Время напоминания",
+  "updateRequiredTitle": "Пора обновиться",
+  "updateRequiredMessage": "Эта версия Gestura больше не поддерживается. Обновите приложение, чтобы продолжить обучение.",
+  "updateAction": "Обновить",
+  "maintenanceTitle": "Скоро вернёмся",
+  "maintenanceMessage": "Сейчас мы улучшаем Gestura. Попробуйте ещё раз чуть позже.",
+  "offlineTitle": "Скачать жесты для офлайн-режима",
+  "offlineReady": "Сохранено на телефоне, работает без интернета",
+  "offlineProgress": "Сохранено файлов: {done} из {total}",
+  "offlineFailed": "Сохранено файлов: {done} из {total}. Нажмите, чтобы докачать остальные."
 }

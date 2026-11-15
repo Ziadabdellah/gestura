@@ -23,7 +23,7 @@ class SignInPage extends StatelessWidget {
   void _finish(BuildContext context) {
     switch (entry) {
       case AuthEntry.welcome:
-        const LearnRoute().go(context);
+        const TodayRoute().go(context);
       case AuthEntry.profile:
         context.pop();
     }

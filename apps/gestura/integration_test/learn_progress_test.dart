@@ -57,7 +57,9 @@ void main() {
     await getIt<ProgressRepository>().recordCompletion(_first, score: 90);
 
     await tester.pumpWidget(
-      const ProviderScope(child: GesturaApp(config: _dev)),
+      const ProviderScope(
+        child: GesturaApp(config: _dev, initialLocation: '/learn'),
+      ),
     );
     await tester.pumpAndSettle();
 

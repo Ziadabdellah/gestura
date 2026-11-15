@@ -193,5 +193,20 @@
   "removeSavedSign": "Quitar de guardados",
   "savedEmptyTitle": "Aún no hay signos guardados",
   "savedEmptyMessage": "Toca el corazón de un signo para guardarlo aquí.",
-  "shareSign": "Compartir signo"
+  "shareSign": "Compartir signo",
+  "settingsReminder": "Recordatorio diario",
+  "settingsReminderOff": "Desactivado",
+  "reminderTitle": "Hora de signar",
+  "reminderBody": "Unos minutos hoy mantienen tu racha.",
+  "reminderPermissionDenied": "Las notificaciones de Gestura están desactivadas. Actívalas en los ajustes del teléfono para recibir recordatorios.",
+  "settingsReminderTime": "Hora del recordatorio",
+  "updateRequiredTitle": "Hora de actualizar",
+  "updateRequiredMessage": "Esta versión de Gestura ya no es compatible. Actualiza la app para seguir aprendiendo.",
+  "updateAction": "Actualizar",
+  "maintenanceTitle": "Volvemos pronto",
+  "maintenanceMessage": "Estamos mejorando Gestura. Vuelve a intentarlo en un rato.",
+  "offlineTitle": "Descargar signos para usar sin conexión",
+  "offlineReady": "Guardados en el teléfono, funcionan sin internet",
+  "offlineProgress": "{done} de {total} archivos guardados",
+  "offlineFailed": "{done} de {total} archivos guardados. Toca para reintentar el resto."
 }

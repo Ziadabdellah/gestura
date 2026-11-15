@@ -6,9 +6,9 @@ import 'package:gestura/app/gestura_app.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/auth/presentation/pages/welcome_page.dart';
-import 'package:gestura/features/learn/presentation/pages/learn_page.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
 import 'package:gestura/features/settings/domain/settings_repository.dart';
+import 'package:gestura/features/today/presentation/pages/today_page.dart';
 import 'package:gestura_ui/gestura_ui.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -80,7 +80,7 @@ void main() {
 
     await _tapButton(tester, 'Continue as guest');
 
-    expect(find.byType(LearnPage), findsOneWidget);
+    expect(find.byType(TodayPage), findsOneWidget);
     expect(_user?.isAnonymous, isTrue);
     expect(
       getIt<SettingsRepository>().load(),
@@ -169,7 +169,7 @@ void main() {
 
     await _fill(tester, email);
 
-    expect(find.byType(LearnPage), findsOneWidget);
+    expect(find.byType(TodayPage), findsOneWidget);
     expect(_user?.email, email);
   });
 }
