@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gestura/features/app_policy/data/remote_config_policy.dart';
 import 'package:gestura/features/app_policy/domain/app_policy.dart';
 import 'package:gestura/features/app_policy/presentation/policy_gate.dart';
 
@@ -27,12 +26,5 @@ void main() {
       storeLink(TargetPlatform.iOS).toString(),
       'https://gestura-prod.web.app',
     );
-  });
-
-  test('dev and staging stay open', () async {
-    const policy = OpenPolicy();
-    expect(policy.current, AppPolicy.open);
-    expect(await policy.watch().isEmpty, isTrue);
-    await policy.refresh();
   });
 }

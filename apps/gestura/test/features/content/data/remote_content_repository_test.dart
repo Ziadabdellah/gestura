@@ -65,10 +65,7 @@ void main() {
 
   test('every flavor knows where published content lives', () {
     expect(const AppConfig(flavor: Flavor.prod).contentBase, _base);
-    expect(
-      const AppConfig(flavor: Flavor.dev).contentBase.host,
-      'gestura-dev-content.web.app',
-    );
+    expect(const AppConfig(flavor: Flavor.dev).contentBase, _base);
   });
 
   test('loads the published catalog with media on the content site', () async {

@@ -10,17 +10,13 @@ void main() {
     group('firebaseOptionsFor on ${platform.name}', () {
       setUp(() => debugDefaultTargetPlatformOverride = platform);
 
-      test('dev and staging share the development project', () {
+      test('every flavor uses the production project', () {
         expect(
-          firebaseOptionsFor(Flavor.dev).projectId,
-          firebaseOptionsFor(Flavor.staging).projectId,
-        );
-      });
-
-      test('prod uses its own project', () {
-        expect(
-          firebaseOptionsFor(Flavor.prod).projectId,
-          isNot(firebaseOptionsFor(Flavor.dev).projectId),
+          {
+            for (final flavor in Flavor.values)
+              firebaseOptionsFor(flavor).projectId,
+          },
+          {'gestura-prod'},
         );
       });
 

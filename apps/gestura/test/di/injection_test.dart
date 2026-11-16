@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -121,20 +122,14 @@ void main() {
       );
       expect(
         container<LearnerCloud>().progress,
-        AppConfig(flavor: flavor).isProd
-            ? isA<FirestoreCloudSet<LessonProgress>>()
-            : isA<DeviceOnlySet<LessonProgress>>(),
+        isA<FirestoreCloudSet<LessonProgress>>(),
       );
       expect(container<UserDocuments>(), isA<FirestoreUserDocuments>());
       expect(container<Reminders>(), isA<LocalReminders>());
+      expect(container<Clock>().now(), isA<DateTime>());
       expect(container<SelfCamera>(), isA<DeviceSelfCamera>());
       expect(container<GoogleAccounts>(), isA<GoogleSignInAccounts>());
-      expect(
-        container<AppPolicySource>(),
-        AppConfig(flavor: flavor).isProd
-            ? isA<RemoteConfigPolicy>()
-            : isA<OpenPolicy>(),
-      );
+      expect(container<AppPolicySource>(), isA<RemoteConfigPolicy>());
       expect(container<LinkSharer>(), isA<SystemLinkSharer>());
       expect(
         container<FirebaseFirestore>().settings.persistenceEnabled,

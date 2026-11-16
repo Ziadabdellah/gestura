@@ -10,18 +10,9 @@ LearnerCloud firestoreLearnerCloud(UserDocuments documents) => LearnerCloud(
   activity: FirestoreCloudSet(documents, 'activity', const ActivityCodec()),
 );
 
-const LearnerCloud deviceOnlyLearnerCloud = LearnerCloud(
-  progress: DeviceOnlySet(),
-  cards: DeviceOnlySet(),
-  activity: DeviceOnlySet(),
-);
-
 @module
 abstract class LearnerCloudModule {
-  @LazySingleton(env: ['prod'])
+  @lazySingleton
   LearnerCloud firestore(UserDocuments documents) =>
       firestoreLearnerCloud(documents);
-
-  @LazySingleton(env: ['dev', 'staging'])
-  LearnerCloud deviceOnly() => deviceOnlyLearnerCloud;
 }

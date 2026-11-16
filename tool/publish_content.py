@@ -9,7 +9,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PUBLISHED = ROOT / "firebase" / "published"
 SITE = ROOT / "firebase" / "content"
-PROJECTS = {"dev": "gestura-dev-9ca1a", "prod": "gestura-prod"}
+PROJECTS = {"prod": "gestura-prod"}
 LANGUAGES = {"en", "ar", "ru", "es", "fr", "de"}
 STEP_TYPES = {"learn", "chooseWord", "chooseVideo"}
 QUIZ_OPTIONS = 4

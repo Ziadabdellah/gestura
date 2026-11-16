@@ -1,19 +1,16 @@
 {
   "projects": {
-    "dev": "gestura-dev-9ca1a",
     "prod": "gestura-prod"
   },
   "targets": {
-    "gestura-dev-9ca1a": {
-      "hosting": {
-        "legal": ["gestura-dev-9ca1a"],
-        "content": ["gestura-dev-content"]
-      }
-    },
     "gestura-prod": {
       "hosting": {
-        "legal": ["gestura-prod"],
-        "content": ["gestura-prod-content"]
+        "legal": [
+          "gestura-prod"
+        ],
+        "content": [
+          "gestura-prod-content"
+        ]
       }
     }
   }

@@ -5,7 +5,7 @@ import subprocess
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 APP = ROOT / "apps" / "gestura"
 TARGETS = {
-    "staging": ("gestura-dev-9ca1a", "1:755238171778:android:e62c4b0f8f9620c556f09b", "lib/main_staging.dart"),
+    "staging": ("gestura-prod", "1:51915729825:android:746fcb2f2121476242f9e0", "lib/main_staging.dart"),
     "prod": ("gestura-prod", "1:51915729825:android:b5149f9b1d5579ab42f9e0", "lib/main_prod.dart"),
 }
 

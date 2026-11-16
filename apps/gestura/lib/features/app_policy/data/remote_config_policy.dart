@@ -4,7 +4,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:gestura/features/app_policy/domain/app_policy.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: AppPolicySource, env: ['prod'])
+@LazySingleton(as: AppPolicySource)
 final class RemoteConfigPolicy implements AppPolicySource {
   new(this._config);
 
@@ -72,18 +72,4 @@ final class RemoteConfigPolicy implements AppPolicySource {
     await _updates?.cancel();
     await _changes.close();
   }
-}
-
-@LazySingleton(as: AppPolicySource, env: ['dev', 'staging'])
-final class OpenPolicy implements AppPolicySource {
-  const new();
-
-  @override
-  AppPolicy get current => AppPolicy.open;
-
-  @override
-  Stream<AppPolicy> watch() => const Stream.empty();
-
-  @override
-  Future<void> refresh() async {}
 }

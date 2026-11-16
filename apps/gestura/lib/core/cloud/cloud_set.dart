@@ -64,17 +64,3 @@ final class FirestoreCloudSet<T> implements CloudSet<T> {
     }
   }, onError: (error, _) => firestoreFailure(error));
 }
-
-final class DeviceOnlySet<T> implements CloudSet<T> {
-  const new();
-
-  @override
-  Future<Result<List<T>>> fetchAll(String userId) async => Ok(List<T>.empty());
-
-  @override
-  Future<Result<void>> saveAll(String userId, Iterable<T> items) async =>
-      const Ok(null);
-
-  @override
-  Future<Result<void>> deleteAll(String userId) async => const Ok(null);
-}

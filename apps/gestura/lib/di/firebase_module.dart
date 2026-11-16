@@ -22,7 +22,7 @@ abstract class FirebaseModule {
   @LazySingleton(env: ['prod'])
   FirebaseAnalytics get analytics => FirebaseAnalytics.instance;
 
-  @LazySingleton(env: ['prod'])
+  @lazySingleton
   FirebaseRemoteConfig get remoteConfig => FirebaseRemoteConfig.instance;
 
   @lazySingleton

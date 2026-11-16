@@ -98,12 +98,4 @@ void main() {
     expect(await numbers.saveAll('u', [1]), const Err<void>(NetworkFailure()));
     expect(await numbers.deleteAll('u'), const Err<void>(NetworkFailure()));
   });
-
-  test('a device-only set keeps nothing in the cloud', () async {
-    const device = DeviceOnlySet<int>();
-
-    expect((await device.fetchAll('u')).valueOrNull, isEmpty);
-    expect(await device.saveAll('u', [1]), const Ok<void>(null));
-    expect(await device.deleteAll('u'), const Ok<void>(null));
-  });
 }
