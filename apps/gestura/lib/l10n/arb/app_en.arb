@@ -491,5 +491,79 @@
   "practiceHint": "Watch the sign, then copy it while you see yourself. Nothing is recorded.",
   "practiceCameraLabel": "Your camera",
   "practiceCameraDenied": "Gestura can't use the camera. Allow it in your phone settings, then try again.",
-  "practiceCameraMissing": "No camera is available on this device."
+  "practiceCameraMissing": "No camera is available on this device.",
+  "adminDashboard": "Admin",
+  "adminItems": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
+  "@adminItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminKindSignLanguages": "Sign languages",
+  "adminKindCategories": "Categories",
+  "adminKindSigns": "Signs",
+  "adminKindCourses": "Courses",
+  "adminKindLessons": "Lessons",
+  "adminSearch": "Search",
+  "adminAdd": "Add",
+  "adminEdit": "Edit",
+  "adminSave": "Save",
+  "adminDelete": "Delete",
+  "adminCancel": "Cancel",
+  "adminPublished": "Published",
+  "adminDraft": "Draft",
+  "adminDeleteTitle": "Delete {id}?",
+  "@adminDeleteTitle": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDeleteMessage": "Learners lose it the next time content is exported. This can't be undone.",
+  "adminSaved": "Saved",
+  "adminDeleted": "Deleted",
+  "adminSaveFailed": "Not saved. Check the fields and your connection.",
+  "adminLoadFailed": "Couldn't load the content.",
+  "adminTryAgain": "Try again",
+  "adminEmptyTitle": "Nothing here yet",
+  "adminEmptyMessage": "Add the first item with the button below.",
+  "adminFieldId": "ID",
+  "adminFieldName": "Name",
+  "adminFieldFingerspelling": "Fingerspelling",
+  "adminFieldPlaceholder": "Placeholder content",
+  "adminFieldOrder": "Order",
+  "adminFieldSignLanguage": "Sign language",
+  "adminFieldGloss": "Gloss",
+  "adminFieldMeaning": "Meaning",
+  "adminFieldCategory": "Category",
+  "adminFieldVideo": "Video path",
+  "adminFieldThumbnail": "Thumbnail path",
+  "adminFieldDuration": "Duration (ms)",
+  "adminFieldSourceName": "Source name",
+  "adminFieldSourceLicense": "Source license",
+  "adminFieldSourceUrl": "Source link",
+  "adminFieldLevel": "Level",
+  "adminFieldTitle": "Title",
+  "adminFieldUnits": "Units (JSON list)",
+  "adminFieldCourse": "Course",
+  "adminFieldUnit": "Unit",
+  "adminFieldSteps": "Steps (JSON list)",
+  "adminFieldPublished": "Published",
+  "adminLanguageEn": "English",
+  "adminLanguageAr": "Arabic",
+  "adminLanguageRu": "Russian",
+  "adminLanguageEs": "Spanish",
+  "adminLanguageFr": "French",
+  "adminLanguageDe": "German",
+  "adminErrorRequired": "Required",
+  "adminErrorTooLong": "Too long",
+  "adminErrorNumber": "Whole number in range",
+  "adminErrorMediaPath": "Starts with media/ or asset/, no spaces",
+  "adminErrorJsonList": "A JSON list that is not empty",
+  "adminErrorIdTaken": "This ID already exists",
+  "adminErrorIdFormat": "Letters, numbers and - only",
+  "adminEnter": "Open the admin dashboard"
 }

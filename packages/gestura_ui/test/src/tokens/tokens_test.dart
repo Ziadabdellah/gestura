@@ -90,18 +90,25 @@ void main() {
       [4, 8, 12, 16, 24, 32, 48],
     );
     expect(
-      [GesturaRadius.sm, GesturaRadius.md, GesturaRadius.lg, GesturaRadius.xl],
-      [8, 12, 20, 28],
+      [
+        GesturaRadius.sm,
+        GesturaRadius.md,
+        GesturaRadius.lg,
+        GesturaRadius.xl,
+        GesturaRadius.full,
+      ],
+      [12, 16, 24, 32, 999],
     );
     expect(
       [GesturaMotion.short, GesturaMotion.medium, GesturaMotion.long],
       const [
-        Duration(milliseconds: 120),
-        Duration(milliseconds: 240),
-        Duration(milliseconds: 400),
+        Duration(milliseconds: 150),
+        Duration(milliseconds: 300),
+        Duration(milliseconds: 500),
       ],
     );
-    expect(GesturaMotion.enter, Curves.easeOutCubic);
-    expect(GesturaMotion.exit, Curves.easeInCubic);
+    expect(GesturaMotion.enter, const Cubic(0.05, 0.7, 0.1, 1));
+    expect(GesturaMotion.exit, const Cubic(0.3, 0, 0.8, 0.15));
+    expect(GesturaMotion.spatial.transform(0.5), greaterThan(0.5));
   });
 }

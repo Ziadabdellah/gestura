@@ -1,8 +1,14 @@
+export 'src/components/g_avatar.dart';
 export 'src/components/g_button.dart';
 export 'src/components/g_card.dart';
 export 'src/components/g_chip.dart';
+export 'src/components/g_empty_state.dart';
 export 'src/components/g_error_view.dart';
+export 'src/components/g_hero_card.dart';
+export 'src/components/g_progress_ring.dart';
+export 'src/components/g_section_header.dart';
 export 'src/components/g_skeleton.dart';
+export 'src/components/g_stat_tile.dart';
 export 'src/foundation/contrast.dart';
 export 'src/foundation/gestura_adaptive_builder.dart';
 export 'src/foundation/gestura_font_licenses.dart';

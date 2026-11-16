@@ -9,7 +9,7 @@ import 'package:gestura_ui/src/theme/gestura_typography.dart';
 import 'package:gestura_ui/src/tokens/gestura_scale.dart';
 
 abstract final class GesturaTheme {
-  static const Size buttonMinimumSize = Size(64, 52);
+  static const Size buttonMinimumSize = Size(64, 56);
   static const double iconSize = 24;
   static const double chipIconSize = 18;
 
@@ -81,7 +81,7 @@ abstract final class GesturaTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: text.titleLarge,
+        titleTextStyle: text.titleLarge?.copyWith(fontWeight: FontWeight.w700),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -123,7 +123,7 @@ abstract final class GesturaTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         margin: EdgeInsets.zero,
-        color: scheme.surfaceContainerLowest,
+        color: scheme.surfaceContainerLow,
         surfaceTintColor: Colors.transparent,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
@@ -166,7 +166,7 @@ abstract final class GesturaTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: scheme.surfaceContainerHigh,
+        fillColor: scheme.surfaceContainerHighest,
         contentPadding: EdgeInsetsDirectional.symmetric(
           horizontal: sizes.md,
           vertical: sizes.sm,
@@ -177,7 +177,7 @@ abstract final class GesturaTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(sizes.radiusMd),
-          borderSide: BorderSide(color: scheme.outline),
+          borderSide: BorderSide(color: scheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(sizes.radiusMd),
@@ -220,6 +220,8 @@ abstract final class GesturaTheme {
         backgroundColor: scheme.surfaceContainer,
         surfaceTintColor: Colors.transparent,
         indicatorColor: scheme.primaryContainer,
+        indicatorShape: pill,
+        height: sizes.scaled(80),
         labelTextStyle: WidgetStatePropertyAll(text.labelMedium),
         iconTheme: WidgetStatePropertyAll(
           IconThemeData(size: sizes.icon(iconSize)),
@@ -247,12 +249,17 @@ abstract final class GesturaTheme {
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: scheme.primary,
+        borderRadius: BorderRadius.circular(sizes.radiusSm),
+        linearMinHeight: sizes.scaled(8),
         linearTrackColor: scheme.surfaceContainerHighest,
         circularTrackColor: scheme.surfaceContainerHighest,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme.primaryContainer,
         foregroundColor: scheme.onPrimaryContainer,
+        elevation: 0,
+        highlightElevation: 0,
+        extendedTextStyle: text.labelLarge,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(sizes.radiusLg),
         ),

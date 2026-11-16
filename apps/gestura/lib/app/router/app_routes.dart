@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gestura/app/router/app_gate.dart';
 import 'package:gestura/app/view/app_shell.dart';
+import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/achievements/presentation/pages/stats_page.dart';
+import 'package:gestura/features/admin/domain/admin_access.dart';
+import 'package:gestura/features/admin/domain/content_kind.dart';
+import 'package:gestura/features/admin/presentation/pages/admin_home_page.dart';
+import 'package:gestura/features/admin/presentation/pages/collection_page.dart';
+import 'package:gestura/features/admin/presentation/pages/editor_page.dart';
 import 'package:gestura/features/auth/domain/auth_entry.dart';
+import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/auth/presentation/pages/create_account_page.dart';
 import 'package:gestura/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:gestura/features/auth/presentation/pages/sign_in_page.dart';
@@ -187,6 +194,77 @@ class StatsRoute extends GoRouteData with $StatsRoute, MaterialTransitions {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const StatsPage();
+}
+
+Future<String?> adminOnly() async {
+  final user = getIt<AuthRepository>().currentUser;
+  return await getIt<AdminAccess>().isAdmin(user) ? null : '/profile';
+}
+
+@TypedGoRoute<AdminRoute>(
+  path: '/admin',
+  routes: [
+    TypedGoRoute<AdminCollectionRoute>(
+      path: ':kind',
+      routes: [
+        TypedGoRoute<AdminNewRoute>(path: 'new'),
+        TypedGoRoute<AdminEditRoute>(path: 'edit/:id'),
+      ],
+    ),
+  ],
+)
+@immutable
+class AdminRoute extends GoRouteData with $AdminRoute, MaterialTransitions {
+  const new();
+
+  @override
+  Future<String?> redirect(BuildContext context, GoRouterState state) =>
+      adminOnly();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const AdminHomePage();
+}
+
+@immutable
+class AdminCollectionRoute extends GoRouteData
+    with $AdminCollectionRoute, MaterialTransitions {
+  const new({required this.kind});
+
+  final String kind;
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) =>
+      ContentKind.byCollection(kind) == null ? '/admin' : null;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      CollectionPage(kind: ContentKind.byCollection(kind)!);
+}
+
+@immutable
+class AdminNewRoute extends GoRouteData
+    with $AdminNewRoute, MaterialTransitions {
+  const new({required this.kind});
+
+  final String kind;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      EditorPage(kind: ContentKind.byCollection(kind)!);
+}
+
+@immutable
+class AdminEditRoute extends GoRouteData
+    with $AdminEditRoute, MaterialTransitions {
+  const new({required this.kind, required this.id});
+
+  final String kind;
+  final String id;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      EditorPage(kind: ContentKind.byCollection(kind)!, id: id);
 }
 
 @TypedGoRoute<LessonRoute>(path: '/lesson/:lessonId')

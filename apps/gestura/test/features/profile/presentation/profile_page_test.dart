@@ -139,6 +139,8 @@ void main() {
         progress: progress,
       );
 
+      await tester.scrollUntilVisible(find.text('Delete account'), 300);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Delete account'));
       await tester.pumpAndSettle();
 

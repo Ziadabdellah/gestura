@@ -54,9 +54,8 @@ class _Ready extends StatelessWidget {
     required this.onOpenSign,
   });
 
-  static const double ringSize = 72;
-  static const double ringStroke = 7;
-  static const Size thumbnail = Size(56, 70);
+  static const double ringSize = 76;
+  static const Size thumbnail = Size(64, 80);
 
   final TodayReady state;
   final int goalMinutes;
@@ -69,11 +68,16 @@ class _Ready extends StatelessWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final colors = context.gColors;
     final sizes = context.gSizes;
     final padding = context.windowSizeClass.screenPadding;
     final next = state.outline.nextLesson;
     final sign = state.signOfTheDay;
     final goalReached = state.minutesToday >= goalMinutes;
+    final heroText = theme.textTheme.apply(
+      bodyColor: colors.onHero,
+      displayColor: colors.onHero,
+    );
 
     return ReadableInset(
       minimum: padding,
@@ -85,6 +89,57 @@ class _Ready extends StatelessWidget {
           sizes.xl,
         ),
         children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: colors.heroGradient,
+              borderRadius: BorderRadius.circular(sizes.radiusXl),
+            ),
+            child: Padding(
+              padding: EdgeInsetsDirectional.all(sizes.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      l10n.continueLearning,
+                      style: heroText.labelLarge,
+                    ),
+                  ),
+                  SizedBox(height: sizes.xs),
+                  Text(
+                    switch (next) {
+                      final LessonOutline lesson => [
+                        l10n.lessonNumber(lesson.number),
+                        lesson.lesson.title.of(context),
+                      ].join(' · '),
+                      null => l10n.allLessonsDone,
+                    },
+                    style: heroText.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (next != null) ...[
+                    SizedBox(height: sizes.md),
+                    Theme(
+                      data: theme.copyWith(
+                        colorScheme: scheme.copyWith(
+                          primary: colors.onHero,
+                          onPrimary: colors.heroEnd,
+                        ),
+                      ),
+                      child: GButton(
+                        label: l10n.startLesson,
+                        icon: Icons.play_arrow_rounded,
+                        onPressed: () => onOpenLesson(next),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: sizes.sm),
           GCard(
             tone: GCardTone.low,
             semanticLabel: [
@@ -95,27 +150,13 @@ class _Ready extends StatelessWidget {
             child: ExcludeSemantics(
               child: Row(
                 children: [
-                  SizedBox.square(
-                    dimension: sizes.scaled(ringSize),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        CircularProgressIndicator(
-                          value: (state.minutesToday / goalMinutes).clamp(0, 1),
-                          strokeWidth: sizes.scaled(ringStroke),
-                          strokeCap: StrokeCap.round,
-                          color: scheme.primary,
-                          backgroundColor: scheme.surfaceContainerHighest,
-                        ),
-                        Center(
-                          child: Icon(
-                            goalReached
-                                ? Icons.check_rounded
-                                : Icons.timer_outlined,
-                            color: scheme.primary,
-                          ),
-                        ),
-                      ],
+                  GProgressRing(
+                    value: state.minutesToday / goalMinutes,
+                    semanticLabel: l10n.todayGoalTitle,
+                    size: ringSize,
+                    child: Icon(
+                      goalReached ? Icons.check_rounded : Icons.timer_outlined,
+                      color: scheme.primary,
                     ),
                   ),
                   SizedBox(width: sizes.md),
@@ -125,7 +166,9 @@ class _Ready extends StatelessWidget {
                       children: [
                         Text(
                           l10n.todayGoalTitle,
-                          style: theme.textTheme.titleMedium,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         Text(
                           l10n.todayGoalProgress(
@@ -135,55 +178,44 @@ class _Ready extends StatelessWidget {
                           style: theme.textTheme.bodyMedium,
                         ),
                         SizedBox(height: sizes.xs),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.local_fire_department_rounded,
-                              color: context.gColors.coralStrong,
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: colors.warningContainer,
+                            borderRadius: BorderRadius.circular(
+                              GesturaRadius.full,
                             ),
-                            SizedBox(width: sizes.xxs),
-                            Flexible(
-                              child: Text(l10n.streakDays(state.streak)),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.symmetric(
+                              horizontal: sizes.sm,
+                              vertical: sizes.xxs,
                             ),
-                          ],
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.local_fire_department_rounded,
+                                  color: colors.coralStrong,
+                                  size: sizes.icon(18),
+                                ),
+                                SizedBox(width: sizes.xxs),
+                                Flexible(
+                                  child: Text(
+                                    l10n.streakDays(state.streak),
+                                    style: theme.textTheme.labelLarge?.copyWith(
+                                      color: colors.onWarningContainer,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-          SizedBox(height: sizes.sm),
-          GCard(
-            tone: GCardTone.low,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Semantics(
-                  header: true,
-                  child: Text(
-                    l10n.continueLearning,
-                    style: theme.textTheme.titleMedium,
-                  ),
-                ),
-                SizedBox(height: sizes.xxs),
-                Text(switch (next) {
-                  final LessonOutline lesson => [
-                    l10n.lessonNumber(lesson.number),
-                    lesson.lesson.title.of(context),
-                  ].join(' · '),
-                  null => l10n.allLessonsDone,
-                }, style: theme.textTheme.bodyLarge),
-                if (next != null) ...[
-                  SizedBox(height: sizes.sm),
-                  GButton(
-                    label: l10n.startLesson,
-                    icon: Icons.play_arrow_rounded,
-                    onPressed: () => onOpenLesson(next),
-                  ),
-                ],
-              ],
             ),
           ),
           SizedBox(height: sizes.sm),
@@ -224,7 +256,7 @@ class _Ready extends StatelessWidget {
                 child: Row(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(sizes.radiusSm),
+                      borderRadius: BorderRadius.circular(sizes.radiusMd),
                       child: MediaImage(
                         media: sign.media.thumbnail,
                         width: sizes.scaled(thumbnail.width),

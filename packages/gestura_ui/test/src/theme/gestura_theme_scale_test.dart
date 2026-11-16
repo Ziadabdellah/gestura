@@ -39,7 +39,10 @@ void main() {
       final theme = GesturaTheme.light(scale: large);
       final card = theme.cardTheme.shape! as RoundedRectangleBorder;
 
-      expect(card.borderRadius, BorderRadius.circular(22));
+      expect(
+        (card.borderRadius as BorderRadius).topLeft.x,
+        closeTo(26.4, 0.001),
+      );
     });
 
     test('keeps every tap target at 48 or more on small phones', () {
@@ -48,7 +51,7 @@ void main() {
       final text = theme.textButtonTheme.style!.minimumSize!.resolve({})!;
       final icon = theme.iconButtonTheme.style!.minimumSize!.resolve({})!;
 
-      expect(filled.height, 48);
+      expect(filled.height, closeTo(50.4, 0.001));
       expect(text.height, 48);
       expect(icon, const Size.square(48));
       expect(theme.listTileTheme.minTileHeight, greaterThanOrEqualTo(48));

@@ -13,6 +13,8 @@ import 'package:gestura/core/share/link_sharer.dart';
 import 'package:gestura/core/telemetry/telemetry.dart';
 import 'package:gestura/di/injection.dart';
 import 'package:gestura/features/activity/domain/activity_repository.dart';
+import 'package:gestura/features/admin/data/content_store.dart';
+import 'package:gestura/features/admin/domain/admin_access.dart';
 import 'package:gestura/features/app_policy/domain/app_policy.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/content/domain/content_repository.dart';
@@ -32,6 +34,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'fake_activity_repository.dart';
+import 'fake_admin.dart';
 import 'fake_auth_repository.dart';
 import 'fake_content_repository.dart';
 import 'fake_learner_cloud.dart';
@@ -81,6 +84,8 @@ Future<void> registerFakes({
   Reminders? reminders,
   AppPolicySource? policy,
   SelfCamera? camera,
+  AdminAccess? admin,
+  ContentStore? store,
 }) async {
   VideoPlayerPlatform.instance = FakeVideoPlayerPlatform();
   UrlLauncherPlatform.instance = FakeUrlLauncher();
@@ -123,7 +128,9 @@ Future<void> registerFakes({
       ),
     )
     ..registerSingleton<Clock>(Clock.fixed(testNow))
-    ..registerSingleton<AppInfo>(testAppInfo);
+    ..registerSingleton<AppInfo>(testAppInfo)
+    ..registerSingleton<AdminAccess>(admin ?? FakeAdminAccess())
+    ..registerSingleton<ContentStore>(store ?? FakeContentStore());
 }
 
 Widget appUnderTest({
@@ -156,6 +163,8 @@ extension PumpApp on WidgetTester {
     Reminders? reminders,
     AppPolicySource? policy,
     SelfCamera? camera,
+    AdminAccess? admin,
+    ContentStore? store,
   }) async {
     view
       ..physicalSize = surfaceSize * 3
@@ -175,6 +184,8 @@ extension PumpApp on WidgetTester {
       reminders: reminders,
       policy: policy,
       camera: camera,
+      admin: admin,
+      store: store,
     );
     addTearDown(getIt.reset);
 

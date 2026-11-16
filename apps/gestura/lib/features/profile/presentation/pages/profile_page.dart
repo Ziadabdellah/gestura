@@ -7,6 +7,8 @@ import 'package:gestura/config/app_info.dart';
 import 'package:gestura/core/errors/failure_presentation.dart';
 import 'package:gestura/core/share/link_sharer.dart';
 import 'package:gestura/di/injection.dart';
+import 'package:gestura/features/admin/domain/admin_access.dart';
+import 'package:gestura/features/admin/presentation/view_models/admin_access_view_model.dart';
 import 'package:gestura/features/auth/domain/auth_entry.dart';
 import 'package:gestura/features/auth/domain/auth_repository.dart';
 import 'package:gestura/features/auth/presentation/view_models/account_state.dart';
@@ -75,18 +77,29 @@ class ProfilePage extends StatelessWidget {
     final l10n = context.l10n;
     final appInfo = getIt<AppInfo>();
 
-    return BlocProvider(
-      create: (_) => AccountViewModel(
-        getIt<AuthRepository>(),
-        getIt<LearnerData>(),
-        getIt<LearnerCloud>(),
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => AccountViewModel(
+            getIt<AuthRepository>(),
+            getIt<LearnerData>(),
+            getIt<LearnerCloud>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => AdminAccessViewModel(
+            getIt<AuthRepository>(),
+            getIt<AdminAccess>(),
+          ),
+        ),
+      ],
       child: Scaffold(
         appBar: AppBar(title: Text(l10n.tabProfile)),
         body: BlocBuilder<AccountViewModel, AccountState>(
           builder: (context, account) => ProfileView(
             appInfo: appInfo,
             account: account,
+            isAdmin: context.watch<AdminAccessViewModel>().state,
             actions: (
               onOpenStats: () => const StatsRoute().go(context),
               onOpenSettings: () => const SettingsRoute().go(context),
@@ -110,6 +123,8 @@ class ProfilePage extends StatelessWidget {
               ),
               onSignOut: () => unawaited(signOut(context)),
               onDeleteAccount: () => unawaited(deleteAccount(context)),
+              onOpenAdmin: () =>
+                  unawaited(const AdminRoute().push<void>(context)),
             ),
           ),
         ),

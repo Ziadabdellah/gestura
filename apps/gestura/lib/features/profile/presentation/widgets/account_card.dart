@@ -78,15 +78,7 @@ class AccountCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                ExcludeSemantics(
-                  child: CircleAvatar(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    foregroundColor: theme.colorScheme.onPrimaryContainer,
-                    child: Text(
-                      String.fromCharCodes(email.runes.take(1)).toUpperCase(),
-                    ),
-                  ),
-                ),
+                ExcludeSemantics(child: GAvatar(name: email, size: 48)),
                 SizedBox(width: sizes.sm),
                 Expanded(
                   child: Text(email, style: theme.textTheme.titleMedium),

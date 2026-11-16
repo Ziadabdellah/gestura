@@ -21,7 +21,7 @@ void main() {
       );
       expect(
         [sizes.radiusSm, sizes.radiusMd, sizes.radiusLg, sizes.radiusXl],
-        [8, 12, 20, 28],
+        [12, 16, 24, 32],
       );
       expect(sizes.tapTarget, 48);
       expect(sizes.icon(24), 24);
@@ -31,7 +31,7 @@ void main() {
       const sizes = GesturaSizes(scale: GesturaScale(text: 1.1, size: 1.1));
 
       expect(sizes.md, closeTo(17.6, 0.001));
-      expect(sizes.radiusLg, closeTo(22, 0.001));
+      expect(sizes.radiusLg, closeTo(26.4, 0.001));
       expect(sizes.scaled(100), closeTo(110, 0.001));
     });
 

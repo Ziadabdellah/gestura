@@ -86,21 +86,21 @@ void main() {
         expect(theme.materialTapTargetSize, MaterialTapTargetSize.padded);
       });
 
-      test('uses tonal cards with 20 radius and no elevation', () {
+      test('uses tonal cards with 24 radius and no elevation', () {
         final card = theme.cardTheme;
         final shape = card.shape! as RoundedRectangleBorder;
 
         expect(card.elevation, 0);
-        expect(card.color, scheme.surfaceContainerLowest);
-        expect(shape.borderRadius, BorderRadius.circular(20));
+        expect(card.color, scheme.surfaceContainerLow);
+        expect(shape.borderRadius, BorderRadius.circular(24));
       });
 
-      test('rounds only the top of bottom sheets with 28', () {
+      test('rounds only the top of bottom sheets with 32', () {
         final shape = theme.bottomSheetTheme.shape! as RoundedRectangleBorder;
 
         expect(
           shape.borderRadius,
-          const BorderRadius.vertical(top: Radius.circular(28)),
+          const BorderRadius.vertical(top: Radius.circular(32)),
         );
       });
 

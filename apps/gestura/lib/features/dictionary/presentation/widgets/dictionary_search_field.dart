@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gestura/l10n/l10n.dart';
+import 'package:gestura_ui/gestura_ui.dart';
 
 class DictionarySearchField extends StatelessWidget {
   const new({
@@ -25,6 +26,19 @@ class DictionarySearchField extends StatelessWidget {
         autocorrect: false,
         decoration: InputDecoration(
           hintText: l10n.searchSignsHint,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(GesturaRadius.full),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(GesturaRadius.full),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 2,
+            ),
+          ),
           prefixIcon: const ExcludeSemantics(child: Icon(Icons.search_rounded)),
           suffixIcon: value.text.isEmpty
               ? null

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gestura/config/app_config.dart';
 import 'package:gestura/core/media/media_cache.dart';
 import 'package:gestura/features/content/data/content_host.dart';
+import 'package:gestura/features/content/data/published_catalog.dart';
 import 'package:gestura/features/content/data/remote_content_repository.dart';
 import 'package:gestura/features/content/domain/sign.dart';
 import 'package:gestura/features/settings/domain/app_settings.dart';
@@ -19,6 +20,13 @@ class _Settings implements SettingsRepository {
   Future<Result<void>> save(AppSettings settings) async => const Ok(null);
 }
 
+class _NothingInFirestore implements PublishedCatalog {
+  const new();
+
+  @override
+  Future<Doc?> load(String? preferredCode) async => null;
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -30,6 +38,7 @@ void main() {
       DiskContentFiles(),
       const AppConfig(flavor: Flavor.prod),
       _Settings(),
+      const _NothingInFirestore(),
     );
 
     final signs = await repository.searchSigns('');
