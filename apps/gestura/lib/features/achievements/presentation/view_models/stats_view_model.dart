@@ -12,8 +12,10 @@ import 'package:gestura/features/review/domain/review_repository.dart';
 import 'package:gestura_core/gestura_core.dart';
 
 class StatsViewModel extends Cubit<StatsState> {
-  new(this._progress, this._reviews, this._activity)
+  new(this._progress, this._reviews, this._activity, {this._clock})
     : super(const StatsLoading());
+
+  final Clock? _clock;
 
   final ProgressRepository _progress;
   final ReviewRepository _reviews;
@@ -57,7 +59,7 @@ class StatsViewModel extends Cubit<StatsState> {
                 lessons: lessons,
                 cards: cards,
                 days: days,
-                today: clock.now(),
+                today: (_clock ?? clock).now(),
               ),
             ),
           );

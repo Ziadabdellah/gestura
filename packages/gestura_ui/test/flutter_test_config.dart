@@ -13,10 +13,12 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await _loadFontsUnderPackageNames();
   final isCi = Platform.environment.containsKey('CI');
+  final ciGoldens = isCi || Platform.environment['GESTURA_CI_GOLDENS'] == '1';
   await AlchemistConfig.runWithConfig(
     config: AlchemistConfig(
       platformGoldensConfig: PlatformGoldensConfig(enabled: !isCi),
-      ciGoldensConfig: const CiGoldensConfig(
+      ciGoldensConfig: CiGoldensConfig(
+        enabled: ciGoldens,
         diffThreshold: crossPlatformAntiAliasingTolerance,
       ),
     ),

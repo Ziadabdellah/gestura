@@ -26,8 +26,17 @@ Sign? signOfTheDay(List<Sign> signs, DateTime day) {
 }
 
 class TodayViewModel extends Cubit<TodayState> {
-  new(this._content, this._progress, this._reviews, this._activity)
-    : super(const TodayLoading());
+  new(
+    this._content,
+    this._progress,
+    this._reviews,
+    this._activity, {
+    this._clock,
+  }) : super(const TodayLoading());
+
+  final Clock? _clock;
+
+  DateTime _now() => (_clock ?? clock).now();
 
   final ContentRepository _content;
   final ProgressRepository _progress;
@@ -51,7 +60,7 @@ class TodayViewModel extends Cubit<TodayState> {
     switch ((courses, signs)) {
       case (Ok(value: [final course, ...]), Ok(value: final signs)):
         _course = course;
-        _sign = signOfTheDay(signs, clock.now());
+        _sign = signOfTheDay(signs, _now());
         _subscriptions.addAll([
           _progress.watchAll().listen(
             (result) => _take(result, (v) => _done = v),
@@ -85,7 +94,7 @@ class TodayViewModel extends Cubit<TodayState> {
     if (course == null || done == null || cards == null || days == null) {
       return;
     }
-    final now = clock.now();
+    final now = _now();
     final today = dayKey(now);
     emit(
       TodayReady(

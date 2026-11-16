@@ -1,0 +1,39 @@
+name: CI goldens
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  goldens:
+    name: Regenerate CI goldens on Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+        with:
+          firebase-config: ${{ secrets.FIREBASE_CONFIG_TGZ_B64 }}
+
+      - name: Code generation
+        run: dart run melos run gen --no-select
+
+      - name: Regenerate the app goldens
+        working-directory: apps/gestura
+        run: flutter test --flavor dev --update-goldens --tags golden
+
+      - name: Regenerate the design system goldens
+        working-directory: packages/gestura_ui
+        run: flutter test --update-goldens --tags golden
+
+      - name: Upload the CI goldens
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-goldens
+          path: |
+            apps/gestura/test/**/goldens/ci/**
+            packages/gestura_ui/test/**/goldens/ci/**
+          retention-days: 7

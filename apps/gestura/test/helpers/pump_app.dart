@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,6 +59,8 @@ const AppInfo testAppInfo = AppInfo(version: '1.0.0', buildNumber: '7');
 const String learnLocation = '/learn';
 
 const Size phoneSize = Size(360, 780);
+
+final DateTime testNow = DateTime(2026, 11, 15, 12);
 const Size tabletSize = Size(800, 1280);
 
 FakeUrlLauncher get fakeLinks =>
@@ -119,6 +122,7 @@ Future<void> registerFakes({
         directory: () async => Directory.systemTemp,
       ),
     )
+    ..registerSingleton<Clock>(Clock.fixed(testNow))
     ..registerSingleton<AppInfo>(testAppInfo);
 }
 

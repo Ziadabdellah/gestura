@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gestura/di/injection.dart';
@@ -18,6 +19,7 @@ class StatsPage extends StatelessWidget {
       getIt<ProgressRepository>(),
       getIt<ReviewRepository>(),
       getIt<ActivityRepository>(),
+      clock: getIt<Clock>(),
     )..start(),
     child: Scaffold(
       appBar: AppBar(title: Text(context.l10n.statsTitle)),
