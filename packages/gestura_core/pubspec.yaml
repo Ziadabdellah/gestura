@@ -12,5 +12,5 @@ dependencies:
   meta: ^1.19.0
 
 dev_dependencies:
-  coverage: ^1.16.0
+  coverage: ^1.16.1
   test: ^1.31.1
